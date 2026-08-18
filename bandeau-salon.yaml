@@ -1,0 +1,44 @@
+esphome:
+  name: bandeau-salon
+  friendly_name: "Bandeau LED Salon"
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  use_address: bandeau-salon.shibusen.info
+
+api:
+  encryption:
+    key: !secret api_encryption_key
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+logger:
+
+# Sorties PWM, une par canal couleur, pilotant chacune la Gate d'un MOSFET.
+# GPIO16/17/18 : à confirmer contre le pinout précis de la carte une fois reçue
+# (éviter les strapping pins GPIO0/2/12/15 et les pins input-only 34-39).
+output:
+  - platform: ledc
+    pin: GPIO16
+    id: output_red
+  - platform: ledc
+    pin: GPIO17
+    id: output_green
+  - platform: ledc
+    pin: GPIO18
+    id: output_blue
+
+light:
+  - platform: rgb
+    name: "Bandeau LED"
+    red: output_red
+    green: output_green
+    blue: output_blue

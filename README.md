@@ -1,0 +1,156 @@
+# ESP32 LED Strip Controller
+
+*[Version française](README.fr.md)*
+
+## Overview
+
+This project replaces the proprietary remote-control box of a 12V RGB LED
+strip with an ESP32 running [ESPHome](https://esphome.io/), integrated into
+Home Assistant. It's a learning project first: every step below favors
+understanding *why* something works over just getting it to work, and this
+document is meant to grow alongside the build rather than being written
+after the fact.
+
+**Status:** hardware received, nothing wired yet. Working through the steps
+below in order.
+
+**Key decisions so far:**
+- WiFi + ESPHome rather than native Zigbee, for simplicity and the depth of
+  available documentation. A native Zigbee version (ESP32-C6/H2) is a
+  possible future iteration, see [Future ideas](#future-ideas).
+- The MOSFET switching circuit is hand-wired from bare components (not a
+  pre-built module), specifically to understand and build the circuit from
+  scratch rather than treat it as a black box.
+- The ESPHome config is managed locally via the `esphome` CLI and versioned
+  in this repository, rather than through the Home Assistant add-on.
+
+## Table of contents
+
+1. [Hardware](#hardware)
+2. [Strip measurements & findings](#strip-measurements--findings)
+3. [MOSFET switching circuit](#mosfet-switching-circuit)
+4. [ESPHome configuration](#esphome-configuration)
+5. [Flashing & first run](#flashing--first-run)
+6. [Home Assistant integration](#home-assistant-integration)
+7. [Final assembly](#final-assembly)
+8. [Future ideas](#future-ideas)
+
+## Hardware
+
+The LED strip is a non-addressable common-anode RGB strip, originally driven
+by a small proprietary remote-control box (color + brightness).
+
+Bill of materials for the ESP32 replacement:
+
+| Part | Notes |
+|---|---|
+| ESP32 DevKitC (WROOM-32) | Generic board, best-documented for ESPHome |
+| 3x N-channel logic-level MOSFET | e.g. IRLZ44N / IRLB8721 — must be *logic-level* to fully saturate from 3.3V GPIO |
+| 3x ~220Ω resistor | Gate resistor, limits inrush current charging the gate |
+| 3x ~10kΩ resistor | Gate pull-down, keeps the MOSFET off by default during ESP32 boot/reset |
+| 12V→5V buck converter (optional) | To power the ESP32 from the strip's own 12V supply in the final build |
+| DC jack → screw terminal adapter | Taps +12V/GND from the existing supply without cutting its original cable |
+
+*(To fill in: exact references actually purchased, once confirmed against
+what arrived.)*
+
+## Strip measurements & findings
+
+Measured 2026-08-09, with the original control box still in place:
+
+- Supply voltage: **12V DC**.
+- One wire stays at a constant 12V regardless of color/brightness settings
+  → this is the common **V+** anode.
+- The other three wires (R/G/B) drop to ~0.3–0.5V at full brightness/full
+  white, and rise back up (towards ~10V) as a channel's brightness is
+  lowered → each channel is switched **on the ground side** via PWM.
+- Isolating a single color (e.g. red only) drops only that wire while the
+  other two rise back up → confirms the wire-to-channel mapping and that
+  the three channels are independent.
+
+**Conclusion:** common-anode RGB strip, ground-side PWM switching per
+channel. This is exactly what the MOSFET circuit below needs to reproduce.
+
+## MOSFET switching circuit
+
+*(Not wired yet — this section will be filled in during breadboard
+prototyping.)*
+
+Planned circuit, repeated identically for each of the 3 channels (R, G, B):
+
+```
+ESP32 GPIO --[R 220Ω]--> Gate ----+
+                                   |
+                          [R 10kΩ to GND]  (pull-down)
+                                   |
+                        Drain -- strip's R/G/B wire
+                        Source -- common ground
+```
+
+- **Gate**: driven from the GPIO through the ~220Ω resistor. The 10kΩ
+  pull-down keeps the MOSFET off whenever the GPIO isn't actively driving
+  3.3V — without it, the floating GPIO state during ESP32 boot/reset could
+  randomly turn a channel on.
+- **Drain**: wired directly to the corresponding R/G/B wire of the strip.
+- **Source**: wired to common ground.
+- The strip's **V+** connects directly to the 12V supply (bypassing the
+  original control box entirely).
+- **Common ground is mandatory** between the ESP32, the 3 MOSFETs and the
+  strip's power supply — without it, "3.3V" on a GPIO has no defined
+  meaning from the MOSFET's perspective.
+
+Before wiring the strip in: check each MOSFET individually with a
+multimeter (continuity mode), confirming Gate voltage toggles Drain-Source
+continuity on/off as expected.
+
+## ESPHome configuration
+
+See [`bandeau-salon.yaml`](bandeau-salon.yaml).
+
+- `output: platform: ledc` — one PWM output per color channel.
+- `light: platform: rgb` — combines the three outputs into one light entity.
+- Secrets (WiFi credentials, OTA password, API encryption key) live in
+  `secrets.yaml`, gitignored; `secrets.yaml.example` is the committed
+  template.
+
+GPIO pins currently set to 16/17/18 — **to confirm** against the exact
+DevKitC pinout once wiring starts (avoid strapping pins GPIO0/2/12/15 and
+input-only pins 34-39).
+
+## Flashing & first run
+
+*(Not done yet.)*
+
+- First flash over USB: `esphome run bandeau-salon.yaml`.
+- Check the logs for a successful WiFi connection.
+- Manually test each channel (red only / green only / blue only / white).
+- Subsequent flashes can be done over-the-air (OTA) once the device is on
+  the network.
+
+## Home Assistant integration
+
+*(Not done yet.)*
+
+- The native **ESPHome** integration should auto-discover the device via
+  mDNS (Settings → Devices & Services).
+- Verify color/brightness control from the dashboard and check for
+  flicker (may require adjusting the `ledc` PWM frequency).
+
+## Final assembly
+
+*(Future — after the breadboard prototype is validated.)*
+
+- Re-solder the MOSFET circuit onto perfboard.
+- Heat-shrink the 12V/GND joints.
+- Removable screw-terminal connectors for the external wiring.
+- Plastic enclosure (not metal — would shield the ESP32's PCB antenna).
+- Add a fuse/polyfuse on +12V and a decoupling capacitor near the ESP32
+  supply.
+
+## Future ideas
+
+- **Native Zigbee**: ESP32-C6 (WiFi + BLE + 802.15.4) or ESP32-H2, joining
+  the existing Zigbee mesh via the Nabu Casa ZBT-2 coordinator, using
+  Espressif's official `HA_color_dimmable_light` example (ESP-IDF, outside
+  ESPHome). Only worth exploring once the WiFi version is validated and
+  working.
