@@ -29,13 +29,14 @@ dans les étapes ci-dessous dans l'ordre.
 ## Sommaire
 
 1. [Matériel](#matériel)
-2. [Mesures & constats sur le bandeau](#mesures--constats-sur-le-bandeau)
-3. [Circuit de commutation MOSFET](#circuit-de-commutation-mosfet)
-4. [Configuration ESPHome](#configuration-esphome)
-5. [Flash & premier démarrage](#flash--premier-démarrage)
-6. [Intégration Home Assistant](#intégration-home-assistant)
-7. [Montage définitif](#montage-définitif)
-8. [Pistes de suite](#pistes-de-suite)
+2. [Outillage](#outillage)
+3. [Mesures & constats sur le bandeau](#mesures--constats-sur-le-bandeau)
+4. [Circuit de commutation MOSFET](#circuit-de-commutation-mosfet)
+5. [Configuration ESPHome](#configuration-esphome)
+6. [Flash & premier démarrage](#flash--premier-démarrage)
+7. [Intégration Home Assistant](#intégration-home-assistant)
+8. [Montage définitif](#montage-définitif)
+9. [Pistes de suite](#pistes-de-suite)
 
 ## Matériel
 
@@ -70,6 +71,19 @@ Liste du matériel pour le remplacement par ESP32 :
 > maintenant, juste noté ici. Avantage : le C6 intègre nativement le
 > 802.15.4 (Zigbee/Thread) en plus du WiFi, donc la piste
 > [Zigbee natif](#pistes-de-suite) ne nécessite plus de matériel séparé.
+
+## Outillage
+
+Outils déjà disponibles, utiles dès cette première phase de prototypage sur
+breadboard :
+
+| Outil | Usage |
+|---|---|
+| Breadboard | Prototypage sans soudure du circuit de commutation MOSFET |
+| Fils Dupont | Connexions breadboard-vers-breadboard et breadboard-vers-ESP32 |
+| Kit de tournevis de précision | Réglage du potentiomètre du convertisseur MP1584EN, travail sur petits composants en général |
+| Alimentation de labo modulable (**MEGO**, EIM Technology), se branche directement sur les rails de la breadboard | Tester le circuit MOSFET sur banc à une tension connue et contrôlable avant de brancher l'alimentation 12V réelle du bandeau |
+| Multimètre | Vérifications continuité/tension — mesures du bandeau, comportement Gate/Drain-Source des MOSFET, vérification de la sortie du convertisseur buck |
 
 ## Mesures & constats sur le bandeau
 

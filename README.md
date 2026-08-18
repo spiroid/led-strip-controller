@@ -27,13 +27,14 @@ below in order.
 ## Table of contents
 
 1. [Hardware](#hardware)
-2. [Strip measurements & findings](#strip-measurements--findings)
-3. [MOSFET switching circuit](#mosfet-switching-circuit)
-4. [ESPHome configuration](#esphome-configuration)
-5. [Flashing & first run](#flashing--first-run)
-6. [Home Assistant integration](#home-assistant-integration)
-7. [Final assembly](#final-assembly)
-8. [Future ideas](#future-ideas)
+2. [Tooling](#tooling)
+3. [Strip measurements & findings](#strip-measurements--findings)
+4. [MOSFET switching circuit](#mosfet-switching-circuit)
+5. [ESPHome configuration](#esphome-configuration)
+6. [Flashing & first run](#flashing--first-run)
+7. [Home Assistant integration](#home-assistant-integration)
+8. [Final assembly](#final-assembly)
+9. [Future ideas](#future-ideas)
 
 ## Hardware
 
@@ -66,6 +67,19 @@ verified 5V before connecting the ESP32 — see note below.)*
 > to that step — not addressed yet, just flagged here. Upside: the C6 has
 > native 802.15.4 (Zigbee/Thread) alongside WiFi, so the
 > [native Zigbee](#future-ideas) path no longer requires separate hardware.
+
+## Tooling
+
+Tools already on hand, useful from this first breadboard-prototyping phase
+onward:
+
+| Tool | Purpose |
+|---|---|
+| Breadboard | Solderless prototyping of the MOSFET switching circuit |
+| Dupont wires | Breadboard-to-breadboard and breadboard-to-ESP32 connections |
+| Precision screwdriver kit | Adjusting the MP1584EN buck converter's trimmer, general small-part work |
+| Adjustable bench power supply (**MEGO**, EIM Technology), plugs directly onto the breadboard rails | Bench-testing the MOSFET circuit at a known, controllable voltage before connecting the real 12V strip supply |
+| Multimeter | Continuity/voltage checks — strip measurements, MOSFET gate/drain-source behavior, buck converter output verification |
 
 ## Strip measurements & findings
 
