@@ -3,9 +3,9 @@ esphome:
   friendly_name: "Bandeau LED Salon"
 
 esp32:
-  board: esp32dev
+  board: esp32-c6-devkitc-1
   framework:
-    type: arduino
+    type: esp-idf
 
 wifi:
   ssid: !secret wifi_ssid
@@ -23,17 +23,18 @@ ota:
 logger:
 
 # Sorties PWM, une par canal couleur, pilotant chacune la Gate d'un MOSFET.
-# GPIO16/17/18 : à confirmer contre le pinout précis de la carte une fois reçue
-# (éviter les strapping pins GPIO0/2/12/15 et les pins input-only 34-39).
+# ESP32-C6-DevKitC-1 : GPIO18/19/20, choisies dans le pool "sans conflit"
+# (évite GPIO4/5/8/9/15 strapping, GPIO12/13 USB natif, GPIO16/17 pont
+# USB-UART utilisé pour la console/logs).
 output:
   - platform: ledc
-    pin: GPIO16
+    pin: GPIO18
     id: output_red
   - platform: ledc
-    pin: GPIO17
+    pin: GPIO19
     id: output_green
   - platform: ledc
-    pin: GPIO18
+    pin: GPIO20
     id: output_blue
 
 light:

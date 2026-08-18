@@ -11,8 +11,30 @@ understanding *why* something works over just getting it to work, and this
 document is meant to grow alongside the build rather than being written
 after the fact.
 
-**Status:** hardware received, nothing wired yet. Working through the steps
-below in order.
+**Status:** hardware and tooling inventoried, ESPHome config adapted for
+the board on hand. Nothing wired yet.
+
+**Planned order of operations:**
+- [x] Strip measurements (common-anode confirmed, see
+      [Strip measurements & findings](#strip-measurements--findings))
+- [x] Hardware & tooling inventory
+- [x] Adapt `bandeau-salon.yaml` to the ESP32-C6 (board id, framework,
+      GPIO pins) — config validated, not yet flashed
+- [ ] Bench-test each of the 3 MOSFETs individually (multimeter continuity,
+      independent of the ESP32)
+- [ ] Wire and validate a single channel end-to-end on breadboard (GPIO →
+      MOSFET → strip wire), flashing a minimal one-output config
+- [ ] Replicate to the other 2 channels
+- [ ] Full 3-channel ESPHome config, flash, per-channel test
+- [ ] Home Assistant integration
+- [ ] Final assembly (perfboard, buck converter setup, enclosure) — see
+      [Final assembly](#final-assembly)
+
+Note: the ESP32 stays on USB power throughout breadboard prototyping — the
+buck converter is only needed for the final assembly step, so its setup is
+deferred until then. Once the strip's real 12V supply is connected (from
+the single-channel wiring step onward), the ESP32's USB ground and the
+strip supply's ground must share a common rail on the breadboard.
 
 **Key decisions so far:**
 - WiFi + ESPHome rather than native Zigbee, for simplicity and the depth of
@@ -61,12 +83,12 @@ verified 5V before connecting the ESP32 — see note below.)*
 > connecting an unregulated/mis-set output could damage the board.
 
 > **Note — board substitution:** the board on hand is an ESP32-C6, not the
-> generic ESP32-WROOM-32 the [ESPHome configuration](#esphome-configuration)
-> currently assumes. The C6 is RISC-V rather than Xtensa, so `board:
-> esp32dev` and the GPIO16/17/18 pin choices will need to change once we get
-> to that step — not addressed yet, just flagged here. Upside: the C6 has
-> native 802.15.4 (Zigbee/Thread) alongside WiFi, so the
-> [native Zigbee](#future-ideas) path no longer requires separate hardware.
+> generic ESP32-WROOM-32 the plan originally assumed. The C6 is RISC-V
+> rather than Xtensa; the [ESPHome configuration](#esphome-configuration)
+> has been updated accordingly (`board: esp32-c6-devkitc-1`, `esp-idf`
+> framework, GPIO18/19/20). Upside: the C6 has native 802.15.4
+> (Zigbee/Thread) alongside WiFi, so the [native Zigbee](#future-ideas)
+> path no longer requires separate hardware.
 
 ## Tooling
 
@@ -134,15 +156,20 @@ continuity on/off as expected.
 
 See [`bandeau-salon.yaml`](bandeau-salon.yaml).
 
-- `output: platform: ledc` — one PWM output per color channel.
+- `esp32: board: esp32-c6-devkitc-1`, `framework: type: esp-idf` — matches
+  the ESP32-C6-DevKitC-1 actually on hand (RISC-V; the `esp-idf` framework
+  has more mature ESP32-C6 support in ESPHome than `arduino`).
+- `output: platform: ledc` — one PWM output per color channel, on
+  **GPIO18/19/20**. Picked from the ESP32-C6-DevKitC-1's conflict-free GPIO
+  pool (0,1,2,3,6,7,10,11,18,19,20,21,22,23), avoiding: strapping pins
+  GPIO4/5/8/9/15, native-USB GPIO12/13, and the UART console GPIO16/17.
 - `light: platform: rgb` — combines the three outputs into one light entity.
 - Secrets (WiFi credentials, OTA password, API encryption key) live in
   `secrets.yaml`, gitignored; `secrets.yaml.example` is the committed
   template.
 
-GPIO pins currently set to 16/17/18 — **to confirm** against the exact
-DevKitC pinout once wiring starts (avoid strapping pins GPIO0/2/12/15 and
-input-only pins 34-39).
+Validated with `esphome config bandeau-salon.yaml` (config parses and
+resolves cleanly — this does not yet compile or flash).
 
 ## Flashing & first run
 

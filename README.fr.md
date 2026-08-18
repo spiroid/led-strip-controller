@@ -11,8 +11,32 @@ privilégie la compréhension du *pourquoi* plutôt que le simple fait que ça
 marche, et ce document est pensé pour évoluer au fil du montage plutôt que
 d'être rédigé après coup.
 
-**État actuel :** matériel reçu, rien de câblé pour l'instant. On avance
-dans les étapes ci-dessous dans l'ordre.
+**État actuel :** matériel et outillage inventoriés, config ESPHome adaptée
+à la carte reçue. Rien de câblé pour l'instant.
+
+**Ordre des manipulations prévu :**
+- [x] Mesures du bandeau (anode commune confirmée, voir
+      [Mesures & constats sur le bandeau](#mesures--constats-sur-le-bandeau))
+- [x] Inventaire matériel & outillage
+- [x] Adapter `bandeau-salon.yaml` à l'ESP32-C6 (board id, framework, pins
+      GPIO) — config validée, pas encore flashée
+- [ ] Tester les 3 MOSFET individuellement sur banc (continuité au
+      multimètre, indépendamment de l'ESP32)
+- [ ] Câbler et valider un seul canal de bout en bout sur breadboard
+      (GPIO → MOSFET → fil du bandeau), en flashant une config minimale à
+      une seule sortie
+- [ ] Répliquer aux 2 autres canaux
+- [ ] Config ESPHome complète à 3 canaux, flash, test par canal
+- [ ] Intégration Home Assistant
+- [ ] Montage définitif (perfboard, réglage du buck, boîtier) — voir
+      [Montage définitif](#montage-définitif)
+
+Note : l'ESP32 reste alimenté en USB pendant tout le prototypage sur
+breadboard — le convertisseur buck n'est nécessaire qu'au montage
+définitif, son réglage est donc reporté jusque-là. Dès que l'alimentation
+12V réelle du bandeau est branchée (à partir de l'étape câblage d'un seul
+canal), la masse USB de l'ESP32 et la masse de l'alimentation du bandeau
+doivent partager un même rail commun sur la breadboard.
 
 **Décisions prises jusqu'ici :**
 - WiFi + ESPHome plutôt que Zigbee natif, pour la simplicité de mise en
@@ -64,12 +88,11 @@ Liste du matériel pour le remplacement par ESP32 :
 > vide — brancher une sortie non réglée pourrait griller la carte.
 
 > **Note — changement de carte :** le matériel reçu est un ESP32-C6, pas
-> l'ESP32-WROOM-32 générique supposé dans la
-> [configuration ESPHome](#configuration-esphome) actuelle. Le C6 est en
-> RISC-V et non Xtensa, donc `board: esp32dev` et le choix des pins
-> GPIO16/17/18 devront changer une fois arrivés à cette étape — pas traité
-> maintenant, juste noté ici. Avantage : le C6 intègre nativement le
-> 802.15.4 (Zigbee/Thread) en plus du WiFi, donc la piste
+> l'ESP32-WROOM-32 générique prévu au départ. Le C6 est en RISC-V et non
+> Xtensa ; la [configuration ESPHome](#configuration-esphome) a été mise à
+> jour en conséquence (`board: esp32-c6-devkitc-1`, framework `esp-idf`,
+> GPIO18/19/20). Avantage : le C6 intègre nativement le 802.15.4
+> (Zigbee/Thread) en plus du WiFi, donc la piste
 > [Zigbee natif](#pistes-de-suite) ne nécessite plus de matériel séparé.
 
 ## Outillage
@@ -141,16 +164,23 @@ bien la continuité Drain-Source, et l'annule en son absence.
 
 Voir [`bandeau-salon.yaml`](bandeau-salon.yaml).
 
-- `output: platform: ledc` — une sortie PWM par canal couleur.
+- `esp32: board: esp32-c6-devkitc-1`, `framework: type: esp-idf` — colle à
+  l'ESP32-C6-DevKitC-1 réellement reçue (RISC-V ; le framework `esp-idf` a
+  un support ESP32-C6 plus mature qu'`arduino` dans ESPHome).
+- `output: platform: ledc` — une sortie PWM par canal couleur, sur
+  **GPIO18/19/20**. Choisies dans le pool de GPIO sans conflit de
+  l'ESP32-C6-DevKitC-1 (0,1,2,3,6,7,10,11,18,19,20,21,22,23), en évitant :
+  les strapping pins GPIO4/5/8/9/15, l'USB natif GPIO12/13, et la console
+  UART GPIO16/17.
 - `light: platform: rgb` — combine les trois sorties en une seule entité
   lumière.
 - Les secrets (identifiants WiFi, mot de passe OTA, clé de chiffrement
   API) sont dans `secrets.yaml`, ignoré par git ; `secrets.yaml.example`
   est le gabarit versionné.
 
-Pins GPIO actuellement fixées à 16/17/18 — **à confirmer** contre le
-pinout précis de la DevKitC une fois le câblage commencé (éviter les
-strapping pins GPIO0/2/12/15 et les pins input-only 34-39).
+Config validée avec `esphome config bandeau-salon.yaml` (le fichier est
+syntaxiquement correct et se résout sans erreur — ça ne compile ni ne
+flashe encore).
 
 ## Flash & premier démarrage
 
