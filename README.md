@@ -44,15 +44,28 @@ Bill of materials for the ESP32 replacement:
 
 | Part | Notes |
 |---|---|
-| ESP32 DevKitC (WROOM-32) | Generic board, best-documented for ESPHome |
-| 3x N-channel logic-level MOSFET | e.g. IRLZ44N / IRLB8721 — must be *logic-level* to fully saturate from 3.3V GPIO |
-| 3x ~220Ω resistor | Gate resistor, limits inrush current charging the gate |
-| 3x ~10kΩ resistor | Gate pull-down, keeps the MOSFET off by default during ESP32 boot/reset |
-| 12V→5V buck converter (optional) | To power the ESP32 from the strip's own 12V supply in the final build |
-| DC jack → screw terminal adapter | Taps +12V/GND from the existing supply without cutting its original cable |
+| **ESP32-C6-DevKitC-1** (box: `ESP32-C6-DEV-KIT-N8-M`, module: `ESP32-C6-WROOM-1`) | RISC-V, 8MB flash. Not the classic WROOM-32 the original plan assumed — see note below. |
+| 3x N-channel logic-level MOSFET, **IRLB8721** | Logic-level, saturates fully from 3.3V GPIO |
+| 3x 220Ω resistor (from assortment kit, 10Ω–1MΩ) | Gate resistor, limits inrush current charging the gate |
+| 3x 10kΩ resistor (from assortment kit, 10Ω–1MΩ) | Gate pull-down, keeps the MOSFET off by default during ESP32 boot/reset |
+| 12V→5V buck converter, **MP1584EN** | To power the ESP32 from the strip's own 12V supply in the final build |
+| DC jack (female, 5.5×2.1mm) → screw terminal adapter | Taps +12V/GND from the existing supply without cutting its original cable |
 
-*(To fill in: exact references actually purchased, once confirmed against
-what arrived.)*
+*(Remaining to double-check: the MP1584EN module's output must be set to a
+verified 5V before connecting the ESP32 — see note below.)*
+
+> **Note — buck converter setup:** the MP1584EN module is adjustable via a
+> small trimmer potentiometer, not fixed-output. Before wiring it to the
+> ESP32, set the output to 5V and verify with a multimeter under no load —
+> connecting an unregulated/mis-set output could damage the board.
+
+> **Note — board substitution:** the board on hand is an ESP32-C6, not the
+> generic ESP32-WROOM-32 the [ESPHome configuration](#esphome-configuration)
+> currently assumes. The C6 is RISC-V rather than Xtensa, so `board:
+> esp32dev` and the GPIO16/17/18 pin choices will need to change once we get
+> to that step — not addressed yet, just flagged here. Upside: the C6 has
+> native 802.15.4 (Zigbee/Thread) alongside WiFi, so the
+> [native Zigbee](#future-ideas) path no longer requires separate hardware.
 
 ## Strip measurements & findings
 

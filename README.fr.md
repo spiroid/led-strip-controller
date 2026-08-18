@@ -47,15 +47,29 @@ Liste du matériel pour le remplacement par ESP32 :
 
 | Élément | Notes |
 |---|---|
-| Carte ESP32 DevKitC (WROOM-32) | Carte générique, la mieux documentée pour ESPHome |
-| 3x MOSFET N-channel logic-level | ex. IRLZ44N / IRLB8721 — doit être *logic-level* pour saturer correctement depuis un GPIO en 3.3V |
-| 3x résistance ~220Ω | Résistance de grille, limite le courant d'appel qui charge la Gate |
-| 3x résistance ~10kΩ | Pull-down de grille, maintient le MOSFET bloqué par défaut pendant le boot/reset de l'ESP32 |
-| Convertisseur buck 12V→5V (optionnel) | Pour alimenter l'ESP32 depuis l'alimentation 12V du bandeau dans le montage définitif |
-| Adaptateur jack DC → bornier à vis | Pour dériver le +12V/GND de l'alimentation existante sans couper son câble d'origine |
+| **ESP32-C6-DevKitC-1** (boîte : `ESP32-C6-DEV-KIT-N8-M`, module : `ESP32-C6-WROOM-1`) | RISC-V, 8MB de flash. Ce n'est pas la WROOM-32 classique prévue par le plan initial — voir note ci-dessous. |
+| 3x MOSFET N-channel logic-level, **IRLB8721** | Logic-level, sature correctement depuis un GPIO en 3.3V |
+| 3x résistance 220Ω (kit d'assortiment, 10Ω–1MΩ) | Résistance de grille, limite le courant d'appel qui charge la Gate |
+| 3x résistance 10kΩ (kit d'assortiment, 10Ω–1MΩ) | Pull-down de grille, maintient le MOSFET bloqué par défaut pendant le boot/reset de l'ESP32 |
+| Convertisseur buck 12V→5V, **MP1584EN** | Pour alimenter l'ESP32 depuis l'alimentation 12V du bandeau dans le montage définitif |
+| Adaptateur jack DC (femelle, 5,5×2,1mm) → bornier à vis | Pour dériver le +12V/GND de l'alimentation existante sans couper son câble d'origine |
 
-*(À compléter : références exactes effectivement achetées, une fois
-confirmées par rapport au matériel reçu.)*
+*(Reste à vérifier : que la sortie du module MP1584EN est bien réglée sur
+5V avant de brancher l'ESP32 — voir note ci-dessous.)*
+
+> **Note — réglage du convertisseur buck :** le module MP1584EN est
+> ajustable via un petit potentiomètre, pas à sortie fixe. Avant de le
+> câbler à l'ESP32, régler la sortie sur 5V et vérifier au multimètre à
+> vide — brancher une sortie non réglée pourrait griller la carte.
+
+> **Note — changement de carte :** le matériel reçu est un ESP32-C6, pas
+> l'ESP32-WROOM-32 générique supposé dans la
+> [configuration ESPHome](#configuration-esphome) actuelle. Le C6 est en
+> RISC-V et non Xtensa, donc `board: esp32dev` et le choix des pins
+> GPIO16/17/18 devront changer une fois arrivés à cette étape — pas traité
+> maintenant, juste noté ici. Avantage : le C6 intègre nativement le
+> 802.15.4 (Zigbee/Thread) en plus du WiFi, donc la piste
+> [Zigbee natif](#pistes-de-suite) ne nécessite plus de matériel séparé.
 
 ## Mesures & constats sur le bandeau
 
