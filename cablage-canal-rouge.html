@@ -247,11 +247,11 @@
 
         <line x1="600" y1="175" x2="575" y2="175" stroke="var(--muted-2)" stroke-width="1.3" stroke-dasharray="2 3"></line>
         <circle cx="575" cy="175" r="3" fill="none" stroke="var(--muted-2)" stroke-width="1.3"></circle>
-        <text x="568" y="179" text-anchor="end" font-style="italic" class="svg-label" font-size="9.5" fill="var(--muted)">vert &mdash; &agrave; c&acirc;bler</text>
+        <text x="568" y="179" text-anchor="end" font-style="italic" class="svg-label" font-size="9.5" fill="var(--muted)">vert &mdash; non raccord&eacute; (flottant)</text>
 
         <line x1="600" y1="210" x2="575" y2="210" stroke="var(--muted-2)" stroke-width="1.3" stroke-dasharray="2 3"></line>
         <circle cx="575" cy="210" r="3" fill="none" stroke="var(--muted-2)" stroke-width="1.3"></circle>
-        <text x="568" y="214" text-anchor="end" font-style="italic" class="svg-label" font-size="9.5" fill="var(--muted)">bleu &mdash; &agrave; c&acirc;bler</text>
+        <text x="568" y="214" text-anchor="end" font-style="italic" class="svg-label" font-size="9.5" fill="var(--muted)">bleu &mdash; non raccord&eacute; (flottant)</text>
 
         <!-- V+ from connector down to 12V supply -->
         <line x1="640" y1="240" x2="640" y2="300" stroke="currentColor" stroke-width="1.6"></line>
@@ -285,10 +285,54 @@
       Le canal Rouge c&acirc;bl&eacute;&nbsp;: GPIO18 &rarr; 220&Omega; &rarr; Gate (avec pull-down
       10&nbsp;k&Omega;) &rarr; MOSFET &rarr; Drain sur le fil R du bandeau, Source sur la masse commune.
       L'alimentation 12V du bandeau attaque directement le V+ (le bo&icirc;tier d'origine est
-      court-circuit&eacute;) et partage cette m&ecirc;me masse avec l'ESP32. Vert et bleu restent
-      &agrave; c&acirc;bler, m&ecirc;me sch&eacute;ma r&eacute;pliqu&eacute; sur GPIO19/GPIO20.
+      court-circuit&eacute;) et partage cette m&ecirc;me masse avec l'ESP32. Vert et bleu ne sont pas
+      raccord&eacute;s pour ce test (fils flottants) &mdash; m&ecirc;me sch&eacute;ma &agrave; r&eacute;pliquer
+      plus tard sur GPIO19/GPIO20.
     </figcaption>
   </figure>
+
+  <div class="note">
+    <span class="label">Vert / bleu pour ce test</span>
+    <span>
+      Les fils vert et bleu du bandeau <strong>n'ont besoin d'&ecirc;tre raccord&eacute;s &agrave; rien</strong>
+      pour ce test &mdash; ni &agrave; la masse, ni entre eux. Laiss&eacute;s flottants, aucun courant ne
+      peut circuler dans ces LED (pas de MOSFET pour fermer le circuit c&ocirc;t&eacute; masse), elles
+      restent simplement &eacute;teintes. Seuls V+ et R doivent &ecirc;tre connect&eacute;s.
+    </span>
+  </div>
+
+  <section class="block">
+    <h2>Rep&egrave;re MOSFET &mdash; IRLB8721 (TO-220)</h2>
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 420 200" role="img" aria-label="Vue de face du bo&icirc;tier TO-220 de l'IRLB8721, face imprim&eacute;e vers l'observateur, pattes vers le bas : de gauche &agrave; droite, Gate, Drain, Source. Le tab m&eacute;tallique &agrave; l'arri&egrave;re est &eacute;lectriquement reli&eacute; au Drain.">
+        <rect x="130" y="20" width="160" height="90" rx="6" fill="none" stroke="currentColor" stroke-width="1.6"></rect>
+        <rect x="150" y="10" width="120" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.4"></rect>
+        <text x="210" y="65" text-anchor="middle" class="svg-label" font-size="10" fill="var(--muted)">IRLB8721</text>
+        <text x="210" y="80" text-anchor="middle" class="svg-label" font-size="9" fill="var(--muted)">face imprim&eacute;e</text>
+        <circle cx="150" cy="35" r="3" fill="none" stroke="currentColor" stroke-width="1.3"></circle>
+
+        <line x1="160" y1="110" x2="160" y2="150" stroke="currentColor" stroke-width="1.6"></line>
+        <line x1="210" y1="110" x2="210" y2="150" stroke="currentColor" stroke-width="1.6"></line>
+        <line x1="260" y1="110" x2="260" y2="150" stroke="currentColor" stroke-width="1.6"></line>
+
+        <circle cx="160" cy="150" r="3" fill="var(--accent)"></circle>
+        <circle cx="210" cy="150" r="3" fill="currentColor"></circle>
+        <circle cx="260" cy="150" r="3" fill="currentColor"></circle>
+
+        <text x="160" y="170" text-anchor="middle" class="svg-label" font-size="13" font-weight="600" fill="var(--accent)">G</text>
+        <text x="210" y="170" text-anchor="middle" class="svg-label" font-size="13" font-weight="600" fill="currentColor">D</text>
+        <text x="260" y="170" text-anchor="middle" class="svg-label" font-size="13" font-weight="600" fill="currentColor">S</text>
+        <text x="160" y="188" text-anchor="middle" class="svg-label" font-size="10" fill="var(--muted)">Gate</text>
+        <text x="210" y="188" text-anchor="middle" class="svg-label" font-size="10" fill="var(--muted)">Drain</text>
+        <text x="260" y="188" text-anchor="middle" class="svg-label" font-size="10" fill="var(--muted)">Source</text>
+      </svg>
+    </div>
+    <p style="font-size: 14.5px; color: var(--ink-soft); margin: 12px 0 0;">
+      Bo&icirc;tier tenu face imprim&eacute;e vers soi, pattes vers le bas&nbsp;: <strong>Gate,
+      Drain, Source</strong> de gauche &agrave; droite. Le tab m&eacute;tallique &agrave; l'arri&egrave;re
+      (percement de fixation) est &eacute;lectriquement reli&eacute; au <strong>Drain</strong>.
+    </p>
+  </section>
 
   <section class="block">
     <h2>V&eacute;rifications avant mise sous tension</h2>
