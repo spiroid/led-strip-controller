@@ -1,0 +1,35 @@
+esphome:
+  name: bandeau-salon-test-rouge
+  friendly_name: "Bandeau LED Salon (test rouge)"
+
+esp32:
+  board: esp32-c6-devkitc-1
+  framework:
+    type: esp-idf
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+api:
+  encryption:
+    key: !secret api_encryption_key
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+logger:
+
+# Config temporaire à une seule sortie, pour valider le canal Rouge de
+# bout en bout (GPIO18 -> MOSFET -> fil R) avant de câbler Vert/Bleu et
+# de repasser sur bandeau-salon.yaml (light: platform: rgb).
+output:
+  - platform: ledc
+    pin: GPIO18
+    id: output_red
+
+light:
+  - platform: monochromatic
+    name: "Bandeau LED Salon (test rouge)"
+    output: output_red
