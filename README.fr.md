@@ -180,6 +180,20 @@ Voir [`bandeau-salon.yaml`](bandeau-salon.yaml).
   API) sont dans `secrets.yaml`, ignoré par git ; `secrets.yaml.example`
   est le gabarit versionné.
 
+> **Note — repérage des broches GND :** l'ESP32-C6-DevKitC-1 a 4 broches
+> GND (toutes reliées entre elles en interne, n'importe laquelle convient),
+> réparties sur les deux connecteurs J1/J3 (pinout confirmé via la doc
+> officielle Espressif) :
+> - J1, position 15 (dernière, juste après le 5V)
+> - J3, position 1 (première, juste avant TX/RX)
+> - J3, position 12 (entre GPIO9 et GPIO13)
+> - J3, position 15 (dernière, après GPIO12)
+>
+> Pratique : GPIO18/19/20 sont sur J3, positions 10/9/8 — juste à côté du
+> GND de J3 position 12 (2 crans de GPIO18). Les 3 sorties PWM et une
+> masse tiennent donc sur 5 broches consécutives du même connecteur.
+> Positions confirmées physiquement sur la carte reçue le 2026-08-20.
+
 Config validée avec `esphome config bandeau-salon.yaml` (le fichier est
 syntaxiquement correct et se résout sans erreur — ça ne compile ni ne
 flashe encore).

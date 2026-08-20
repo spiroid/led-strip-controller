@@ -170,6 +170,19 @@ See [`bandeau-salon.yaml`](bandeau-salon.yaml).
   `secrets.yaml`, gitignored; `secrets.yaml.example` is the committed
   template.
 
+> **Note — locating the GND pins:** the ESP32-C6-DevKitC-1 has 4 GND pins
+> (all internally tied together, any of them works), spread across the two
+> J1/J3 headers (pinout confirmed via the official Espressif docs):
+> - J1, position 15 (last, right after 5V)
+> - J3, position 1 (first, right before TX/RX)
+> - J3, position 12 (between GPIO9 and GPIO13)
+> - J3, position 15 (last, after GPIO12)
+>
+> Handy: GPIO18/19/20 sit on J3, positions 10/9/8 — right next to the GND
+> at J3 position 12 (2 slots from GPIO18). The 3 PWM outputs and one GND
+> fit within 5 consecutive positions on the same header. Positions
+> physically confirmed on the board on hand on 2026-08-20.
+
 Validated with `esphome config bandeau-salon.yaml` (config parses and
 resolves cleanly — this does not yet compile or flash).
 
