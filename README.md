@@ -12,7 +12,8 @@ document is meant to grow alongside the build rather than being written
 after the fact.
 
 **Status:** hardware and tooling inventoried, ESPHome config adapted for
-the board on hand. Nothing wired yet.
+the board on hand, all 3 MOSFETs individually bench-tested and validated.
+Nothing wired on breadboard yet.
 
 **Planned order of operations:**
 - [x] Strip measurements (common-anode confirmed, see
@@ -20,8 +21,9 @@ the board on hand. Nothing wired yet.
 - [x] Hardware & tooling inventory
 - [x] Adapt `bandeau-salon.yaml` to the ESP32-C6 (board id, framework,
       GPIO pins) — config validated, not yet flashed
-- [ ] Bench-test each of the 3 MOSFETs individually (multimeter continuity,
-      independent of the ESP32)
+- [x] Bench-test each of the 3 MOSFETs individually (multimeter continuity,
+      independent of the ESP32) — see
+      [`mosfet-test-schema.html`](mosfet-test-schema.html)
 - [ ] Wire and validate a single channel end-to-end on breadboard (GPIO →
       MOSFET → strip wire), flashing a minimal one-output config
 - [ ] Replicate to the other 2 channels

@@ -12,7 +12,8 @@ marche, et ce document est pensé pour évoluer au fil du montage plutôt que
 d'être rédigé après coup.
 
 **État actuel :** matériel et outillage inventoriés, config ESPHome adaptée
-à la carte reçue. Rien de câblé pour l'instant.
+à la carte reçue, les 3 MOSFET testés et validés individuellement sur banc.
+Rien de câblé sur breadboard pour l'instant.
 
 **Ordre des manipulations prévu :**
 - [x] Mesures du bandeau (anode commune confirmée, voir
@@ -20,8 +21,9 @@ d'être rédigé après coup.
 - [x] Inventaire matériel & outillage
 - [x] Adapter `bandeau-salon.yaml` à l'ESP32-C6 (board id, framework, pins
       GPIO) — config validée, pas encore flashée
-- [ ] Tester les 3 MOSFET individuellement sur banc (continuité au
-      multimètre, indépendamment de l'ESP32)
+- [x] Tester les 3 MOSFET individuellement sur banc (continuité au
+      multimètre, indépendamment de l'ESP32) — voir
+      [`mosfet-test-schema.html`](mosfet-test-schema.html)
 - [ ] Câbler et valider un seul canal de bout en bout sur breadboard
       (GPIO → MOSFET → fil du bandeau), en flashant une config minimale à
       une seule sortie
