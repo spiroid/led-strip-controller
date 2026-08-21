@@ -1,0 +1,348 @@
+<title>Câblage des canaux Vert et Bleu</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --bg: #eef2f2;
+    --surface: #ffffff;
+    --ink: #1b2a2e;
+    --ink-soft: #33474b;
+    --muted: #64787b;
+    --muted-2: #93a3a5;
+    --accent: #b8641c;
+    --accent-soft: #b8641c1f;
+    --rule: #ccd8d8;
+    --rule-strong: #a9bcbc;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #10191b;
+      --surface: #16221f;
+      --ink: #e4ede9;
+      --ink-soft: #c2d1cd;
+      --muted: #8ea1a0;
+      --muted-2: #5c7371;
+      --accent: #e08a3c;
+      --accent-soft: #e08a3c26;
+      --rule: #2a3936;
+      --rule-strong: #3c4f4b;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #10191b;
+    --surface: #16221f;
+    --ink: #e4ede9;
+    --ink-soft: #c2d1cd;
+    --muted: #8ea1a0;
+    --muted-2: #5c7371;
+    --accent: #e08a3c;
+    --accent-soft: #e08a3c26;
+    --rule: #2a3936;
+    --rule-strong: #3c4f4b;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    margin: 0;
+    padding: 48px 24px 80px;
+  }
+
+  main {
+    max-width: 980px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  h1 {
+    font-family: "IBM Plex Sans Condensed", "IBM Plex Sans", sans-serif;
+    font-weight: 700;
+    font-size: clamp(28px, 4vw, 38px);
+    line-height: 1.1;
+    margin: 0;
+    text-wrap: balance;
+    color: var(--ink);
+  }
+
+  .intro {
+    max-width: 72ch;
+    color: var(--ink-soft);
+    font-size: 16px;
+  }
+
+  .intro code {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.9em;
+    background: var(--accent-soft);
+    color: var(--accent);
+    padding: 0.05em 0.35em;
+    border-radius: 4px;
+  }
+
+  figure {
+    margin: 0;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 20px clamp(12px, 3vw, 28px) 22px;
+  }
+
+  .diagram-wrap {
+    overflow-x: auto;
+  }
+
+  svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-width: 820px;
+    color: var(--ink);
+  }
+
+  figcaption {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--rule);
+    font-size: 14px;
+    color: var(--muted);
+    max-width: 80ch;
+  }
+
+  h2 {
+    font-family: "IBM Plex Sans Condensed", "IBM Plex Sans", sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    margin: 0 0 12px;
+    color: var(--ink);
+  }
+
+  section.block {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 20px clamp(16px, 3vw, 28px);
+  }
+
+  ol.protocol {
+    margin: 0;
+    padding-left: 1.3em;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  ol.protocol li { color: var(--ink-soft); }
+  ol.protocol strong { color: var(--ink); font-weight: 600; }
+
+  .note {
+    display: flex;
+    gap: 14px;
+    background: var(--accent-soft);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 14.5px;
+    color: var(--ink-soft);
+  }
+
+  .note .label {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    white-space: nowrap;
+    padding-top: 2px;
+  }
+
+  .svg-label { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+</style>
+
+<main>
+  <div>
+    <div class="eyebrow">Bandeau LED &middot; c&acirc;blage breadboard</div>
+    <h1>C&acirc;bler les canaux Vert et Bleu</h1>
+  </div>
+
+  <p class="intro">
+    M&ecirc;me circuit que pour le <a href="cablage-canal-rouge.html">canal Rouge</a>, r&eacute;pliqu&eacute;
+    &agrave; l'identique deux fois&nbsp;: <code>GPIO19</code> (<code>output_green</code>) et
+    <code>GPIO20</code> (<code>output_blue</code>) pilotent chacun la Gate d'un MOSFET IRLB8721 d&eacute;j&agrave;
+    valid&eacute; au banc, via sa propre 220&Omega; et son propre pull-down 10&nbsp;k&Omega;. Les trois Source
+    rejoignent la m&ecirc;me masse commune, les trois Drain vont respectivement sur les fils V et B du bandeau.
+    Rien de nouveau conceptuellement &mdash; c'est le m&ecirc;me circuit fois trois.
+  </p>
+
+  <figure>
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 1000 620" role="img" aria-label="Sch&eacute;ma du c&acirc;blage des trois canaux&nbsp;: GPIO18, GPIO19 et GPIO20 de l'ESP32 passent chacun par une r&eacute;sistance 220 ohms jusqu'&agrave; la Gate d'un MOSFET IRLB8721, avec une r&eacute;sistance 10 kilohms en pull-down vers la masse commune. Les trois Drain rejoignent respectivement les fils R, V et B du bandeau LED, les trois Source rejoignent la masse commune. L'alimentation 12V du bandeau aliment&eacute; le V+ et partage la m&ecirc;me masse commune que l'ESP32.">
+        <!-- ESP32 board -->
+        <line x1="150" y1="24" x2="150" y2="40" stroke="currentColor" stroke-width="1.4"></line>
+        <circle cx="150" cy="24" r="3" fill="none" stroke="currentColor" stroke-width="1.4"></circle>
+        <text x="162" y="21" class="svg-label" font-size="10" fill="var(--muted)">USB &middot; 5V</text>
+        <rect x="40" y="40" width="220" height="80" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"></rect>
+        <text x="150" y="75" text-anchor="middle" class="svg-label" font-size="12" fill="currentColor">ESP32-C6-DevKitC-1</text>
+        <text x="150" y="93" text-anchor="middle" class="svg-label" font-size="10" fill="var(--muted)">(aliment&eacute; en USB)</text>
+
+        <!-- ESP32 GND down to common rail -->
+        <line x1="60" y1="120" x2="60" y2="500" stroke="currentColor" stroke-width="1.4"></line>
+        <text x="66" y="132" class="svg-label" font-size="10" fill="currentColor">GND</text>
+
+        <!-- ===== Channel R (GPIO18) ===== -->
+        <line x1="110" y1="120" x2="110" y2="150" stroke="currentColor" stroke-width="1.4"></line>
+        <text x="116" y="134" class="svg-label" font-size="9.5" fill="currentColor">GPIO18 (output_red)</text>
+        <polyline points="110,150 110,160 102,168 118,180 102,192 118,204 102,214 110,222 110,230" fill="none" stroke="currentColor" stroke-width="1.4"></polyline>
+        <text x="126" y="192" class="svg-label" font-size="10.5" fill="currentColor">220&Omega;</text>
+        <circle cx="110" cy="230" r="3.2" fill="currentColor"></circle>
+        <polyline points="110,230 110,250 101,260 119,274 101,288 119,302 101,316 119,330 101,344 119,358 110,370 110,500" fill="none" stroke="currentColor" stroke-width="1.4"></polyline>
+        <text x="126" y="300" class="svg-label" font-size="10.5" fill="currentColor">10 k&Omega;</text>
+        <text x="126" y="313" class="svg-label" font-size="9" fill="var(--muted)">(pull-down)</text>
+        <line x1="110" y1="230" x2="170" y2="230" stroke="currentColor" stroke-width="1.4"></line>
+        <text x="162" y="244" text-anchor="end" class="svg-label" font-size="10.5" fill="currentColor">G</text>
+        <rect x="170" y="185" width="80" height="90" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"></rect>
+        <text x="210" y="234" text-anchor="middle" class="svg-label" font-size="10" fill="currentColor">IRLB8721</text>
+        <line x1="210" y1="185" x2="210" y2="150" stroke="currentColor" stroke-width="1.4"></line>
+        <text x="216" y="168" class="svg-label" font-size="10.5" fill="currentColor">D</text>
+        <line x1="210" y1="150" x2="840" y2="150" stroke="currentColor" stroke-width="1.6"></line>
+        <text x="525" y="141" text-anchor="middle" class="svg-label" font-size="10" font-weight="600" fill="currentColor">fil R (rouge)</text>
+        <line x1="210" y1="275" x2="210" y2="500" stroke="currentColor" stroke-width="1.4"></line>
+        <text x="216" y="292" class="svg-label" font-size="10.5" fill="currentColor">S</text>
+
+        <!-- ===== Channel G (GPIO19) ===== -->
+        <line x1="160" y1="120" x2="160" y2="150" stroke="currentColor" stroke-width="1.4"></line>
+        <line x1="160" y1="150" x2="380" y2="150" stroke="currentColor" stroke-width="1.4"></line>
+        <text x="205" y="144" class="svg-label" font-size="9.5" fill="currentColor">GPIO19 (output_green)</text>
+        <polyline points="380,150 380,160 372,168 388,180 372,192 388,204 372,214 380,222 380,230" fill="none" stroke="currentColor" stroke-width="1.4"></polyline>
+        <text x="396" y="192" class="svg-label" font-size="10.5" fill="currentColor">220&Omega;</text>
+        <circle cx="380" cy="230" r="3.2" fill="currentColor"></circle>
+        <polyline points="380,230 380,250 371,260 389,274 371,288 389,302 371,316 389,330 371,344 389,358 380,370 380,500" fill="none" stroke="currentColor" stroke-width="1.4"></polyline>
+        <text x="396" y="300" class="svg-label" font-size="10.5" fill="currentColor">10 k&Omega;</text>
+        <text x="396" y="313" class="svg-label" font-size="9" fill="var(--muted)">(pull-down)</text>
+        <line x1="380" y1="230" x2="440" y2="230" stroke="currentColor" stroke-width="1.4"></line>
+        <text x="432" y="244" text-anchor="end" class="svg-label" font-size="10.5" fill="currentColor">G</text>
+        <rect x="440" y="185" width="80" height="90" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"></rect>
+        <text x="480" y="234" text-anchor="middle" class="svg-label" font-size="10" fill="currentColor">IRLB8721</text>
+        <line x1="480" y1="185" x2="480" y2="195" stroke="currentColor" stroke-width="1.4"></line>
+        <text x="486" y="192" class="svg-label" font-size="10.5" fill="currentColor">D</text>
+        <line x1="480" y1="195" x2="840" y2="195" stroke="currentColor" stroke-width="1.6"></line>
+        <text x="660" y="186" text-anchor="middle" class="svg-label" font-size="10" font-weight="600" fill="currentColor">fil V (vert)</text>
+        <line x1="480" y1="275" x2="480" y2="500" stroke="currentColor" stroke-width="1.4"></line>
+        <text x="486" y="292" class="svg-label" font-size="10.5" fill="currentColor">S</text>
+
+        <!-- ===== Channel B (GPIO20) ===== -->
+        <line x1="210" y1="120" x2="210" y2="170" stroke="currentColor" stroke-width="1.4"></line>
+        <line x1="210" y1="170" x2="650" y2="170" stroke="currentColor" stroke-width="1.4"></line>
+        <text x="255" y="164" class="svg-label" font-size="9.5" fill="currentColor">GPIO20 (output_blue)</text>
+        <polyline points="650,170 650,180 642,188 658,200 642,212 658,224 642,234 650,242 650,250" fill="none" stroke="currentColor" stroke-width="1.4"></polyline>
+        <text x="666" y="212" class="svg-label" font-size="10.5" fill="currentColor">220&Omega;</text>
+        <circle cx="650" cy="250" r="3.2" fill="currentColor"></circle>
+        <polyline points="650,250 650,270 641,280 659,294 641,308 659,322 641,336 659,350 641,364 659,378 650,390 650,500" fill="none" stroke="currentColor" stroke-width="1.4"></polyline>
+        <text x="666" y="320" class="svg-label" font-size="10.5" fill="currentColor">10 k&Omega;</text>
+        <text x="666" y="333" class="svg-label" font-size="9" fill="var(--muted)">(pull-down)</text>
+        <line x1="650" y1="250" x2="710" y2="250" stroke="currentColor" stroke-width="1.4"></line>
+        <text x="702" y="264" text-anchor="end" class="svg-label" font-size="10.5" fill="currentColor">G</text>
+        <rect x="710" y="205" width="80" height="90" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"></rect>
+        <text x="750" y="254" text-anchor="middle" class="svg-label" font-size="10" fill="currentColor">IRLB8721</text>
+        <line x1="750" y1="205" x2="750" y2="240" stroke="currentColor" stroke-width="1.4"></line>
+        <text x="756" y="226" class="svg-label" font-size="10.5" fill="currentColor">D</text>
+        <line x1="750" y1="240" x2="840" y2="240" stroke="currentColor" stroke-width="1.6"></line>
+        <text x="795" y="231" text-anchor="middle" class="svg-label" font-size="10" font-weight="600" fill="currentColor">fil B (bleu)</text>
+        <line x1="750" y1="295" x2="750" y2="500" stroke="currentColor" stroke-width="1.4"></line>
+        <text x="756" y="312" class="svg-label" font-size="10.5" fill="currentColor">S</text>
+
+        <!-- Strip connector -->
+        <text x="910" y="88" text-anchor="middle" class="svg-label" font-size="12" font-weight="600" fill="currentColor">Bandeau LED</text>
+        <rect x="840" y="100" width="140" height="220" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"></rect>
+        <circle cx="840" cy="150" r="2.6" fill="currentColor"></circle>
+        <text x="852" y="154" class="svg-label" font-size="10" fill="currentColor">R</text>
+        <circle cx="840" cy="195" r="2.6" fill="currentColor"></circle>
+        <text x="852" y="199" class="svg-label" font-size="10" fill="currentColor">V</text>
+        <circle cx="840" cy="240" r="2.6" fill="currentColor"></circle>
+        <text x="852" y="244" class="svg-label" font-size="10" fill="currentColor">B</text>
+
+        <!-- V+ from connector down to 12V supply -->
+        <line x1="910" y1="320" x2="910" y2="380" stroke="currentColor" stroke-width="1.6"></line>
+        <text x="918" y="336" class="svg-label" font-size="10" fill="currentColor">V+</text>
+
+        <!-- 12V supply -->
+        <rect x="830" y="380" width="160" height="60" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"></rect>
+        <text x="910" y="406" text-anchor="middle" class="svg-label" font-size="11" fill="currentColor">Alim. 12V (bandeau)</text>
+        <text x="910" y="423" text-anchor="middle" class="svg-label" font-size="9" fill="var(--muted)">bo&icirc;tier d'origine court-circuit&eacute;</text>
+
+        <!-- 12V GND down to common rail -->
+        <line x1="850" y1="440" x2="850" y2="500" stroke="currentColor" stroke-width="1.4"></line>
+
+        <!-- Common ground rail -->
+        <line x1="20" y1="500" x2="970" y2="500" stroke="var(--accent)" stroke-width="3"></line>
+        <circle cx="60" cy="500" r="3.5" fill="var(--accent)"></circle>
+        <circle cx="210" cy="500" r="3.5" fill="var(--accent)"></circle>
+        <circle cx="480" cy="500" r="3.5" fill="var(--accent)"></circle>
+        <circle cx="750" cy="500" r="3.5" fill="var(--accent)"></circle>
+        <circle cx="850" cy="500" r="3.5" fill="var(--accent)"></circle>
+
+        <line x1="480" y1="500" x2="480" y2="508" stroke="var(--accent)" stroke-width="1.6"></line>
+        <line x1="470" y1="511" x2="490" y2="511" stroke="var(--accent)" stroke-width="1.6"></line>
+        <line x1="473.5" y1="515" x2="486.5" y2="515" stroke="var(--accent)" stroke-width="1.6"></line>
+        <line x1="477" y1="519" x2="483" y2="519" stroke="var(--accent)" stroke-width="1.6"></line>
+
+        <text x="480" y="540" text-anchor="middle" class="svg-label" font-size="14" font-weight="600" letter-spacing="0.04em" fill="var(--accent)">MASSE COMMUNE</text>
+        <text x="480" y="557" text-anchor="middle" class="svg-label" font-size="10.5" fill="var(--muted)">ESP32 (USB) + alim. 12V du bandeau &mdash; m&ecirc;me r&eacute;f&eacute;rence, obligatoire</text>
+      </svg>
+    </div>
+    <figcaption>
+      Trois circuits identiques en parall&egrave;le, une masse commune partag&eacute;e&nbsp;: GPIO18/19/20
+      &rarr; 220&Omega; &rarr; Gate (pull-down 10&nbsp;k&Omega;) &rarr; MOSFET &rarr; Drain sur le fil
+      R/V/B correspondant, Source sur la masse commune. Les fils qui se croisent sur le sch&eacute;ma sans
+      point de jonction ne sont <strong>pas</strong> reli&eacute;s entre eux &mdash; convention standard.
+      Rep&egrave;re Gate/Drain/Source du bo&icirc;tier IRLB8721&nbsp;: voir le
+      <a href="cablage-canal-rouge.html">sch&eacute;ma du canal Rouge</a>.
+    </figcaption>
+  </figure>
+
+  <section class="block">
+    <h2>V&eacute;rifications avant mise sous tension</h2>
+    <ol class="protocol">
+      <li>Vert et bleu c&acirc;bl&eacute;s &agrave; l'identique du rouge&nbsp;: m&ecirc;mes valeurs de
+        r&eacute;sistances (220&Omega; / 10&nbsp;k&Omega;), MOSFET d&eacute;j&agrave; valid&eacute;s
+        individuellement au banc.</li>
+      <li>Multim&egrave;tre en continuit&eacute; entre V+ et masse sur le bandeau &mdash; <strong>aucun
+        bip</strong> attendu.</li>
+      <li>Reflasher avec <code>bandeau-salon.yaml</code> (RGB complet,
+        <code>light: platform: rgb</code>) &agrave; la place de
+        <code>bandeau-salon-test-rouge.yaml</code>.</li>
+      <li>Tester chaque canal isol&eacute;ment (rouge seul / vert seul / bleu seul) &agrave; 100%, puis
+        blanc plein (les 3 &agrave; 100% simultan&eacute;ment).</li>
+      <li>Apr&egrave;s quelques minutes &agrave; pleine charge combin&eacute;e&nbsp;: les 3 MOSFET
+        restent &agrave; peine ti&egrave;des au toucher.</li>
+    </ol>
+  </section>
+
+  <div class="note">
+    <span class="label">Courant cumul&eacute; &agrave; pleine charge</span>
+    <span>
+      Le test du canal Rouge seul a d&eacute;j&agrave; montr&eacute; que le MEGO coupe par limitation de
+      courant pr&egrave;s de 100% sur un seul canal &agrave; certains r&eacute;glages de tension. En blanc
+      plein, les <strong>trois canaux tirent du courant simultan&eacute;ment</strong> &mdash; si &ccedil;a
+      coupe encore, ce n'est pas un nouveau probl&egrave;me mais la m&ecirc;me limite de banc de test,
+      d&eacute;j&agrave; identifi&eacute;e comme non repr&eacute;sentative de l'alimentation 12V d&eacute;finitive
+      du bandeau.
+    </span>
+  </div>
+</main>
