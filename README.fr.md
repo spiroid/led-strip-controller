@@ -13,7 +13,8 @@ d'être rédigé après coup.
 
 **État actuel :** matériel et outillage inventoriés, config ESPHome adaptée
 à la carte reçue, les 3 MOSFET testés et validés individuellement sur banc.
-Rien de câblé sur breadboard pour l'instant.
+Canal Rouge câblé de bout en bout sur breadboard, flashé, et validé stable
+à 100% de luminosité.
 
 **Ordre des manipulations prévu :**
 - [x] Mesures du bandeau (anode commune confirmée, voir
@@ -24,9 +25,10 @@ Rien de câblé sur breadboard pour l'instant.
 - [x] Tester les 3 MOSFET individuellement sur banc (continuité au
       multimètre, indépendamment de l'ESP32) — voir
       [`mosfet-test-schema.html`](mosfet-test-schema.html)
-- [ ] Câbler et valider un seul canal de bout en bout sur breadboard
+- [x] Câbler et valider un seul canal de bout en bout sur breadboard
       (GPIO → MOSFET → fil du bandeau), en flashant une config minimale à
-      une seule sortie
+      une seule sortie — voir [`cablage-canal-rouge.html`](cablage-canal-rouge.html)
+      et [Flash & premier démarrage](#flash--premier-démarrage)
 - [ ] Répliquer aux 2 autres canaux
 - [ ] Config ESPHome complète à 3 canaux, flash, test par canal
 - [ ] Intégration Home Assistant
@@ -200,12 +202,33 @@ flashe encore).
 
 ## Flash & premier démarrage
 
-*(Pas encore fait.)*
+Canal Rouge validé le 2026-08-21 avec
+[`bandeau-salon-test-rouge.yaml`](bandeau-salon-test-rouge.yaml) — une
+variante temporaire à une seule sortie de `bandeau-salon.yaml`
+(`light: platform: monochromatic` sur `output_red` uniquement), voir
+[`cablage-canal-rouge.html`](cablage-canal-rouge.html) pour le câblage.
 
-- Premier flash via USB : `esphome run bandeau-salon.yaml`.
-- Vérifier dans les logs la connexion WiFi.
-- Tester manuellement chaque canal (rouge seul / vert seul / bleu seul /
-  blanc).
+- Premier flash via USB : `esphome run bandeau-salon-test-rouge.yaml`. Sur
+  l'ESP32-C6-DevKitC-1, la carte s'énumère comme "USB JTAG/serial debug
+  unit" Espressif (`idVendor=303a`) — choisir ce périphérique série si
+  plusieurs sont proposés. Le câble USB doit porter les lignes data, pas
+  juste l'alimentation (un câble de téléphone charge-only allume bien la
+  LED de la carte mais ne s'énumère jamais côté PC).
+- L'entité lumière a été pilotée depuis Home Assistant (découverte
+  automatique via l'intégration ESPHome/mDNS une fois flashé), la CLI
+  `esphome` n'ayant pas de commande pour basculer une entité directement.
+- Connexion WiFi vérifiée dans les logs, puis montée en luminosité de 0%
+  à 100%.
+- **Constat :** vers 99-100% de luminosité (appel de courant quasi continu,
+  contre un courant moyen plus faible à un rapport cyclique PWM partiel),
+  le bandeau coupait — remonté à la limitation de courant de l'alimentation
+  de banc MEGO, pas à un défaut de câblage ou de MOSFET (confirmé par les
+  logs ESPHome ne montrant aucun reboot/perte WiFi de l'ESP32 au même
+  moment). Baisser légèrement la tension réglée sur le MEGO a ramené
+  l'appel sous la limite ; stable à 100% depuis. Ne devrait pas se
+  reproduire sur l'alimentation 12V réelle du bandeau, dimensionnée pour la
+  charge complète à 3 canaux.
+- MOSFET resté à peine tiède après plusieurs minutes à 100% — validé.
 - Les flashs suivants pourront se faire en OTA une fois le device sur le
   réseau.
 

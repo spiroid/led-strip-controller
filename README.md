@@ -13,7 +13,8 @@ after the fact.
 
 **Status:** hardware and tooling inventoried, ESPHome config adapted for
 the board on hand, all 3 MOSFETs individually bench-tested and validated.
-Nothing wired on breadboard yet.
+Red channel wired end-to-end on breadboard, flashed, and validated stable
+at 100% brightness.
 
 **Planned order of operations:**
 - [x] Strip measurements (common-anode confirmed, see
@@ -24,8 +25,10 @@ Nothing wired on breadboard yet.
 - [x] Bench-test each of the 3 MOSFETs individually (multimeter continuity,
       independent of the ESP32) — see
       [`mosfet-test-schema.html`](mosfet-test-schema.html)
-- [ ] Wire and validate a single channel end-to-end on breadboard (GPIO →
-      MOSFET → strip wire), flashing a minimal one-output config
+- [x] Wire and validate a single channel end-to-end on breadboard (GPIO →
+      MOSFET → strip wire), flashing a minimal one-output config — see
+      [`cablage-canal-rouge.html`](cablage-canal-rouge.html) and
+      [Flashing & first run](#flashing--first-run)
 - [ ] Replicate to the other 2 channels
 - [ ] Full 3-channel ESPHome config, flash, per-channel test
 - [ ] Home Assistant integration
@@ -188,11 +191,31 @@ resolves cleanly — this does not yet compile or flash).
 
 ## Flashing & first run
 
-*(Not done yet.)*
+Red channel validated 2026-08-21 with
+[`bandeau-salon-test-rouge.yaml`](bandeau-salon-test-rouge.yaml) — a
+temporary single-output variant of `bandeau-salon.yaml` (`light: platform:
+monochromatic` on `output_red` only), see
+[`cablage-canal-rouge.html`](cablage-canal-rouge.html) for the wiring.
 
-- First flash over USB: `esphome run bandeau-salon.yaml`.
-- Check the logs for a successful WiFi connection.
-- Manually test each channel (red only / green only / blue only / white).
+- First flash over USB: `esphome run bandeau-salon-test-rouge.yaml`. On the
+  ESP32-C6-DevKitC-1, the board enumerates as an Espressif "USB JTAG/serial
+  debug unit" (`idVendor=303a`) — pick that serial device if several are
+  offered. The USB cable must carry data lines, not just power (a
+  charge-only phone cable will make the board's power LED light up but
+  never enumerate on the host).
+- The light entity was controlled from Home Assistant (auto-discovered via
+  the ESPHome integration/mDNS once flashed) rather than from the ESPHome
+  CLI, which has no way to toggle an entity directly.
+- Checked the logs for a successful WiFi connection, then ramped brightness
+  0% → 100%.
+- **Finding:** at ~99-100% brightness (near-continuous current draw,
+  vs. the lower average current of a partial PWM duty cycle), the strip cut
+  out — traced to the MEGO bench supply's current limiting, not a wiring or
+  MOSFET fault (confirmed by ESPHome logs showing no ESP32 reboot/WiFi drop
+  at the same moment). Slightly lowering the MEGO's set voltage brought the
+  draw back under the limit; stable at 100% since. Not expected to recur on
+  the strip's real 12V supply, which is sized for full 3-channel load.
+- MOSFET stayed barely warm after several minutes at 100% — validated.
 - Subsequent flashes can be done over-the-air (OTA) once the device is on
   the network.
 
