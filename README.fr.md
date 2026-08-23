@@ -15,7 +15,8 @@ d'être rédigé après coup.
 à la carte reçue, les 3 MOSFET testés et validés individuellement sur banc.
 Circuit RGB complet à 3 canaux câblé de bout en bout sur breadboard,
 flashé, et validé stable — canaux individuels et blanc plein à 100% de
-luminosité.
+luminosité. Intégré à Home Assistant, contrôle couleur/luminosité confirmé
+sans scintillement depuis le tableau de bord.
 
 **Ordre des manipulations prévu :**
 - [x] Mesures du bandeau (anode commune confirmée, voir
@@ -34,7 +35,8 @@ luminosité.
       [`cablage-canaux-vert-bleu.html`](cablage-canaux-vert-bleu.html)
 - [x] Config ESPHome complète à 3 canaux, flash, test par canal — voir
       [Flash & premier démarrage](#flash--premier-démarrage)
-- [ ] Intégration Home Assistant
+- [x] Intégration Home Assistant — voir
+      [Intégration Home Assistant](#intégration-home-assistant)
 - [ ] Montage définitif (perfboard, réglage du buck, boîtier) — voir
       [Montage définitif](#montage-définitif)
 
@@ -260,13 +262,15 @@ RGB complet à 3 canaux validé le 2026-08-23 avec
 
 ## Intégration Home Assistant
 
-*(Pas encore fait.)*
-
-- L'intégration native **ESPHome** devrait découvrir automatiquement le
-  device via mDNS (Paramètres → Appareils & Services).
-- Vérifier le contrôle couleur/luminosité depuis le tableau de bord et
-  l'absence de scintillement (peut nécessiter d'ajuster la fréquence PWM
-  du `ledc`).
+Validé le 2026-08-23. L'intégration native **ESPHome** a découvert
+automatiquement le device via mDNS (Paramètres → Appareils & Services) une
+fois `bandeau-salon.yaml` flashé et connecté au WiFi ; l'ajout a demandé la
+clé de chiffrement API (`api_encryption_key` de `secrets.yaml`). L'entité
+lumière "Bandeau LED" est apparue avec un contrôle complet couleur (roue
+chromatique) + luminosité, et le mélange de couleurs comme la variation de
+luminosité fonctionnent proprement depuis le tableau de bord, sans
+scintillement — aucun ajustement de la fréquence PWM du `ledc` n'a été
+nécessaire.
 
 ## Montage définitif
 

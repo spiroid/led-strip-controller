@@ -15,6 +15,8 @@ after the fact.
 the board on hand, all 3 MOSFETs individually bench-tested and validated.
 Full 3-channel RGB circuit wired end-to-end on breadboard, flashed, and
 validated stable — individual channels plus full white at 100% brightness.
+Integrated into Home Assistant, color/brightness control confirmed
+flicker-free from the dashboard.
 
 **Planned order of operations:**
 - [x] Strip measurements (common-anode confirmed, see
@@ -33,7 +35,8 @@ validated stable — individual channels plus full white at 100% brightness.
       [`cablage-canaux-vert-bleu.html`](cablage-canaux-vert-bleu.html)
 - [x] Full 3-channel ESPHome config, flash, per-channel test — see
       [Flashing & first run](#flashing--first-run)
-- [ ] Home Assistant integration
+- [x] Home Assistant integration — see
+      [Home Assistant integration](#home-assistant-integration)
 - [ ] Final assembly (perfboard, buck converter setup, enclosure) — see
       [Final assembly](#final-assembly)
 
@@ -244,12 +247,13 @@ Full 3-channel RGB validated 2026-08-23 with
 
 ## Home Assistant integration
 
-*(Not done yet.)*
-
-- The native **ESPHome** integration should auto-discover the device via
-  mDNS (Settings → Devices & Services).
-- Verify color/brightness control from the dashboard and check for
-  flicker (may require adjusting the `ledc` PWM frequency).
+Validated 2026-08-23. The native **ESPHome** integration auto-discovered
+the device via mDNS (Settings → Devices & Services) once `bandeau-salon.yaml`
+was flashed and connected to WiFi; adding it prompted for the API
+encryption key (`api_encryption_key` from `secrets.yaml`). The "Bandeau LED"
+light entity showed up with full color-wheel + brightness control, and both
+color mixing and brightness ramping worked cleanly from the dashboard, no
+flicker — no `ledc` PWM frequency adjustment needed.
 
 ## Final assembly
 
