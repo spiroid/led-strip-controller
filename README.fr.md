@@ -37,6 +37,9 @@ sans scintillement depuis le tableau de bord.
       [Flash & premier démarrage](#flash--premier-démarrage)
 - [x] Intégration Home Assistant — voir
       [Intégration Home Assistant](#intégration-home-assistant)
+- [ ] Tester sur banc la prise jack et le convertisseur buck (MP1584EN)
+      sur l'alimentation 12V réelle du bandeau, indépendamment du montage
+      définitif — voir [Montage définitif](#montage-définitif)
 - [ ] Montage définitif (perfboard, réglage du buck, boîtier) — voir
       [Montage définitif](#montage-définitif)
 
@@ -275,6 +278,22 @@ nécessaire.
 ## Montage définitif
 
 *(À venir — une fois le prototype breadboard validé.)*
+
+Avant de souder quoi que ce soit, tester la chaîne d'alimentation seule sur
+breadboard, sur le même principe que la validation de chaque MOSFET
+isolément avant de le câbler dans le circuit lumière :
+
+- Brancher l'adaptateur jack DC → bornier à vis sur l'alimentation 12V
+  réelle du bandeau (en dérivation, sans couper le câble d'origine) et
+  vérifier au multimètre qu'on lit bien ~12V entre + et GND.
+- Câbler cette dérivation sur l'entrée du MP1584EN, régler son
+  potentiomètre, et vérifier la sortie au multimètre **à vide** jusqu'à
+  lire un 5,0V propre — avant de brancher l'ESP32, une sortie non réglée
+  pourrait sinon envoyer du 12V directement sur la carte.
+- Une fois la sortie du buck confirmée à 5V, alimenter l'ESP32 depuis
+  celle-ci sur la breadboard (pas encore soudé) pour vérifier qu'il boot
+  et se reconnecte normalement au WiFi, avant de passer au montage
+  permanent ci-dessous.
 
 - Ressouder le circuit MOSFET sur perfboard.
 - Isoler les jonctions 12V/GND à la gaine thermorétractable.
