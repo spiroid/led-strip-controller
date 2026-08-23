@@ -13,8 +13,8 @@ after the fact.
 
 **Status:** hardware and tooling inventoried, ESPHome config adapted for
 the board on hand, all 3 MOSFETs individually bench-tested and validated.
-Red channel wired end-to-end on breadboard, flashed, and validated stable
-at 100% brightness.
+Full 3-channel RGB circuit wired end-to-end on breadboard, flashed, and
+validated stable — individual channels plus full white at 100% brightness.
 
 **Planned order of operations:**
 - [x] Strip measurements (common-anode confirmed, see
@@ -29,8 +29,10 @@ at 100% brightness.
       MOSFET → strip wire), flashing a minimal one-output config — see
       [`cablage-canal-rouge.html`](cablage-canal-rouge.html) and
       [Flashing & first run](#flashing--first-run)
-- [ ] Replicate to the other 2 channels
-- [ ] Full 3-channel ESPHome config, flash, per-channel test
+- [x] Replicate to the other 2 channels — see
+      [`cablage-canaux-vert-bleu.html`](cablage-canaux-vert-bleu.html)
+- [x] Full 3-channel ESPHome config, flash, per-channel test — see
+      [Flashing & first run](#flashing--first-run)
 - [ ] Home Assistant integration
 - [ ] Final assembly (perfboard, buck converter setup, enclosure) — see
       [Final assembly](#final-assembly)
@@ -218,6 +220,27 @@ monochromatic` on `output_red` only), see
 - MOSFET stayed barely warm after several minutes at 100% — validated.
 - Subsequent flashes can be done over-the-air (OTA) once the device is on
   the network.
+
+Full 3-channel RGB validated 2026-08-23 with
+[`bandeau-salon.yaml`](bandeau-salon.yaml), wiring per
+[`cablage-canaux-vert-bleu.html`](cablage-canaux-vert-bleu.html):
+
+- Flashed over USB (new device identity vs.
+  `bandeau-salon-test-rouge`, so USB was required again for this first
+  flash of `bandeau-salon`).
+- **Finding:** driving the blue channel lit up green instead — traced to
+  the green/blue gate wires being swapped between GPIO19 and GPIO20 on the
+  breadboard, not a MOSFET or config issue. Fixed by correcting the gate
+  wiring; re-tested red/green/blue individually afterwards to confirm the
+  swap was fully resolved in both directions.
+- Full white (all 3 channels at 100% simultaneously) hit the MEGO's
+  current-limit trip again, this time at its original set voltage — the
+  combined 3-channel draw is higher than any single channel. Lowering the
+  MEGO to **9.5V** brought it back under the limit; stable at full white
+  since. Same bench-supply-only caveat as the Red-channel finding above:
+  not expected on the strip's real 12V supply, which is sized for the full
+  load.
+- All 3 MOSFETs stayed cool after sustained full-white load — validated.
 
 ## Home Assistant integration
 

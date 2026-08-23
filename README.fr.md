@@ -13,8 +13,9 @@ d'être rédigé après coup.
 
 **État actuel :** matériel et outillage inventoriés, config ESPHome adaptée
 à la carte reçue, les 3 MOSFET testés et validés individuellement sur banc.
-Canal Rouge câblé de bout en bout sur breadboard, flashé, et validé stable
-à 100% de luminosité.
+Circuit RGB complet à 3 canaux câblé de bout en bout sur breadboard,
+flashé, et validé stable — canaux individuels et blanc plein à 100% de
+luminosité.
 
 **Ordre des manipulations prévu :**
 - [x] Mesures du bandeau (anode commune confirmée, voir
@@ -29,8 +30,10 @@ Canal Rouge câblé de bout en bout sur breadboard, flashé, et validé stable
       (GPIO → MOSFET → fil du bandeau), en flashant une config minimale à
       une seule sortie — voir [`cablage-canal-rouge.html`](cablage-canal-rouge.html)
       et [Flash & premier démarrage](#flash--premier-démarrage)
-- [ ] Répliquer aux 2 autres canaux
-- [ ] Config ESPHome complète à 3 canaux, flash, test par canal
+- [x] Répliquer aux 2 autres canaux — voir
+      [`cablage-canaux-vert-bleu.html`](cablage-canaux-vert-bleu.html)
+- [x] Config ESPHome complète à 3 canaux, flash, test par canal — voir
+      [Flash & premier démarrage](#flash--premier-démarrage)
 - [ ] Intégration Home Assistant
 - [ ] Montage définitif (perfboard, réglage du buck, boîtier) — voir
       [Montage définitif](#montage-définitif)
@@ -231,6 +234,29 @@ variante temporaire à une seule sortie de `bandeau-salon.yaml`
 - MOSFET resté à peine tiède après plusieurs minutes à 100% — validé.
 - Les flashs suivants pourront se faire en OTA une fois le device sur le
   réseau.
+
+RGB complet à 3 canaux validé le 2026-08-23 avec
+[`bandeau-salon.yaml`](bandeau-salon.yaml), câblage suivant
+[`cablage-canaux-vert-bleu.html`](cablage-canaux-vert-bleu.html) :
+
+- Flashé via USB (nouvelle identité de device par rapport à
+  `bandeau-salon-test-rouge`, donc l'USB était de nouveau nécessaire pour
+  ce premier flash de `bandeau-salon`).
+- **Constat :** piloter le canal bleu allumait le vert à la place — remonté
+  à une inversion des fils de Gate entre GPIO19 et GPIO20 sur la
+  breadboard, pas à un défaut de MOSFET ou de config. Corrigé en
+  rebranchant correctement les Gates ; rouge/vert/bleu retestés
+  individuellement ensuite pour confirmer que l'inversion était bien
+  résolue dans les deux sens.
+- Le blanc plein (les 3 canaux à 100% simultanément) a de nouveau déclenché
+  la limitation de courant du MEGO, cette fois à sa tension de consigne
+  d'origine — l'appel cumulé des 3 canaux est plus élevé que celui d'un
+  seul canal. Baisser le MEGO à **9,5V** a ramené l'appel sous la limite ;
+  stable en blanc plein depuis. Même réserve que le constat sur le canal
+  Rouge ci-dessus : ne devrait pas se reproduire sur l'alimentation 12V
+  réelle du bandeau, dimensionnée pour la charge complète.
+- Les 3 MOSFET sont restés froids après une charge blanc plein prolongée —
+  validé.
 
 ## Intégration Home Assistant
 
