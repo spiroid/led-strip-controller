@@ -300,13 +300,22 @@ combined capacitance would collapse toward the smaller value (losing
 almost all the 470µF reservoir), and neither would form the direct
 low-impedance shunt across the rail that decoupling actually requires.
 
+**Fuse sizing:** measured 2026-08-24 in series on +12V, between the real
+strip supply and the strip's V+, at full white 100% (all 3 channels, the
+worst-case draw) — **0.83–0.895A**. Target a PTC polyfuse rated ~1.5A hold
+current (~30-70% margin over the measured max, tight enough to react to a
+real short well before wire/MOSFET damage, loose enough not to nuisance-trip
+on normal variation). None on hand — ordering a leaded/radial PTC polyfuse,
+~1.5A hold current, rated ≥12V. Doesn't block the rest of final assembly;
+it wires in series on +12V and can be added at any point.
+
 Remaining for the permanent build:
 
 - Re-solder the MOSFET circuit onto perfboard.
 - Heat-shrink the 12V/GND joints.
 - Removable screw-terminal connectors for the external wiring.
 - Plastic enclosure (not metal — would shield the ESP32's PCB antenna).
-- Add a fuse/polyfuse on +12V.
+- Add the polyfuse on +12V once it arrives.
 
 ## Future ideas
 

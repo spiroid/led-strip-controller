@@ -319,6 +319,18 @@ petite des deux (perdant l'essentiel du réservoir de 470µF), et aucun des
 deux ne formerait le pont basse impédance direct entre les rails que le
 découplage exige réellement.
 
+**Calibre du fusible :** mesuré le 2026-08-24 en série sur le +12V, entre
+l'alimentation réelle du bandeau et le V+ du bandeau, en blanc plein 100%
+(les 3 canaux, le cas le plus gourmand) — **0,83–0,895A**. Cible un
+polyfuse PTC avec un courant de maintien (*hold current*) d'environ
+**1,5A** (marge d'environ 30-70% au-dessus du max mesuré, assez serré
+pour réagir à un vrai court-circuit avant tout dommage aux fils/MOSFET,
+assez large pour ne pas déclencher sur une variation normale). Aucun
+disponible sous la main pour l'instant — commande en cours d'un polyfuse
+traversant (radial), ~1,5A hold current, tension nominale ≥12V. Ne
+bloque pas le reste du montage définitif : il se câble en série sur le
++12V et peut être ajouté à n'importe quel moment.
+
 Reste à faire pour le montage permanent :
 
 - Ressouder le circuit MOSFET sur perfboard.
@@ -326,7 +338,7 @@ Reste à faire pour le montage permanent :
 - Connectique externe démontable via bornier à vis.
 - Boîtier en plastique (pas métallique — atténuerait l'antenne PCB de
   l'ESP32).
-- Ajouter un fusible/polyfuse sur le +12V.
+- Ajouter le polyfuse sur le +12V une fois reçu.
 
 ## Pistes de suite
 
