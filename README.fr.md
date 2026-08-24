@@ -295,10 +295,12 @@ MOSFET isolément avant de le câbler dans le circuit lumière — voir
   J1, même rail que le `5V` USB), câble USB débranché pour éviter de
   relier deux sources 5V entre elles — boot et reconnexion WiFi confirmés
   normaux.
-- [ ] Ajouter les condensateurs de découplage (470µF électrolytique +
+- [x] Ajouter les condensateurs de découplage (470µF électrolytique +
   100nF céramique, en parallèle, câblés au plus près des pins `5V`/`GND`
   de l'ESP32) et confirmer l'absence de reboot en usage WiFi normal — voir
-  [`decouplage-condensateurs.html`](decouplage-condensateurs.html).
+  [`decouplage-condensateurs.html`](decouplage-condensateurs.html). Câblés
+  et validés : l'ESP32 boot et tient sans reboot malgré une activité WiFi
+  répétée.
 
 **Pourquoi le découplage est utile ici :** l'ESP32 tire des pics de
 courant brefs à chaque émission WiFi ; sans réserve locale, ces pics

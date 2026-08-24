@@ -278,10 +278,12 @@ isolation before being wired into the light circuit — see
   same rail as USB `5V`) on the breadboard, USB cable disconnected to
   avoid backfeeding two 5V sources into each other — confirmed it boots
   and reconnects to WiFi normally.
-- [ ] Add decoupling capacitors (470µF electrolytic + 100nF ceramic, in
+- [x] Add decoupling capacitors (470µF electrolytic + 100nF ceramic, in
   parallel, wired as close as possible to the ESP32's `5V`/`GND` pins) and
   confirm no reboot under normal WiFi use — see
-  [`decouplage-condensateurs.html`](decouplage-condensateurs.html).
+  [`decouplage-condensateurs.html`](decouplage-condensateurs.html). Wired
+  and validated: the ESP32 boots and holds through repeated WiFi activity
+  with no reboot.
 
 **Why decoupling matters here:** the ESP32 draws brief current spikes on
 every WiFi transmission; without local capacitance those spikes have to
