@@ -1,0 +1,343 @@
+<title>D&eacute;couplage de l'alimentation ESP32</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --bg: #eef2f2;
+    --surface: #ffffff;
+    --ink: #1b2a2e;
+    --ink-soft: #33474b;
+    --muted: #64787b;
+    --muted-2: #93a3a5;
+    --accent: #b8641c;
+    --accent-soft: #b8641c1f;
+    --rule: #ccd8d8;
+    --rule-strong: #a9bcbc;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #10191b;
+      --surface: #16221f;
+      --ink: #e4ede9;
+      --ink-soft: #c2d1cd;
+      --muted: #8ea1a0;
+      --muted-2: #5c7371;
+      --accent: #e08a3c;
+      --accent-soft: #e08a3c26;
+      --rule: #2a3936;
+      --rule-strong: #3c4f4b;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #10191b;
+    --surface: #16221f;
+    --ink: #e4ede9;
+    --ink-soft: #c2d1cd;
+    --muted: #8ea1a0;
+    --muted-2: #5c7371;
+    --accent: #e08a3c;
+    --accent-soft: #e08a3c26;
+    --rule: #2a3936;
+    --rule-strong: #3c4f4b;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    margin: 0;
+    padding: 48px 24px 80px;
+  }
+
+  main {
+    max-width: 980px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  h1 {
+    font-family: "IBM Plex Sans Condensed", "IBM Plex Sans", sans-serif;
+    font-weight: 700;
+    font-size: clamp(28px, 4vw, 38px);
+    line-height: 1.1;
+    margin: 0;
+    text-wrap: balance;
+    color: var(--ink);
+  }
+
+  .intro {
+    max-width: 72ch;
+    color: var(--ink-soft);
+    font-size: 16px;
+  }
+
+  .intro code {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.9em;
+    background: var(--accent-soft);
+    color: var(--accent);
+    padding: 0.05em 0.35em;
+    border-radius: 4px;
+  }
+
+  figure {
+    margin: 0;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 20px clamp(12px, 3vw, 28px) 22px;
+  }
+
+  .diagram-wrap {
+    overflow-x: auto;
+  }
+
+  svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-width: 820px;
+    color: var(--ink);
+  }
+
+  figcaption {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--rule);
+    font-size: 14px;
+    color: var(--muted);
+    max-width: 80ch;
+  }
+
+  h2 {
+    font-family: "IBM Plex Sans Condensed", "IBM Plex Sans", sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    margin: 0 0 12px;
+    color: var(--ink);
+  }
+
+  section.block {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 20px clamp(16px, 3vw, 28px);
+  }
+
+  section.block p {
+    max-width: 74ch;
+    color: var(--ink-soft);
+    margin: 0 0 12px;
+  }
+
+  section.block p:last-child { margin-bottom: 0; }
+
+  section.block strong { color: var(--ink); font-weight: 600; }
+
+  section.block code {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.9em;
+    background: var(--accent-soft);
+    color: var(--accent);
+    padding: 0.05em 0.35em;
+    border-radius: 4px;
+  }
+
+  ol.protocol {
+    margin: 0;
+    padding-left: 1.3em;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  ol.protocol li { color: var(--ink-soft); }
+  ol.protocol strong { color: var(--ink); font-weight: 600; }
+
+  .note {
+    display: flex;
+    gap: 14px;
+    background: var(--accent-soft);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 14.5px;
+    color: var(--ink-soft);
+  }
+
+  .note .label {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    white-space: nowrap;
+    padding-top: 2px;
+  }
+
+  .svg-label { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+</style>
+
+<main>
+  <div>
+    <div class="eyebrow">Bandeau LED &middot; alimentation ESP32</div>
+    <h1>D&eacute;couplage de l'alimentation ESP32</h1>
+  </div>
+
+  <p class="intro">
+    Le buck converter sort d&eacute;j&agrave; un 5V stable &agrave; vide (voir
+    <a href="test-buck-converter.html">test-buck-converter.html</a>), mais &agrave; vide seulement.
+    En fonctionnement, l'ESP32 tire des pics de courant brefs &agrave; chaque &eacute;mission WiFi
+    &mdash; deux condensateurs en parall&egrave;le, plac&eacute;s au plus pr&egrave;s de ses pins
+    <code>5V</code>/<code>GND</code>, absorbent ces pics avant qu'ils ne fassent chuter la tension et
+    provoquent un reboot intempestif (brownout).
+  </p>
+
+  <figure>
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 1000 420" role="img" aria-label="Sch&eacute;ma du d&eacute;couplage&nbsp;: la sortie 5V du MP1584EN alimente un rail 5V et un rail masse. Un condensateur &eacute;lectrolytique de 470 microfarads et un condensateur c&eacute;ramique de 100 nanofarads sont branch&eacute;s en parall&egrave;le entre ces deux rails, au plus pr&egrave;s des pins 5V et GND de l'ESP32-C6-DevKitC-1.">
+        <!-- MP1584EN (validated) -->
+        <rect x="40" y="150" width="170" height="100" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"></rect>
+        <text x="125" y="192" text-anchor="middle" class="svg-label" font-size="12" font-weight="600" fill="currentColor">MP1584EN</text>
+        <text x="125" y="208" text-anchor="middle" class="svg-label" font-size="9.5" fill="var(--accent)">5V valid&eacute; (&agrave; vide)</text>
+
+        <!-- rails -->
+        <line x1="210" y1="175" x2="800" y2="175" stroke="var(--accent)" stroke-width="1.8"></line>
+        <text x="225" y="167" class="svg-label" font-size="10" font-weight="600" fill="var(--accent)">+5V</text>
+        <line x1="210" y1="225" x2="800" y2="225" stroke="currentColor" stroke-width="1.6"></line>
+        <text x="225" y="242" class="svg-label" font-size="10" fill="currentColor">GND</text>
+
+        <!-- Electrolytic capacitor (polarized) -->
+        <circle cx="700" cy="175" r="2.8" fill="var(--accent)"></circle>
+        <line x1="700" y1="175" x2="700" y2="193" stroke="currentColor" stroke-width="1.4"></line>
+        <line x1="684" y1="193" x2="716" y2="193" stroke="currentColor" stroke-width="2"></line>
+        <text x="672" y="190" text-anchor="end" class="svg-label" font-size="12" fill="currentColor">+</text>
+        <path d="M 684 206 Q 700 217 716 206" fill="none" stroke="currentColor" stroke-width="2"></path>
+        <text x="672" y="212" text-anchor="end" class="svg-label" font-size="12" fill="var(--muted)">&minus;</text>
+        <line x1="700" y1="213" x2="700" y2="225" stroke="currentColor" stroke-width="1.4"></line>
+        <circle cx="700" cy="225" r="2.8" fill="currentColor"></circle>
+        <text x="700" y="256" text-anchor="middle" class="svg-label" font-size="12" font-weight="600" fill="currentColor">470&nbsp;&micro;F</text>
+        <text x="700" y="271" text-anchor="middle" class="svg-label" font-size="9" fill="var(--muted)">&eacute;lectrolytique</text>
+        <text x="700" y="284" text-anchor="middle" class="svg-label" font-size="9" fill="var(--muted)">r&eacute;servoir basse fr&eacute;quence</text>
+
+        <!-- Ceramic capacitor (non-polarized) -->
+        <circle cx="760" cy="175" r="2.8" fill="var(--accent)"></circle>
+        <line x1="760" y1="175" x2="760" y2="195" stroke="currentColor" stroke-width="1.4"></line>
+        <line x1="745" y1="195" x2="775" y2="195" stroke="currentColor" stroke-width="2"></line>
+        <line x1="745" y1="205" x2="775" y2="205" stroke="currentColor" stroke-width="2"></line>
+        <line x1="760" y1="205" x2="760" y2="225" stroke="currentColor" stroke-width="1.4"></line>
+        <circle cx="760" cy="225" r="2.8" fill="currentColor"></circle>
+        <text x="760" y="256" text-anchor="middle" class="svg-label" font-size="12" font-weight="600" fill="currentColor">100&nbsp;nF</text>
+        <text x="760" y="271" text-anchor="middle" class="svg-label" font-size="9" fill="var(--muted)">c&eacute;ramique</text>
+        <text x="760" y="284" text-anchor="middle" class="svg-label" font-size="9" fill="var(--muted)">bypass haute fr&eacute;quence</text>
+
+        <!-- proximity bracket -->
+        <path d="M 690 300 L 690 310 L 950 310 L 950 300" fill="none" stroke="var(--muted-2)" stroke-width="1.2"></path>
+        <text x="820" y="326" text-anchor="middle" class="svg-label" font-size="9.5" fill="var(--muted)">quelques cm max &mdash; au plus pr&egrave;s des pins ESP32, pas c&ocirc;t&eacute; MP1584EN</text>
+
+        <!-- ESP32 -->
+        <rect x="800" y="140" width="180" height="120" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"></rect>
+        <text x="890" y="188" text-anchor="middle" class="svg-label" font-size="12" font-weight="600" fill="currentColor">ESP32-C6-DevKitC-1</text>
+        <text x="890" y="204" text-anchor="middle" class="svg-label" font-size="9" fill="var(--muted)">pin 5V / GND (J1)</text>
+        <text x="808" y="172" class="svg-label" font-size="9.5" fill="var(--accent)">5V</text>
+        <text x="808" y="228" class="svg-label" font-size="9.5" fill="currentColor">GND</text>
+      </svg>
+    </div>
+    <figcaption>
+      Les deux condensateurs sont branch&eacute;s <strong>en parall&egrave;le</strong>, entre les m&ecirc;mes
+      deux rails 5V/GND, chacun au plus pr&egrave;s des pins d'alimentation de l'ESP32. Le sens du condensateur
+      &eacute;lectrolytique compte&nbsp;: <strong>+</strong> c&ocirc;t&eacute; 5V, plaque courbe
+      (<strong>&minus;</strong>) c&ocirc;t&eacute; GND. Le c&eacute;ramique n'est pas polaris&eacute;, aucun sens
+      &agrave; respecter.
+    </figcaption>
+  </figure>
+
+  <section class="block">
+    <h2>Pourquoi ces deux valeurs, et pourquoi en parall&egrave;le</h2>
+    <p>
+      Ce sont deux composants au r&ocirc;le diff&eacute;rent, pas redondant &mdash; c'est pour &ccedil;a
+      qu'on met les deux plut&ocirc;t que de doubler l'un ou l'autre.
+    </p>
+    <p>
+      <strong>Le 470&nbsp;&micro;F &eacute;lectrolytique</strong> est le r&eacute;servoir de charge. Une
+      &eacute;mission WiFi fait grimper br&egrave;vement la consommation de l'ESP32, sur des dur&eacute;es de
+      l'ordre de la centaine de microsecondes. Sans r&eacute;serve locale, ce courant suppl&eacute;mentaire doit
+      venir du buck converter &agrave; travers le fil qui le relie &agrave; l'ESP32 &mdash; et la r&eacute;sistance
+      de ce fil, aussi faible soit-elle, fait chuter un peu la tension pendant le pic. R&eacute;p&eacute;t&eacute;
+      assez souvent ou assez fort, cette chute peut suffire &agrave; faire rebooter la carte en plein milieu d'une
+      trame WiFi. Le condensateur agit comme un petit seau d'eau rempli en continu et pr&ecirc;t &agrave; se vider
+      d'un coup&nbsp;: plus il est gros, mieux il absorbe un pic sans que la tension ne bouge. 470&micro;F est le
+      haut de la fourchette recommand&eacute;e (100-470&micro;F) &mdash; on prend cette valeur parce qu'elle
+      &eacute;tait d&eacute;j&agrave; dans le kit, et que dans cette famille de composants, plus de capacit&eacute;
+      ne co&ucirc;te quasiment rien de plus en risque ou en encombrement.
+    </p>
+    <p>
+      <strong>Le 100&nbsp;nF c&eacute;ramique</strong> s'occupe d'un probl&egrave;me diff&eacute;rent&nbsp;: le
+      gros condensateur &eacute;lectrolytique, de par sa construction (feuilles enroul&eacute;es), a une
+      inductance parasite qui le rend lent &agrave; r&eacute;agir aux variations tr&egrave;s rapides &mdash; au-del&agrave;
+      d'une certaine fr&eacute;quence, il cesse d'&ecirc;tre efficace. Le c&eacute;ramique, beaucoup plus petit
+      et sans cette inductance parasite, prend le relais exactement l&agrave; o&ugrave; l'&eacute;lectrolytique
+      d&eacute;croche&nbsp;: le bruit de commutation du buck converter lui-m&ecirc;me (le MP1584EN d&eacute;coupe
+      &agrave; environ 1,5&nbsp;MHz) et les fronts rapides internes de l'ESP32. 100&nbsp;nF (souvent marqu&eacute;
+      "104" sur le bo&icirc;tier) est la valeur standard utilis&eacute;e pr&egrave;s de quasiment tous les circuits
+      num&eacute;riques pour ce r&ocirc;le &mdash; ce n'est pas calcul&eacute; sp&eacute;cifiquement pour l'ESP32,
+      c'est la valeur de r&eacute;f&eacute;rence qui couvre bien cette plage de fr&eacute;quence.
+    </p>
+    <p>
+      <strong>Pourquoi en parall&egrave;le, et pas en s&eacute;rie ou l'un &agrave; la place de l'autre&nbsp;:</strong>
+      brancher les deux entre les m&ecirc;mes rails 5V/GND leur permet de r&eacute;pondre chacun ind&eacute;pendamment,
+      chacun dans sa plage de fr&eacute;quence, en m&ecirc;me temps &mdash; ensemble ils couvrent une plage bien
+      plus large qu'aucun des deux seul. En s&eacute;rie, la capacit&eacute; totale serait plus petite que celle du
+      plus petit des deux (environ 100&nbsp;nF effectif, l'essentiel du r&eacute;servoir de 470&micro;F serait perdu),
+      et surtout &ccedil;a ne cr&eacute;erait pas un vrai pont direct entre le 5V et la masse &agrave; l'endroit
+      o&ugrave; &ccedil;a compte&nbsp;: un condensateur de d&eacute;couplage doit &ecirc;tre un chemin court-circuit&eacute;
+      (en haute fr&eacute;quence) directement entre les deux rails, au plus pr&egrave;s du composant qu'il prot&egrave;ge
+      &mdash; d'o&ugrave; aussi l'importance de les souder/brancher pr&egrave;s des pins de l'ESP32, pas c&ocirc;t&eacute;
+      buck converter.
+    </p>
+  </section>
+
+  <section class="block">
+    <h2>V&eacute;rifications avant mise sous tension</h2>
+    <ol class="protocol">
+      <li>Rep&eacute;rer la polarit&eacute; du condensateur &eacute;lectrolytique avant de le brancher &mdash;
+        patte la plus longue et bo&icirc;tier sans marquage c&ocirc;t&eacute; <strong>+</strong> (5V), patte
+        courte et bande marqu&eacute;e <strong>&minus;</strong> c&ocirc;t&eacute; GND. L'inverser peut le faire
+        chauffer, gonfler, voire &eacute;clater.</li>
+      <li>Brancher les deux condensateurs <strong>en parall&egrave;le</strong> entre 5V et GND, au plus
+        pr&egrave;s des pins d'alimentation de l'ESP32 (quelques cm max).</li>
+      <li>Multim&egrave;tre sur les deux rails une fois branch&eacute;&nbsp;: toujours ~5V avant de reconnecter
+        l'ESP32.</li>
+      <li>Alimenter l'ESP32 depuis cette sortie, c&acirc;ble USB d&eacute;branch&eacute; (comme pour le test
+        du buck converter seul).</li>
+      <li>Laisser tourner quelques minutes en usage normal (changements de couleur/luminosit&eacute; r&eacute;p&eacute;t&eacute;s
+        depuis Home Assistant, pour solliciter le WiFi) &mdash; aucun reboot inattendu.</li>
+    </ol>
+  </section>
+
+  <div class="note">
+    <span class="label">Polarit&eacute; obligatoire</span>
+    <span>
+      Contrairement au c&eacute;ramique, l'&eacute;lectrolytique est un composant polaris&eacute;&nbsp;: le
+      brancher &agrave; l'envers n'est pas juste inefficace, &ccedil;a peut l'endommager (chauffe, fuite
+      d'&eacute;lectrolyte, voire &eacute;clatement sous tension prolong&eacute;e). &Agrave; v&eacute;rifier
+      deux fois avant de mettre sous tension.
+    </span>
+  </div>
+</main>

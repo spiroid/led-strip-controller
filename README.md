@@ -278,6 +278,25 @@ isolation before being wired into the light circuit — see
   same rail as USB `5V`) on the breadboard, USB cable disconnected to
   avoid backfeeding two 5V sources into each other — confirmed it boots
   and reconnects to WiFi normally.
+- [ ] Add decoupling capacitors (470µF electrolytic + 100nF ceramic, in
+  parallel, wired as close as possible to the ESP32's `5V`/`GND` pins) and
+  confirm no reboot under normal WiFi use — see
+  [`decouplage-condensateurs.html`](decouplage-condensateurs.html).
+
+**Why decoupling matters here:** the ESP32 draws brief current spikes on
+every WiFi transmission; without local capacitance those spikes have to
+be supplied through the wire from the buck converter, whose resistance
+causes a momentary voltage dip that can brown out the board mid-transmission.
+The two capacitors cover different timescales rather than duplicating each
+other: the 470µF electrolytic is the bulk reservoir that smooths the
+(relatively slow, ~100µs-scale) WiFi current pulses; the 100nF ceramic
+has none of the electrolytic's parasitic inductance, so it keeps working
+at the higher frequencies (buck-converter switching noise, fast digital
+edges) where the electrolytic stops being effective. They're wired in
+**parallel** across the same 5V/GND rails, not in series — in series the
+combined capacitance would collapse toward the smaller value (losing
+almost all the 470µF reservoir), and neither would form the direct
+low-impedance shunt across the rail that decoupling actually requires.
 
 Remaining for the permanent build:
 
@@ -285,8 +304,7 @@ Remaining for the permanent build:
 - Heat-shrink the 12V/GND joints.
 - Removable screw-terminal connectors for the external wiring.
 - Plastic enclosure (not metal — would shield the ESP32's PCB antenna).
-- Add a fuse/polyfuse on +12V and a decoupling capacitor near the ESP32
-  supply.
+- Add a fuse/polyfuse on +12V.
 
 ## Future ideas
 

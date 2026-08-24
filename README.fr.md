@@ -295,6 +295,27 @@ MOSFET isolément avant de le câbler dans le circuit lumière — voir
   J1, même rail que le `5V` USB), câble USB débranché pour éviter de
   relier deux sources 5V entre elles — boot et reconnexion WiFi confirmés
   normaux.
+- [ ] Ajouter les condensateurs de découplage (470µF électrolytique +
+  100nF céramique, en parallèle, câblés au plus près des pins `5V`/`GND`
+  de l'ESP32) et confirmer l'absence de reboot en usage WiFi normal — voir
+  [`decouplage-condensateurs.html`](decouplage-condensateurs.html).
+
+**Pourquoi le découplage est utile ici :** l'ESP32 tire des pics de
+courant brefs à chaque émission WiFi ; sans réserve locale, ces pics
+doivent être fournis via le fil venant du buck converter, dont la
+résistance provoque une chute de tension momentanée qui peut faire
+rebooter la carte en pleine transmission. Les deux condensateurs couvrent
+des échelles de temps différentes plutôt que de faire doublon :
+l'électrolytique 470µF est le réservoir qui lisse les pics WiFi
+(relativement lents, de l'ordre de la centaine de µs) ; le céramique
+100nF n'a pas l'inductance parasite de l'électrolytique, donc il continue
+à fonctionner aux fréquences plus élevées (bruit de commutation du buck
+converter, fronts numériques rapides) là où l'électrolytique cesse d'être
+efficace. Ils sont câblés **en parallèle** sur les mêmes rails 5V/GND, pas
+en série — en série la capacité totale s'effondrerait vers la plus
+petite des deux (perdant l'essentiel du réservoir de 470µF), et aucun des
+deux ne formerait le pont basse impédance direct entre les rails que le
+découplage exige réellement.
 
 Reste à faire pour le montage permanent :
 
@@ -303,8 +324,7 @@ Reste à faire pour le montage permanent :
 - Connectique externe démontable via bornier à vis.
 - Boîtier en plastique (pas métallique — atténuerait l'antenne PCB de
   l'ESP32).
-- Ajouter un fusible/polyfuse sur le +12V et un condensateur de découplage
-  près de l'alimentation de l'ESP32.
+- Ajouter un fusible/polyfuse sur le +12V.
 
 ## Pistes de suite
 
