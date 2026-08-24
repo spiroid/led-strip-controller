@@ -309,7 +309,10 @@ on normal variation). None on hand — ordering a leaded/radial PTC polyfuse,
 ~1.5A hold current, rated ≥12V. Doesn't block the rest of final assembly;
 it wires in series on +12V and can be added at any point.
 
-Remaining for the permanent build:
+Remaining for the permanent build — see
+[`cablage-perfboard.html`](cablage-perfboard.html) for the consolidated
+wiring reference (all 3 channels + buck converter + decoupling, in one
+diagram) and the recommended soldering order:
 
 - Re-solder the MOSFET circuit onto perfboard.
 - Heat-shrink the 12V/GND joints.

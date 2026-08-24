@@ -331,7 +331,10 @@ traversant (radial), ~1,5A hold current, tension nominale ≥12V. Ne
 bloque pas le reste du montage définitif : il se câble en série sur le
 +12V et peut être ajouté à n'importe quel moment.
 
-Reste à faire pour le montage permanent :
+Reste à faire pour le montage permanent — voir
+[`cablage-perfboard.html`](cablage-perfboard.html) pour le schéma de
+câblage consolidé (les 3 canaux + buck converter + découplage, en un seul
+diagramme) et l'ordre de soudure recommandé :
 
 - Ressouder le circuit MOSFET sur perfboard.
 - Isoler les jonctions 12V/GND à la gaine thermorétractable.

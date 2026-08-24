@@ -1,0 +1,417 @@
+<title>Câblage du montage définitif sur perfboard</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --bg: #eef2f2;
+    --surface: #ffffff;
+    --ink: #1b2a2e;
+    --ink-soft: #33474b;
+    --muted: #64787b;
+    --muted-2: #93a3a5;
+    --accent: #b8641c;
+    --accent-soft: #b8641c1f;
+    --rule: #ccd8d8;
+    --rule-strong: #a9bcbc;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #10191b;
+      --surface: #16221f;
+      --ink: #e4ede9;
+      --ink-soft: #c2d1cd;
+      --muted: #8ea1a0;
+      --muted-2: #5c7371;
+      --accent: #e08a3c;
+      --accent-soft: #e08a3c26;
+      --rule: #2a3936;
+      --rule-strong: #3c4f4b;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #10191b;
+    --surface: #16221f;
+    --ink: #e4ede9;
+    --ink-soft: #c2d1cd;
+    --muted: #8ea1a0;
+    --muted-2: #5c7371;
+    --accent: #e08a3c;
+    --accent-soft: #e08a3c26;
+    --rule: #2a3936;
+    --rule-strong: #3c4f4b;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    margin: 0;
+    padding: 48px 24px 80px;
+  }
+
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  h1 {
+    font-family: "IBM Plex Sans Condensed", "IBM Plex Sans", sans-serif;
+    font-weight: 700;
+    font-size: clamp(28px, 4vw, 38px);
+    line-height: 1.1;
+    margin: 0;
+    text-wrap: balance;
+    color: var(--ink);
+  }
+
+  .intro {
+    max-width: 72ch;
+    color: var(--ink-soft);
+    font-size: 16px;
+  }
+
+  .intro code {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.9em;
+    background: var(--accent-soft);
+    color: var(--accent);
+    padding: 0.05em 0.35em;
+    border-radius: 4px;
+  }
+
+  figure {
+    margin: 0;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 20px clamp(12px, 3vw, 28px) 22px;
+  }
+
+  .diagram-wrap {
+    overflow-x: auto;
+  }
+
+  svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-width: 1280px;
+    color: var(--ink);
+  }
+
+  figcaption {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--rule);
+    font-size: 14px;
+    color: var(--muted);
+    max-width: 90ch;
+  }
+
+  h2 {
+    font-family: "IBM Plex Sans Condensed", "IBM Plex Sans", sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    margin: 0 0 12px;
+    color: var(--ink);
+  }
+
+  section.block {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 20px clamp(16px, 3vw, 28px);
+  }
+
+  section.block p {
+    max-width: 78ch;
+    color: var(--ink-soft);
+    margin: 0 0 12px;
+  }
+
+  section.block p:last-child { margin-bottom: 0; }
+  section.block strong { color: var(--ink); font-weight: 600; }
+
+  ol.protocol {
+    margin: 0;
+    padding-left: 1.3em;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  ol.protocol li { color: var(--ink-soft); }
+  ol.protocol strong { color: var(--ink); font-weight: 600; }
+
+  .note {
+    display: flex;
+    gap: 14px;
+    background: var(--accent-soft);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 14.5px;
+    color: var(--ink-soft);
+  }
+
+  .note .label {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    white-space: nowrap;
+    padding-top: 2px;
+  }
+
+  .svg-label { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+</style>
+
+<main>
+  <div>
+    <div class="eyebrow">Bandeau LED &middot; montage d&eacute;finitif</div>
+    <h1>Câblage du perfboard : le circuit complet</h1>
+  </div>
+
+  <p class="intro">
+    Ce sch&eacute;ma r&eacute;unit tout ce qui a &eacute;t&eacute; valid&eacute; s&eacute;par&eacute;ment sur
+    breadboard &mdash; les 3 canaux MOSFET, le buck converter, les condensateurs de d&eacute;couplage &mdash;
+    en une seule r&eacute;f&eacute;rence pour ressouder le tout sur perfboard. Rien de nouveau &eacute;lectriquement,
+    c'est le m&ecirc;me circuit, juste consolid&eacute;. Le <strong>polyfuse</strong> appara&icirc;t en
+    pointill&eacute;s&nbsp;: pas encore re&ccedil;u, mais sa place est r&eacute;serv&eacute;e en s&eacute;rie sur
+    le +12V.
+  </p>
+
+  <figure>
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 1560 620" role="img" aria-label="Sch&eacute;ma complet du montage&nbsp;: l'alimentation 12V du bandeau entre par un bornier, passe par un polyfuse (pas encore install&eacute;) puis se s&eacute;pare en deux&nbsp;: une branche va directement au V+ du bandeau, l'autre alimente l'entr&eacute;e du MP1584EN. La sortie 5V du MP1584EN passe par deux condensateurs de d&eacute;couplage en parall&egrave;le (470 microfarads et 100 nanofarads) avant d'atteindre les pins 5V/GND de l'ESP32. Les GPIO18, 19 et 20 de l'ESP32 pilotent chacun un MOSFET IRLB8721 via une r&eacute;sistance de grille de 220 ohms et un pull-down de 10 kilohms, dont le Drain rejoint le fil R, V ou B du bandeau et la Source la masse commune.">
+        <!-- ================= 12V input + fuse ================= -->
+        <rect x="20" y="250" width="150" height="70" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"></rect>
+        <text x="95" y="278" text-anchor="middle" class="svg-label" font-size="11.5" font-weight="600" fill="currentColor">Entr&eacute;e 12V</text>
+        <text x="95" y="294" text-anchor="middle" class="svg-label" font-size="9" fill="var(--muted)">(bornier, depuis jack)</text>
+
+        <line x1="170" y1="270" x2="230" y2="270" stroke="currentColor" stroke-width="1.6"></line>
+        <text x="200" y="262" text-anchor="middle" class="svg-label" font-size="9.5" fill="currentColor">+12V</text>
+        <rect x="230" y="262" width="70" height="16" rx="2" fill="none" stroke="var(--muted-2)" stroke-width="1.4" stroke-dasharray="4 3"></rect>
+        <text x="265" y="296" text-anchor="middle" class="svg-label" font-size="9" fill="var(--accent)">Polyfuse ~1,5A</text>
+        <text x="265" y="309" text-anchor="middle" class="svg-label" font-size="8.5" fill="var(--muted)">&agrave; souder &agrave; r&eacute;ception</text>
+        <line x1="300" y1="270" x2="330" y2="270" stroke="currentColor" stroke-width="1.6"></line>
+        <circle cx="330" cy="270" r="3.2" fill="currentColor"></circle>
+
+        <line x1="170" y1="320" x2="170" y2="560" stroke="currentColor" stroke-width="1.4"></line>
+        <text x="176" y="335" class="svg-label" font-size="9.5" fill="currentColor">GND</text>
+        <line x1="170" y1="320" x2="250" y2="320" stroke="currentColor" stroke-width="1.4"></line>
+        <line x1="250" y1="320" x2="250" y2="410" stroke="currentColor" stroke-width="1.4"></line>
+        <line x1="250" y1="410" x2="390" y2="410" stroke="currentColor" stroke-width="1.4"></line>
+
+        <!-- direct +12V bus to strip V+ (top) -->
+        <line x1="330" y1="270" x2="330" y2="20" stroke="var(--accent)" stroke-width="1.6"></line>
+        <line x1="330" y1="20" x2="1470" y2="20" stroke="var(--accent)" stroke-width="1.6"></line>
+        <line x1="1470" y1="20" x2="1470" y2="120" stroke="var(--accent)" stroke-width="1.6"></line>
+        <text x="700" y="13" text-anchor="middle" class="svg-label" font-size="10" font-weight="600" fill="var(--accent)">V+ direct au bandeau</text>
+
+        <!-- down to buck IN+ -->
+        <line x1="330" y1="270" x2="330" y2="360" stroke="currentColor" stroke-width="1.6"></line>
+        <line x1="330" y1="360" x2="390" y2="360" stroke="currentColor" stroke-width="1.6"></line>
+
+        <!-- ================= MP1584EN ================= -->
+        <rect x="390" y="330" width="170" height="110" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"></rect>
+        <text x="475" y="352" text-anchor="middle" class="svg-label" font-size="12" font-weight="600" fill="currentColor">MP1584EN</text>
+        <text x="475" y="367" text-anchor="middle" class="svg-label" font-size="9.5" fill="var(--accent)">5V valid&eacute;</text>
+        <circle cx="475" cy="400" r="13" fill="none" stroke="currentColor" stroke-width="1.4"></circle>
+        <line x1="468" y1="394" x2="482" y2="406" stroke="currentColor" stroke-width="1.6"></line>
+        <text x="475" y="425" text-anchor="middle" class="svg-label" font-size="8" fill="var(--muted)">trimmer</text>
+
+        <circle cx="390" cy="360" r="2.8" fill="currentColor"></circle>
+        <text x="396" y="357" class="svg-label" font-size="9" fill="currentColor">IN+</text>
+        <circle cx="390" cy="410" r="2.8" fill="currentColor"></circle>
+        <text x="396" y="422" class="svg-label" font-size="9" fill="currentColor">IN-</text>
+        <circle cx="560" cy="360" r="2.8" fill="currentColor"></circle>
+        <text x="554" y="357" text-anchor="end" class="svg-label" font-size="9" fill="currentColor">OUT+</text>
+        <circle cx="560" cy="410" r="2.8" fill="currentColor"></circle>
+        <text x="554" y="422" text-anchor="end" class="svg-label" font-size="9" fill="currentColor">OUT-</text>
+
+        <!-- OUT -> local 5V/GND taps near ESP32 -->
+        <line x1="560" y1="360" x2="560" y2="200" stroke="var(--accent)" stroke-width="1.6"></line>
+        <line x1="560" y1="200" x2="660" y2="200" stroke="var(--accent)" stroke-width="1.6"></line>
+        <line x1="660" y1="200" x2="660" y2="140" stroke="var(--accent)" stroke-width="1.6"></line>
+
+        <line x1="560" y1="410" x2="560" y2="250" stroke="currentColor" stroke-width="1.4"></line>
+        <line x1="560" y1="250" x2="650" y2="250" stroke="currentColor" stroke-width="1.4"></line>
+        <line x1="600" y1="250" x2="600" y2="560" stroke="currentColor" stroke-width="1.4"></line>
+        <circle cx="600" cy="250" r="2.8" fill="currentColor"></circle>
+
+        <!-- decoupling caps -->
+        <circle cx="590" cy="200" r="2.8" fill="var(--accent)"></circle>
+        <line x1="590" y1="200" x2="590" y2="215" stroke="currentColor" stroke-width="1.4"></line>
+        <line x1="575" y1="215" x2="605" y2="215" stroke="currentColor" stroke-width="2"></line>
+        <text x="567" y="212" text-anchor="end" class="svg-label" font-size="10" fill="currentColor">+</text>
+        <path d="M 575 226 Q 590 236 605 226" fill="none" stroke="currentColor" stroke-width="2"></path>
+        <line x1="590" y1="234" x2="590" y2="250" stroke="currentColor" stroke-width="1.4"></line>
+        <circle cx="590" cy="250" r="2.8" fill="currentColor"></circle>
+        <text x="590" y="270" text-anchor="middle" class="svg-label" font-size="10.5" font-weight="600" fill="currentColor">470&nbsp;&micro;F</text>
+        <text x="590" y="283" text-anchor="middle" class="svg-label" font-size="8.5" fill="var(--muted)">&eacute;lectrolytique</text>
+
+        <circle cx="625" cy="200" r="2.8" fill="var(--accent)"></circle>
+        <line x1="625" y1="200" x2="625" y2="218" stroke="currentColor" stroke-width="1.4"></line>
+        <line x1="610" y1="218" x2="640" y2="218" stroke="currentColor" stroke-width="2"></line>
+        <line x1="610" y1="228" x2="640" y2="228" stroke="currentColor" stroke-width="2"></line>
+        <line x1="625" y1="228" x2="625" y2="250" stroke="currentColor" stroke-width="1.4"></line>
+        <circle cx="625" cy="250" r="2.8" fill="currentColor"></circle>
+        <text x="625" y="270" text-anchor="middle" class="svg-label" font-size="10.5" font-weight="600" fill="currentColor">100&nbsp;nF</text>
+        <text x="625" y="283" text-anchor="middle" class="svg-label" font-size="8.5" fill="var(--muted)">c&eacute;ramique</text>
+
+        <!-- ================= ESP32 ================= -->
+        <rect x="600" y="50" width="220" height="90" rx="4" fill="none" stroke="currentColor" stroke-width="1.8"></rect>
+        <text x="710" y="88" text-anchor="middle" class="svg-label" font-size="12.5" font-weight="600" fill="currentColor">ESP32-C6-DevKitC-1</text>
+        <text x="710" y="104" text-anchor="middle" class="svg-label" font-size="9" fill="var(--muted)">(sur perfboard)</text>
+
+        <text x="614" y="152" text-anchor="middle" class="svg-label" font-size="8.5" fill="currentColor">GND</text>
+        <line x1="620" y1="140" x2="620" y2="560" stroke="currentColor" stroke-width="1.6"></line>
+        <text x="660" y="152" text-anchor="middle" class="svg-label" font-size="8.5" fill="var(--accent)">5V</text>
+        <text x="700" y="152" text-anchor="middle" class="svg-label" font-size="8" fill="currentColor">GPIO18</text>
+        <text x="740" y="152" text-anchor="middle" class="svg-label" font-size="8" fill="currentColor">GPIO19</text>
+        <text x="780" y="152" text-anchor="middle" class="svg-label" font-size="8" fill="currentColor">GPIO20</text>
+
+        <!-- ================= Channel R (GPIO18) ================= -->
+        <line x1="700" y1="140" x2="700" y2="170" stroke="currentColor" stroke-width="1.4"></line>
+        <polyline points="700,170 700,180 692,188 708,200 692,212 708,224 692,234 700,242 700,250" fill="none" stroke="currentColor" stroke-width="1.4"></polyline>
+        <text x="716" y="212" class="svg-label" font-size="10" fill="currentColor">220&Omega;</text>
+        <circle cx="700" cy="250" r="3" fill="currentColor"></circle>
+        <polyline points="700,250 700,270 691,280 709,294 691,308 709,322 691,336 709,350 691,364 709,378 700,390 700,560" fill="none" stroke="currentColor" stroke-width="1.4"></polyline>
+        <text x="716" y="320" class="svg-label" font-size="10" fill="currentColor">10&nbsp;k&Omega;</text>
+        <line x1="700" y1="250" x2="760" y2="250" stroke="currentColor" stroke-width="1.4"></line>
+        <text x="752" y="264" text-anchor="end" class="svg-label" font-size="9.5" fill="currentColor">G</text>
+        <rect x="760" y="205" width="80" height="90" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"></rect>
+        <text x="800" y="254" text-anchor="middle" class="svg-label" font-size="9.5" fill="currentColor">IRLB8721</text>
+        <line x1="800" y1="205" x2="800" y2="170" stroke="currentColor" stroke-width="1.4"></line>
+        <text x="806" y="188" class="svg-label" font-size="9.5" fill="currentColor">D</text>
+        <line x1="800" y1="170" x2="1400" y2="170" stroke="currentColor" stroke-width="1.6"></line>
+        <text x="1080" y="161" text-anchor="middle" class="svg-label" font-size="9.5" font-weight="600" fill="currentColor">fil R (rouge)</text>
+        <line x1="800" y1="295" x2="800" y2="560" stroke="currentColor" stroke-width="1.4"></line>
+        <text x="806" y="312" class="svg-label" font-size="9.5" fill="currentColor">S</text>
+
+        <!-- ================= Channel G (GPIO19) ================= -->
+        <line x1="740" y1="140" x2="740" y2="215" stroke="currentColor" stroke-width="1.4"></line>
+        <line x1="740" y1="215" x2="950" y2="215" stroke="currentColor" stroke-width="1.4"></line>
+        <polyline points="950,215 950,225 942,233 958,245 942,257 958,269 942,279 950,287 950,295" fill="none" stroke="currentColor" stroke-width="1.4"></polyline>
+        <text x="966" y="257" class="svg-label" font-size="10" fill="currentColor">220&Omega;</text>
+        <circle cx="950" cy="295" r="3" fill="currentColor"></circle>
+        <polyline points="950,295 950,315 941,325 959,339 941,353 959,367 941,381 959,395 941,409 959,423 950,435 950,560" fill="none" stroke="currentColor" stroke-width="1.4"></polyline>
+        <text x="966" y="365" class="svg-label" font-size="10" fill="currentColor">10&nbsp;k&Omega;</text>
+        <line x1="950" y1="295" x2="1010" y2="295" stroke="currentColor" stroke-width="1.4"></line>
+        <text x="1002" y="309" text-anchor="end" class="svg-label" font-size="9.5" fill="currentColor">G</text>
+        <rect x="1010" y="250" width="80" height="90" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"></rect>
+        <text x="1050" y="299" text-anchor="middle" class="svg-label" font-size="9.5" fill="currentColor">IRLB8721</text>
+        <line x1="1050" y1="250" x2="1050" y2="215" stroke="currentColor" stroke-width="1.4"></line>
+        <text x="1056" y="233" class="svg-label" font-size="9.5" fill="currentColor">D</text>
+        <line x1="1050" y1="215" x2="1400" y2="215" stroke="currentColor" stroke-width="1.6"></line>
+        <text x="1200" y="206" text-anchor="middle" class="svg-label" font-size="9.5" font-weight="600" fill="currentColor">fil V (vert)</text>
+        <line x1="1050" y1="340" x2="1050" y2="560" stroke="currentColor" stroke-width="1.4"></line>
+        <text x="1056" y="357" class="svg-label" font-size="9.5" fill="currentColor">S</text>
+
+        <!-- ================= Channel B (GPIO20) ================= -->
+        <line x1="780" y1="140" x2="780" y2="260" stroke="currentColor" stroke-width="1.4"></line>
+        <line x1="780" y1="260" x2="1200" y2="260" stroke="currentColor" stroke-width="1.4"></line>
+        <polyline points="1200,260 1200,270 1192,278 1208,290 1192,302 1208,314 1192,324 1200,332 1200,340" fill="none" stroke="currentColor" stroke-width="1.4"></polyline>
+        <text x="1216" y="302" class="svg-label" font-size="10" fill="currentColor">220&Omega;</text>
+        <circle cx="1200" cy="340" r="3" fill="currentColor"></circle>
+        <polyline points="1200,340 1200,360 1191,370 1209,384 1191,398 1209,412 1191,426 1209,440 1191,454 1209,468 1200,480 1200,560" fill="none" stroke="currentColor" stroke-width="1.4"></polyline>
+        <text x="1216" y="410" class="svg-label" font-size="10" fill="currentColor">10&nbsp;k&Omega;</text>
+        <line x1="1200" y1="340" x2="1260" y2="340" stroke="currentColor" stroke-width="1.4"></line>
+        <text x="1252" y="354" text-anchor="end" class="svg-label" font-size="9.5" fill="currentColor">G</text>
+        <rect x="1260" y="295" width="80" height="90" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"></rect>
+        <text x="1300" y="344" text-anchor="middle" class="svg-label" font-size="9.5" fill="currentColor">IRLB8721</text>
+        <line x1="1300" y1="295" x2="1300" y2="260" stroke="currentColor" stroke-width="1.4"></line>
+        <text x="1306" y="278" class="svg-label" font-size="9.5" fill="currentColor">D</text>
+        <line x1="1300" y1="260" x2="1400" y2="260" stroke="currentColor" stroke-width="1.6"></line>
+        <text x="1350" y="251" text-anchor="middle" class="svg-label" font-size="9.5" font-weight="600" fill="currentColor">fil B (bleu)</text>
+        <line x1="1300" y1="385" x2="1300" y2="560" stroke="currentColor" stroke-width="1.4"></line>
+        <text x="1306" y="402" class="svg-label" font-size="9.5" fill="currentColor">S</text>
+
+        <!-- ================= Strip connector ================= -->
+        <rect x="1400" y="120" width="140" height="280" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"></rect>
+        <text x="1470" y="108" text-anchor="middle" class="svg-label" font-size="12" font-weight="600" fill="currentColor">Bandeau LED</text>
+        <circle cx="1470" cy="125" r="2.8" fill="var(--accent)"></circle>
+        <text x="1478" y="138" class="svg-label" font-size="10" fill="var(--accent)">V+</text>
+        <circle cx="1400" cy="170" r="2.8" fill="currentColor"></circle>
+        <text x="1412" y="174" class="svg-label" font-size="10" fill="currentColor">R</text>
+        <circle cx="1400" cy="215" r="2.8" fill="currentColor"></circle>
+        <text x="1412" y="219" class="svg-label" font-size="10" fill="currentColor">V</text>
+        <circle cx="1400" cy="260" r="2.8" fill="currentColor"></circle>
+        <text x="1412" y="264" class="svg-label" font-size="10" fill="currentColor">B</text>
+
+        <!-- ================= common ground rail ================= -->
+        <line x1="20" y1="560" x2="1540" y2="560" stroke="var(--accent)" stroke-width="3"></line>
+        <circle cx="170" cy="560" r="3.5" fill="var(--accent)"></circle>
+        <circle cx="600" cy="560" r="3.5" fill="var(--accent)"></circle>
+        <circle cx="620" cy="560" r="3.5" fill="var(--accent)"></circle>
+        <circle cx="700" cy="560" r="3.5" fill="var(--accent)"></circle>
+        <circle cx="800" cy="560" r="3.5" fill="var(--accent)"></circle>
+        <circle cx="950" cy="560" r="3.5" fill="var(--accent)"></circle>
+        <circle cx="1050" cy="560" r="3.5" fill="var(--accent)"></circle>
+        <circle cx="1200" cy="560" r="3.5" fill="var(--accent)"></circle>
+        <circle cx="1300" cy="560" r="3.5" fill="var(--accent)"></circle>
+        <text x="800" y="592" text-anchor="middle" class="svg-label" font-size="14" font-weight="600" letter-spacing="0.04em" fill="var(--accent)">MASSE COMMUNE</text>
+      </svg>
+    </div>
+    <figcaption>
+      Entr&eacute;e 12V &rarr; polyfuse (en attente) &rarr; se s&eacute;pare en <strong>V+ direct au bandeau</strong>
+      et <strong>entr&eacute;e du MP1584EN</strong>. Sa sortie 5V passe par les deux condensateurs de
+      d&eacute;couplage avant les pins <code>5V</code>/<code>GND</code> de l'ESP32. Les trois canaux
+      GPIO18/19/20 &rarr; 220&Omega; &rarr; Gate (pull-down 10&nbsp;k&Omega;) &rarr; MOSFET &rarr; Drain sur
+      le fil R/V/B, Source sur la masse commune &mdash; identique au c&acirc;blage breadboard d&eacute;j&agrave;
+      valid&eacute;. Rep&egrave;re Gate/Drain/Source du bo&icirc;tier IRLB8721&nbsp;: voir le
+      <a href="cablage-canal-rouge.html">sch&eacute;ma du canal Rouge</a>. Les fils qui se croisent sans point
+      de jonction ne sont <strong>pas</strong> reli&eacute;s entre eux.
+    </figcaption>
+  </figure>
+
+  <section class="block">
+    <h2>Ordre de soudure recommand&eacute;</h2>
+    <ol class="protocol">
+      <li>Souder d'abord la <strong>masse commune</strong> (piste ou fil reliant tous les points GND) — c'est
+        le squelette du montage, tout le reste s'y raccroche.</li>
+      <li>Souder <strong>un canal &agrave; la fois</strong> (r&eacute;sistances, MOSFET), en revalidant sa
+        continuit&eacute; Gate/Drain-Source au multim&egrave;tre avant de passer au suivant — plus facile
+        d'isoler un mauvais point de soudure sur un seul canal que sur les trois &agrave; la fois.</li>
+      <li>Souder le MP1584EN et les deux condensateurs de d&eacute;couplage. <strong>V&eacute;rifier le sens du
+        condensateur &eacute;lectrolytique avant de souder</strong> — contrairement &agrave; la breadboard,
+        une erreur de polarit&eacute; n'est plus juste d&eacute;branchable en un geste.</li>
+      <li>Souder l'entr&eacute;e 12V (bornier) et la branche <strong>V+ direct au bandeau</strong>. Laisser
+        l'emplacement du polyfuse accessible pour l'ajouter d&egrave;s r&eacute;ception — ne pas relier les
+        deux extr&eacute;mit&eacute;s en direct de fa&ccedil;on permanente.</li>
+      <li>Continuit&eacute; g&eacute;n&eacute;rale au multim&egrave;tre (V+/GND, pas de court-circuit) avant
+        toute mise sous tension.</li>
+      <li>Remettre sous tension et revalider les m&ecirc;mes jalons que sur breadboard&nbsp;: connexion WiFi,
+        chaque canal isol&eacute;, blanc plein, temp&eacute;rature des MOSFET.</li>
+    </ol>
+  </section>
+
+  <div class="note">
+    <span class="label">Fusible non install&eacute;</span>
+    <span>
+      Le polyfuse n'est pas encore re&ccedil;u — le +12V reste temporairement non prot&eacute;g&eacute; contre
+      un court-circuit franc pendant cette phase. Rien n'emp&ecirc;che de souder le reste et de faire les tests
+      de validation, mais &eacute;viter de laisser le montage sous tension sans surveillance avant que le
+      fusible soit en place.
+    </span>
+  </div>
+</main>
