@@ -334,7 +334,9 @@ bloque pas le reste du montage définitif : il se câble en série sur le
 Reste à faire pour le montage permanent — voir
 [`cablage-perfboard.html`](cablage-perfboard.html) pour le schéma de
 câblage consolidé (les 3 canaux + buck converter + découplage, en un seul
-diagramme) et l'ordre de soudure recommandé :
+diagramme) et l'ordre de soudure recommandé, et
+[`technique-perfboard.html`](technique-perfboard.html) pour la technique
+de soudure elle-même sur perfboard à trous isolés (première fois) :
 
 - Ressouder le circuit MOSFET sur perfboard.
 - Isoler les jonctions 12V/GND à la gaine thermorétractable.

@@ -312,7 +312,9 @@ it wires in series on +12V and can be added at any point.
 Remaining for the permanent build — see
 [`cablage-perfboard.html`](cablage-perfboard.html) for the consolidated
 wiring reference (all 3 channels + buck converter + decoupling, in one
-diagram) and the recommended soldering order:
+diagram) and the recommended soldering order, and
+[`technique-perfboard.html`](technique-perfboard.html) for the actual
+soldering technique on isolated-pad perfboard (first time doing this):
 
 - Re-solder the MOSFET circuit onto perfboard.
 - Heat-shrink the 12V/GND joints.

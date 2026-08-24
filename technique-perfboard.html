@@ -1,0 +1,455 @@
+<title>Souder sur perfboard : la technique</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --bg: #eef2f2;
+    --surface: #ffffff;
+    --ink: #1b2a2e;
+    --ink-soft: #33474b;
+    --muted: #64787b;
+    --muted-2: #93a3a5;
+    --accent: #b8641c;
+    --accent-soft: #b8641c1f;
+    --rule: #ccd8d8;
+    --rule-strong: #a9bcbc;
+    --solder: #8a95a0;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #10191b;
+      --surface: #16221f;
+      --ink: #e4ede9;
+      --ink-soft: #c2d1cd;
+      --muted: #8ea1a0;
+      --muted-2: #5c7371;
+      --accent: #e08a3c;
+      --accent-soft: #e08a3c26;
+      --rule: #2a3936;
+      --rule-strong: #3c4f4b;
+      --solder: #aab4bd;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #10191b;
+    --surface: #16221f;
+    --ink: #e4ede9;
+    --ink-soft: #c2d1cd;
+    --muted: #8ea1a0;
+    --muted-2: #5c7371;
+    --accent: #e08a3c;
+    --accent-soft: #e08a3c26;
+    --rule: #2a3936;
+    --rule-strong: #3c4f4b;
+    --solder: #aab4bd;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    margin: 0;
+    padding: 48px 24px 80px;
+  }
+
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  h1 {
+    font-family: "IBM Plex Sans Condensed", "IBM Plex Sans", sans-serif;
+    font-weight: 700;
+    font-size: clamp(28px, 4vw, 38px);
+    line-height: 1.1;
+    margin: 0;
+    text-wrap: balance;
+    color: var(--ink);
+  }
+
+  .intro {
+    max-width: 74ch;
+    color: var(--ink-soft);
+    font-size: 16px;
+  }
+
+  .intro code, section.block code {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.9em;
+    background: var(--accent-soft);
+    color: var(--accent);
+    padding: 0.05em 0.35em;
+    border-radius: 4px;
+  }
+
+  .intro a { color: var(--accent); }
+
+  figure {
+    margin: 0;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 20px clamp(12px, 3vw, 28px) 22px;
+  }
+
+  .diagram-wrap { overflow-x: auto; }
+
+  svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    color: var(--ink);
+  }
+
+  svg.closeup { min-width: 760px; }
+  svg.board { min-width: 1180px; }
+
+  figcaption {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--rule);
+    font-size: 14px;
+    color: var(--muted);
+    max-width: 90ch;
+  }
+
+  h2 {
+    font-family: "IBM Plex Sans Condensed", "IBM Plex Sans", sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    margin: 0 0 12px;
+    color: var(--ink);
+  }
+
+  section.block {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 20px clamp(16px, 3vw, 28px);
+  }
+
+  section.block p { max-width: 78ch; color: var(--ink-soft); margin: 0 0 12px; }
+  section.block p:last-child { margin-bottom: 0; }
+  section.block strong { color: var(--ink); font-weight: 600; }
+
+  ol.protocol {
+    margin: 0;
+    padding-left: 1.3em;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  ol.protocol li { color: var(--ink-soft); }
+  ol.protocol strong { color: var(--ink); font-weight: 600; }
+
+  ul.pitfalls {
+    margin: 0;
+    padding-left: 1.3em;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  ul.pitfalls li { color: var(--ink-soft); }
+  ul.pitfalls strong { color: var(--ink); font-weight: 600; }
+
+  .note {
+    display: flex;
+    gap: 14px;
+    background: var(--accent-soft);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 14.5px;
+    color: var(--ink-soft);
+  }
+
+  .note .label {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    white-space: nowrap;
+    padding-top: 2px;
+  }
+
+  .svg-label { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+</style>
+
+<main>
+  <div>
+    <div class="eyebrow">Bandeau LED &middot; montage d&eacute;finitif</div>
+    <h1>Souder sur perfboard : la technique</h1>
+  </div>
+
+  <p class="intro">
+    Ta plaque est du perfboard &agrave; <strong>trous isol&eacute;s</strong>&nbsp;: chaque trou porte sa
+    propre pastille de cuivre, ind&eacute;pendante de ses voisines (contrairement au stripboard, o&ugrave; des
+    bandes de cuivre relient des lignes enti&egrave;res de trous). &Ccedil;a veut dire que
+    <strong>chaque connexion qui n'est pas directement une patte de composant doit &ecirc;tre faite avec un
+    fil</strong>, soud&eacute; d'une pastille &agrave; l'autre c&ocirc;t&eacute; cuivre. C'est cette technique
+    qu'on regarde ici, avant de passer au c&acirc;blage complet du
+    <a href="cablage-perfboard.html">sch&eacute;ma &eacute;lectrique</a>. La disposition ci-dessous est une
+    <strong>proposition illustrative</strong> &agrave; adapter &agrave; la taille r&eacute;elle de ta plaque
+    &mdash; c'est le sch&eacute;ma &eacute;lectrique qui fait foi pour chaque connexion, pas le placement exact
+    des trous ici.
+  </p>
+
+  <section class="block">
+    <h2>Le principe : dessus / dessous</h2>
+    <p>
+      On ins&egrave;re les composants par le <strong>dessus</strong> (c&ocirc;t&eacute; sans cuivre, c'est
+      l&agrave; qu'on lit les valeurs et qu'on place tout visuellement), leurs pattes ressortent par le
+      <strong>dessous</strong> (c&ocirc;t&eacute; cuivre) &mdash; c'est l&agrave; qu'on soude, et l&agrave; qu'on
+      ajoute les fils de liaison entre pastilles. Une fois la plaque retourn&eacute;e pour souder, la
+      disposition est vue en miroir (gauche/droite invers&eacute;es) par rapport &agrave; ce qu'on voit depuis
+      le dessus &mdash; c'est d&eacute;stabilisant au d&eacute;but, on s'y fait vite.
+    </p>
+  </section>
+
+  <figure>
+    <div class="diagram-wrap">
+      <svg class="closeup" viewBox="0 0 900 400" role="img" aria-label="Deux vues d'une r&eacute;sistance mont&eacute;e sur perfboard. Vue de dessus&nbsp;: la r&eacute;sistance repose sur la plaque, ses deux pattes travers&eacute;s deux trous adjacents. Vue de dessous&nbsp;: les deux pattes sont pli&eacute;es le long de la pastille de cuivre et soud&eacute;es en forme de c&ocirc;ne brillant ; un fil de liaison suppl&eacute;mentaire est soud&eacute; sur l'une des deux pastilles pour rejoindre un autre point du circuit.">
+        <!-- LEFT: top view -->
+        <text x="220" y="30" text-anchor="middle" class="svg-label" font-size="13" font-weight="600" fill="currentColor">Vue de dessus (c&ocirc;t&eacute; composants)</text>
+        <rect x="60" y="50" width="320" height="200" rx="6" fill="var(--surface)" stroke="var(--rule-strong)" stroke-width="1.6"></rect>
+        <circle cx="130" cy="90" r="3" fill="var(--muted-2)"></circle>
+        <circle cx="190" cy="90" r="3" fill="var(--muted-2)"></circle>
+        <circle cx="250" cy="90" r="3" fill="var(--muted-2)"></circle>
+        <circle cx="310" cy="90" r="3" fill="var(--muted-2)"></circle>
+        <circle cx="130" cy="150" r="3" fill="var(--muted-2)"></circle>
+        <circle cx="190" cy="150" r="3.5" fill="currentColor"></circle>
+        <circle cx="250" cy="150" r="3.5" fill="currentColor"></circle>
+        <circle cx="310" cy="150" r="3" fill="var(--muted-2)"></circle>
+        <circle cx="130" cy="210" r="3" fill="var(--muted-2)"></circle>
+        <circle cx="190" cy="210" r="3" fill="var(--muted-2)"></circle>
+        <circle cx="250" cy="210" r="3" fill="var(--muted-2)"></circle>
+        <circle cx="310" cy="210" r="3" fill="var(--muted-2)"></circle>
+        <rect x="175" y="135" width="90" height="30" rx="15" fill="none" stroke="currentColor" stroke-width="2"></rect>
+        <line x1="220" y1="135" x2="220" y2="165" stroke="var(--accent)" stroke-width="2"></line>
+        <line x1="190" y1="150" x2="190" y2="115" stroke="currentColor" stroke-width="1.6"></line>
+        <line x1="190" y1="115" x2="205" y2="105" stroke="currentColor" stroke-width="1.6"></line>
+        <line x1="250" y1="150" x2="250" y2="115" stroke="currentColor" stroke-width="1.6"></line>
+        <line x1="250" y1="115" x2="235" y2="105" stroke="currentColor" stroke-width="1.6"></line>
+        <text x="220" y="270" text-anchor="middle" class="svg-label" font-size="10.5" fill="var(--muted)">2 pattes travers&eacute;es dans 2 trous voisins,</text>
+        <text x="220" y="284" text-anchor="middle" class="svg-label" font-size="10.5" fill="var(--muted)">l&eacute;g&egrave;rement &eacute;cart&eacute;es pour tenir avant soudure</text>
+
+        <!-- RIGHT: bottom view -->
+        <text x="680" y="30" text-anchor="middle" class="svg-label" font-size="13" font-weight="600" fill="currentColor">Vue de dessous (c&ocirc;t&eacute; cuivre, apr&egrave;s soudure)</text>
+        <rect x="520" y="50" width="320" height="200" rx="6" fill="var(--surface)" stroke="var(--rule-strong)" stroke-width="1.6"></rect>
+        <circle cx="590" cy="90" r="7" fill="none" stroke="var(--muted-2)" stroke-width="1.2"></circle>
+        <circle cx="650" cy="90" r="7" fill="none" stroke="var(--muted-2)" stroke-width="1.2"></circle>
+        <circle cx="710" cy="90" r="7" fill="none" stroke="var(--muted-2)" stroke-width="1.2"></circle>
+        <circle cx="770" cy="90" r="7" fill="none" stroke="var(--muted-2)" stroke-width="1.2"></circle>
+        <circle cx="590" cy="150" r="7" fill="none" stroke="var(--muted-2)" stroke-width="1.2"></circle>
+        <circle cx="650" cy="150" r="9" fill="var(--solder)"></circle>
+        <circle cx="710" cy="150" r="9" fill="var(--solder)"></circle>
+        <circle cx="770" cy="150" r="7" fill="none" stroke="var(--muted-2)" stroke-width="1.2"></circle>
+        <circle cx="590" cy="210" r="7" fill="none" stroke="var(--muted-2)" stroke-width="1.2"></circle>
+        <circle cx="650" cy="210" r="7" fill="none" stroke="var(--muted-2)" stroke-width="1.2"></circle>
+        <circle cx="710" cy="210" r="7" fill="none" stroke="var(--muted-2)" stroke-width="1.2"></circle>
+        <circle cx="770" cy="210" r="7" fill="none" stroke="var(--muted-2)" stroke-width="1.2"></circle>
+        <line x1="650" y1="150" x2="590" y2="150" stroke="var(--accent)" stroke-width="2.4"></line>
+        <text x="600" y="140" class="svg-label" font-size="9.5" fill="var(--accent)">fil de liaison &rarr; vers un autre point</text>
+        <text x="650" y="290" text-anchor="middle" class="svg-label" font-size="10.5" fill="var(--muted)">soudure en c&ocirc;ne, brillante = bon joint</text>
+        <text x="650" y="304" text-anchor="middle" class="svg-label" font-size="10.5" fill="var(--muted)">terne / grumeleuse / bombée = &agrave; refaire</text>
+      </svg>
+    </div>
+    <figcaption>
+      Le fil de liaison (en orange) se soude directement sur la pastille, &agrave; c&ocirc;t&eacute; de la
+      patte du composant &mdash; c'est comme &ccedil;a qu'on relie deux pastilles qui ne se touchent pas
+      directement. Sur ce montage, la <strong>masse commune</strong> se fait typiquement avec un seul fil qui
+      court le long d'une rang&eacute;e enti&egrave;re, soud&eacute; &agrave; chaque pastille GND qu'il croise.
+    </figcaption>
+  </figure>
+
+  <section class="block">
+    <h2>&Eacute;tapes pour une soudure</h2>
+    <ol class="protocol">
+      <li>Ins&eacute;rer le composant par le dessus, <strong>&eacute;carter l&eacute;g&egrave;rement les pattes</strong>
+        c&ocirc;t&eacute; cuivre pour qu'il tienne tout seul sans les mains avant de souder.</li>
+      <li>Chauffer <strong>ensemble</strong> la pastille et la patte avec la panne du fer (pas le fil de
+        soudure directement) pendant 1-2 secondes.</li>
+      <li>Appliquer le fil &agrave; souder sur le point chaud (pastille + patte), <strong>pas sur la panne</strong>
+        &mdash; il doit fondre au contact de la jonction, pas du fer.</li>
+      <li>Retirer le fil &agrave; souder, puis le fer, dans cet ordre. Laisser refroidir sans bouger la
+        patte quelques secondes.</li>
+      <li>Couper l'exc&eacute;dent de patte au ras de la soudure.</li>
+      <li>V&eacute;rifier au multim&egrave;tre (continuit&eacute; sur le joint, pas de court-circuit avec les
+        pastilles voisines) avant de passer au suivant.</li>
+    </ol>
+  </section>
+
+  <figure>
+    <div class="diagram-wrap">
+      <svg class="board" viewBox="0 0 1200 700" role="img" aria-label="Disposition illustrative du montage complet sur une plaque perfboard, vue de dessus&nbsp;: de gauche &agrave; droite, le bornier d'entr&eacute;e 12V, l'emplacement r&eacute;serv&eacute; pour le polyfuse, le module MP1584EN, les deux condensateurs de d&eacute;couplage, une rang&eacute;e de connecteurs f&eacute;males pour brancher l'ESP32-C6-DevKitC-1 de mani&egrave;re amovible, puis les trois canaux R, V et B (r&eacute;sistance et MOSFET IRLB8721), et enfin le bornier de sortie vers le bandeau. Un fil de masse commune court le long du bas de la plaque, c&ocirc;t&eacute; soudure.">
+        <defs>
+          <pattern id="holes" width="30" height="30" patternUnits="userSpaceOnUse">
+            <circle cx="15" cy="15" r="2.4" fill="var(--muted-2)" opacity="0.6"></circle>
+          </pattern>
+        </defs>
+        <rect x="30" y="30" width="1140" height="600" rx="6" fill="var(--surface)" stroke="var(--rule-strong)" stroke-width="1.8"></rect>
+        <rect x="30" y="30" width="1140" height="600" fill="url(#holes)"></rect>
+
+        <!-- input terminal -->
+        <rect x="55" y="230" width="90" height="150" rx="4" fill="var(--bg)" stroke="currentColor" stroke-width="1.6"></rect>
+        <text x="100" y="215" text-anchor="middle" class="svg-label" font-size="10.5" font-weight="600" fill="currentColor">Bornier 12V</text>
+        <circle cx="100" cy="270" r="6" fill="none" stroke="currentColor" stroke-width="1.6"></circle>
+        <text x="100" y="274" text-anchor="middle" class="svg-label" font-size="8" fill="currentColor">+</text>
+        <circle cx="100" cy="330" r="6" fill="none" stroke="currentColor" stroke-width="1.6"></circle>
+        <text x="100" y="334" text-anchor="middle" class="svg-label" font-size="8" fill="currentColor">&minus;</text>
+
+        <!-- fuse spot -->
+        <rect x="175" y="270" width="60" height="18" rx="3" fill="none" stroke="var(--muted-2)" stroke-width="1.4" stroke-dasharray="4 3"></rect>
+        <text x="205" y="305" text-anchor="middle" class="svg-label" font-size="9" fill="var(--muted)">polyfuse</text>
+        <text x="205" y="317" text-anchor="middle" class="svg-label" font-size="8" fill="var(--muted)">(&agrave; venir)</text>
+
+        <!-- MP1584EN -->
+        <rect x="270" y="235" width="130" height="90" rx="4" fill="var(--bg)" stroke="currentColor" stroke-width="1.6"></rect>
+        <text x="335" y="270" text-anchor="middle" class="svg-label" font-size="10.5" font-weight="600" fill="currentColor">MP1584EN</text>
+        <text x="335" y="284" text-anchor="middle" class="svg-label" font-size="8.5" fill="var(--muted)">module, 4 fils vers</text>
+        <text x="335" y="296" text-anchor="middle" class="svg-label" font-size="8.5" fill="var(--muted)">4 pastilles perfboard</text>
+        <circle cx="270" cy="250" r="3" fill="currentColor"></circle>
+        <circle cx="270" cy="310" r="3" fill="currentColor"></circle>
+        <circle cx="400" cy="250" r="3" fill="currentColor"></circle>
+        <circle cx="400" cy="310" r="3" fill="currentColor"></circle>
+
+        <!-- decoupling caps -->
+        <circle cx="440" cy="260" r="14" fill="var(--bg)" stroke="currentColor" stroke-width="1.6"></circle>
+        <text x="440" y="264" text-anchor="middle" class="svg-label" font-size="8" fill="currentColor">+</text>
+        <text x="440" y="295" text-anchor="middle" class="svg-label" font-size="8.5" fill="var(--muted)">470&micro;F</text>
+        <rect x="465" y="248" width="22" height="12" rx="3" fill="var(--bg)" stroke="currentColor" stroke-width="1.6"></rect>
+        <text x="476" y="278" text-anchor="middle" class="svg-label" font-size="8.5" fill="var(--muted)">100nF</text>
+
+        <!-- ESP32 header -->
+        <rect x="520" y="90" width="260" height="70" rx="4" fill="var(--bg)" stroke="currentColor" stroke-width="1.6" stroke-dasharray="6 3"></rect>
+        <text x="650" y="115" text-anchor="middle" class="svg-label" font-size="10.5" font-weight="600" fill="currentColor">Barrettes f&eacute;melles</text>
+        <text x="650" y="129" text-anchor="middle" class="svg-label" font-size="8.5" fill="var(--muted)">ESP32-C6-DevKitC-1 enfich&eacute;e</text>
+        <text x="650" y="143" text-anchor="middle" class="svg-label" font-size="8.5" fill="var(--muted)">(amovible, USB accessible)</text>
+
+        <!-- ground bus -->
+        <line x1="55" y1="600" x2="1130" y2="600" stroke="var(--accent)" stroke-width="3"></line>
+        <text x="600" y="622" text-anchor="middle" class="svg-label" font-size="11" font-weight="600" letter-spacing="0.03em" fill="var(--accent)">FIL DE MASSE COMMUNE (c&ocirc;t&eacute; soudure, dessous)</text>
+
+        <!-- Channel R -->
+        <g>
+          <rect x="560" y="330" width="16" height="40" fill="none" stroke="currentColor" stroke-width="1.4"></rect>
+          <text x="568" y="385" text-anchor="middle" class="svg-label" font-size="8.5" fill="currentColor">220&Omega;</text>
+          <rect x="600" y="325" width="50" height="65" rx="4" fill="var(--bg)" stroke="currentColor" stroke-width="1.6"></rect>
+          <circle cx="612" cy="400" r="3" fill="currentColor"></circle>
+          <circle cx="625" cy="400" r="3" fill="currentColor"></circle>
+          <circle cx="638" cy="400" r="3" fill="currentColor"></circle>
+          <text x="612" y="414" text-anchor="middle" class="svg-label" font-size="7.5" fill="var(--muted)">G</text>
+          <text x="625" y="414" text-anchor="middle" class="svg-label" font-size="7.5" fill="var(--muted)">D</text>
+          <text x="638" y="414" text-anchor="middle" class="svg-label" font-size="7.5" fill="var(--muted)">S</text>
+          <text x="625" y="358" text-anchor="middle" class="svg-label" font-size="9" fill="currentColor">IRLB8721</text>
+          <text x="605" y="304" text-anchor="middle" class="svg-label" font-size="9.5" font-weight="600" fill="currentColor">R</text>
+          <line x1="638" y1="403" x2="638" y2="600" stroke="var(--accent)" stroke-width="1.6"></line>
+        </g>
+
+        <!-- Channel G -->
+        <g>
+          <rect x="700" y="330" width="16" height="40" fill="none" stroke="currentColor" stroke-width="1.4"></rect>
+          <text x="708" y="385" text-anchor="middle" class="svg-label" font-size="8.5" fill="currentColor">220&Omega;</text>
+          <rect x="740" y="325" width="50" height="65" rx="4" fill="var(--bg)" stroke="currentColor" stroke-width="1.6"></rect>
+          <circle cx="752" cy="400" r="3" fill="currentColor"></circle>
+          <circle cx="765" cy="400" r="3" fill="currentColor"></circle>
+          <circle cx="778" cy="400" r="3" fill="currentColor"></circle>
+          <text x="752" y="414" text-anchor="middle" class="svg-label" font-size="7.5" fill="var(--muted)">G</text>
+          <text x="765" y="414" text-anchor="middle" class="svg-label" font-size="7.5" fill="var(--muted)">D</text>
+          <text x="778" y="414" text-anchor="middle" class="svg-label" font-size="7.5" fill="var(--muted)">S</text>
+          <text x="765" y="358" text-anchor="middle" class="svg-label" font-size="9" fill="currentColor">IRLB8721</text>
+          <text x="745" y="304" text-anchor="middle" class="svg-label" font-size="9.5" font-weight="600" fill="currentColor">V</text>
+          <line x1="778" y1="403" x2="778" y2="600" stroke="var(--accent)" stroke-width="1.6"></line>
+        </g>
+
+        <!-- Channel B -->
+        <g>
+          <rect x="840" y="330" width="16" height="40" fill="none" stroke="currentColor" stroke-width="1.4"></rect>
+          <text x="848" y="385" text-anchor="middle" class="svg-label" font-size="8.5" fill="currentColor">220&Omega;</text>
+          <rect x="880" y="325" width="50" height="65" rx="4" fill="var(--bg)" stroke="currentColor" stroke-width="1.6"></rect>
+          <circle cx="892" cy="400" r="3" fill="currentColor"></circle>
+          <circle cx="905" cy="400" r="3" fill="currentColor"></circle>
+          <circle cx="918" cy="400" r="3" fill="currentColor"></circle>
+          <text x="892" y="414" text-anchor="middle" class="svg-label" font-size="7.5" fill="var(--muted)">G</text>
+          <text x="905" y="414" text-anchor="middle" class="svg-label" font-size="7.5" fill="var(--muted)">D</text>
+          <text x="918" y="414" text-anchor="middle" class="svg-label" font-size="7.5" fill="var(--muted)">S</text>
+          <text x="905" y="358" text-anchor="middle" class="svg-label" font-size="9" fill="currentColor">IRLB8721</text>
+          <text x="885" y="304" text-anchor="middle" class="svg-label" font-size="9.5" font-weight="600" fill="currentColor">B</text>
+          <line x1="918" y1="403" x2="918" y2="600" stroke="var(--accent)" stroke-width="1.6"></line>
+        </g>
+
+        <text x="765" y="440" text-anchor="middle" class="svg-label" font-size="9" fill="var(--muted)">10k&Omega; pull-down de chaque Gate vers la masse &mdash; non trac&eacute; ici, voir le sch&eacute;ma &eacute;lectrique</text>
+
+        <!-- output terminal -->
+        <rect x="1005" y="220" width="90" height="170" rx="4" fill="var(--bg)" stroke="currentColor" stroke-width="1.6"></rect>
+        <text x="1050" y="205" text-anchor="middle" class="svg-label" font-size="10.5" font-weight="600" fill="currentColor">Vers le bandeau</text>
+        <circle cx="1050" cy="250" r="5" fill="none" stroke="currentColor" stroke-width="1.4"></circle>
+        <text x="1065" y="254" class="svg-label" font-size="9" fill="currentColor">V+</text>
+        <circle cx="1050" cy="285" r="5" fill="none" stroke="currentColor" stroke-width="1.4"></circle>
+        <text x="1065" y="289" class="svg-label" font-size="9" fill="currentColor">R</text>
+        <circle cx="1050" cy="320" r="5" fill="none" stroke="currentColor" stroke-width="1.4"></circle>
+        <text x="1065" y="324" class="svg-label" font-size="9" fill="currentColor">V</text>
+        <circle cx="1050" cy="355" r="5" fill="none" stroke="currentColor" stroke-width="1.4"></circle>
+        <text x="1065" y="359" class="svg-label" font-size="9" fill="currentColor">B</text>
+      </svg>
+    </div>
+    <figcaption>
+      Disposition illustrative, &agrave; adapter &agrave; la taille r&eacute;elle de ta plaque &mdash; l'important
+      c'est l'organisation en zones (entr&eacute;e &agrave; gauche, sortie &agrave; droite, un fil de masse
+      commun qui court en bas) plut&ocirc;t que la position exacte de chaque trou. Pour la liste compl&egrave;te
+      des connexions (r&eacute;sistances de pull-down, fils signal entre chaque MOSFET et l'ESP32, etc.),
+      r&eacute;f&eacute;rence-toi au <a href="cablage-perfboard.html">sch&eacute;ma &eacute;lectrique</a>.
+    </figcaption>
+  </figure>
+
+  <section class="block">
+    <h2>Pi&egrave;ges classiques du d&eacute;butant</h2>
+    <ul class="pitfalls">
+      <li><strong>Joint froid</strong> (terne, granuleux) &mdash; le fer n'a pas assez chauff&eacute; la
+        pastille avant d'appliquer la soudure. &Ccedil;a a l'air soud&eacute; mais la connexion est
+        instable. Solution&nbsp;: refaire en chauffant 1-2 secondes de plus avant d'appliquer le fil.</li>
+      <li><strong>Pont de soudure</strong> entre deux pastilles voisines &mdash; trop de soudure qui coule
+        sur le c&ocirc;t&eacute;. &Agrave; v&eacute;rifier syst&eacute;matiquement au multim&egrave;tre
+        (continuit&eacute; entre pastilles cens&eacute;es &ecirc;tre isol&eacute;es).</li>
+      <li><strong>Fer laiss&eacute; trop longtemps</strong> &mdash; risque de d&eacute;coller la pastille de
+        cuivre de la plaque, ou de cuire un composant sensible &agrave; proximit&eacute; (les MOSFET
+        supportent bien la chaleur de soudure br&egrave;ve, mais pas une exposition prolong&eacute;e).</li>
+      <li><strong>Panne non &eacute;tam&eacute;e</strong> &mdash; un fer propre et l&eacute;g&egrave;rement
+        recouvert d'une fine couche de soudure transmet bien mieux la chaleur qu'une panne oxyd&eacute;e ou
+        sale.</li>
+      <li><strong>Tout souder d'un coup</strong> &mdash; mieux vaut suivre l'ordre du
+        <a href="cablage-perfboard.html">sch&eacute;ma &eacute;lectrique</a> (masse d'abord, un canal &agrave;
+        la fois) et v&eacute;rifier au fur et &agrave; mesure, plut&ocirc;t que de tout souder puis chercher
+        un d&eacute;faut dans 40 joints d'un coup.</li>
+    </ul>
+  </section>
+
+  <div class="note">
+    <span class="label">Avant le premier essai</span>
+    <span>
+      Entra&icirc;ne-toi sur une chute de perfboard avec un composant qui ne sert pas (une r&eacute;sistance
+      quelconque) avant d'attaquer le vrai montage &mdash; le geste (chauffer pastille+patte, appliquer la
+      soudure sur le point chaud, retirer soudure puis fer) se sent mieux en pratique qu'en lisant.
+    </span>
+  </div>
+</main>
