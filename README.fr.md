@@ -37,7 +37,7 @@ sans scintillement depuis le tableau de bord.
       [Flash & premier démarrage](#flash--premier-démarrage)
 - [x] Intégration Home Assistant — voir
       [Intégration Home Assistant](#intégration-home-assistant)
-- [ ] Tester sur banc la prise jack et le convertisseur buck (MP1584EN)
+- [x] Tester sur banc la prise jack et le convertisseur buck (MP1584EN)
       sur l'alimentation 12V réelle du bandeau, indépendamment du montage
       définitif — voir [Montage définitif](#montage-définitif)
 - [ ] Montage définitif (perfboard, réglage du buck, boîtier) — voir
@@ -277,23 +277,26 @@ nécessaire.
 
 ## Montage définitif
 
-*(À venir — une fois le prototype breadboard validé.)*
+*(Chaîne d'alimentation testée sur banc ; le reste reste à venir une fois
+le prototype breadboard complet validé.)*
 
-Avant de souder quoi que ce soit, tester la chaîne d'alimentation seule sur
-breadboard, sur le même principe que la validation de chaque MOSFET
-isolément avant de le câbler dans le circuit lumière :
+Avant de souder quoi que ce soit, la chaîne d'alimentation a été testée
+seule sur breadboard, sur le même principe que la validation de chaque
+MOSFET isolément avant de le câbler dans le circuit lumière — voir
+[`test-buck-converter.html`](test-buck-converter.html) pour le câblage :
 
-- Brancher l'adaptateur jack DC → bornier à vis sur l'alimentation 12V
-  réelle du bandeau (en dérivation, sans couper le câble d'origine) et
-  vérifier au multimètre qu'on lit bien ~12V entre + et GND.
-- Câbler cette dérivation sur l'entrée du MP1584EN, régler son
-  potentiomètre, et vérifier la sortie au multimètre **à vide** jusqu'à
-  lire un 5,0V propre — avant de brancher l'ESP32, une sortie non réglée
-  pourrait sinon envoyer du 12V directement sur la carte.
-- Une fois la sortie du buck confirmée à 5V, alimenter l'ESP32 depuis
-  celle-ci sur la breadboard (pas encore soudé) pour vérifier qu'il boot
-  et se reconnecte normalement au WiFi, avant de passer au montage
-  permanent ci-dessous.
+- [x] Brancher l'adaptateur jack DC → bornier à vis sur l'alimentation 12V
+  réelle du bandeau (en dérivation, sans couper le câble d'origine) —
+  ~12V confirmés au multimètre entre + et GND.
+- [x] Câbler cette dérivation sur l'entrée du MP1584EN et régler son
+  potentiomètre — 5,0V stables confirmés en sortie au multimètre, à vide,
+  avant de brancher l'ESP32.
+- [x] Alimenter l'ESP32 depuis la sortie du buck (pin `5V` du connecteur
+  J1, même rail que le `5V` USB), câble USB débranché pour éviter de
+  relier deux sources 5V entre elles — boot et reconnexion WiFi confirmés
+  normaux.
+
+Reste à faire pour le montage permanent :
 
 - Ressouder le circuit MOSFET sur perfboard.
 - Isoler les jonctions 12V/GND à la gaine thermorétractable.

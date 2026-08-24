@@ -37,7 +37,7 @@ flicker-free from the dashboard.
       [Flashing & first run](#flashing--first-run)
 - [x] Home Assistant integration — see
       [Home Assistant integration](#home-assistant-integration)
-- [ ] Bench-test the DC jack tap and buck converter (MP1584EN) on the
+- [x] Bench-test the DC jack tap and buck converter (MP1584EN) on the
       strip's real 12V supply, independent of final assembly — see
       [Final assembly](#final-assembly)
 - [ ] Final assembly (perfboard, buck converter setup, enclosure) — see
@@ -260,22 +260,26 @@ flicker — no `ledc` PWM frequency adjustment needed.
 
 ## Final assembly
 
-*(Future — after the breadboard prototype is validated.)*
+*(Power path bench-tested; the rest is future work once the breadboard
+prototype as a whole is validated.)*
 
-Before soldering anything down, bench-test the power path on its own,
-breadboard-style, the same way each MOSFET was validated in isolation
-before being wired into the light circuit:
+Before soldering anything down, the power path was bench-tested on its
+own, breadboard-style, the same way each MOSFET was validated in
+isolation before being wired into the light circuit — see
+[`test-buck-converter.html`](test-buck-converter.html) for the wiring:
 
-- Fit the DC jack → screw terminal adapter onto the strip's real 12V
-  supply (tapping it, not cutting the original cable) and check with a
-  multimeter that it reads ~12V between + and GND.
-- Wire that tap into the MP1584EN's input, adjust its trimmer, and check
-  the output with a multimeter **under no load** until it reads a clean
-  5.0V — do this before connecting the ESP32, an unset/adjustable output
-  could otherwise send 12V straight to the board.
-- Once the buck output is confirmed at 5V, power the ESP32 from it on the
-  breadboard (not yet soldered) to confirm it boots and reconnects to WiFi
-  normally, before moving on to the permanent build below.
+- [x] Fit the DC jack → screw terminal adapter onto the strip's real 12V
+  supply (tapping it, not cutting the original cable) — confirmed ~12V
+  between + and GND with a multimeter.
+- [x] Wire that tap into the MP1584EN's input and adjust its trimmer —
+  confirmed a stable 5.0V on the output with a multimeter, under no load,
+  before connecting the ESP32.
+- [x] Power the ESP32 from the buck output (`5V` pin on the J1 header,
+  same rail as USB `5V`) on the breadboard, USB cable disconnected to
+  avoid backfeeding two 5V sources into each other — confirmed it boots
+  and reconnects to WiFi normally.
+
+Remaining for the permanent build:
 
 - Re-solder the MOSFET circuit onto perfboard.
 - Heat-shrink the 12V/GND joints.
