@@ -1,0 +1,301 @@
+<title>Tester le buck converter avant l'ESP32</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --bg: #eef2f2;
+    --surface: #ffffff;
+    --ink: #1b2a2e;
+    --ink-soft: #33474b;
+    --muted: #64787b;
+    --muted-2: #93a3a5;
+    --accent: #b8641c;
+    --accent-soft: #b8641c1f;
+    --rule: #ccd8d8;
+    --rule-strong: #a9bcbc;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #10191b;
+      --surface: #16221f;
+      --ink: #e4ede9;
+      --ink-soft: #c2d1cd;
+      --muted: #8ea1a0;
+      --muted-2: #5c7371;
+      --accent: #e08a3c;
+      --accent-soft: #e08a3c26;
+      --rule: #2a3936;
+      --rule-strong: #3c4f4b;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #10191b;
+    --surface: #16221f;
+    --ink: #e4ede9;
+    --ink-soft: #c2d1cd;
+    --muted: #8ea1a0;
+    --muted-2: #5c7371;
+    --accent: #e08a3c;
+    --accent-soft: #e08a3c26;
+    --rule: #2a3936;
+    --rule-strong: #3c4f4b;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    margin: 0;
+    padding: 48px 24px 80px;
+  }
+
+  main {
+    max-width: 980px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  h1 {
+    font-family: "IBM Plex Sans Condensed", "IBM Plex Sans", sans-serif;
+    font-weight: 700;
+    font-size: clamp(28px, 4vw, 38px);
+    line-height: 1.1;
+    margin: 0;
+    text-wrap: balance;
+    color: var(--ink);
+  }
+
+  .intro {
+    max-width: 72ch;
+    color: var(--ink-soft);
+    font-size: 16px;
+  }
+
+  .intro code {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.9em;
+    background: var(--accent-soft);
+    color: var(--accent);
+    padding: 0.05em 0.35em;
+    border-radius: 4px;
+  }
+
+  figure {
+    margin: 0;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 20px clamp(12px, 3vw, 28px) 22px;
+  }
+
+  .diagram-wrap {
+    overflow-x: auto;
+  }
+
+  svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-width: 820px;
+    color: var(--ink);
+  }
+
+  figcaption {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--rule);
+    font-size: 14px;
+    color: var(--muted);
+    max-width: 80ch;
+  }
+
+  h2 {
+    font-family: "IBM Plex Sans Condensed", "IBM Plex Sans", sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    margin: 0 0 12px;
+    color: var(--ink);
+  }
+
+  section.block {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 20px clamp(16px, 3vw, 28px);
+  }
+
+  ol.protocol {
+    margin: 0;
+    padding-left: 1.3em;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  ol.protocol li { color: var(--ink-soft); }
+  ol.protocol strong { color: var(--ink); font-weight: 600; }
+
+  .note {
+    display: flex;
+    gap: 14px;
+    background: var(--accent-soft);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 14.5px;
+    color: var(--ink-soft);
+  }
+
+  .note .label {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    white-space: nowrap;
+    padding-top: 2px;
+  }
+
+  .svg-label { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+</style>
+
+<main>
+  <div>
+    <div class="eyebrow">Bandeau LED &middot; alimentation ESP32</div>
+    <h1>Tester le buck converter avant l'ESP32</h1>
+  </div>
+
+  <p class="intro">
+    La prise jack DC &rarr; bornier &agrave; vis est d&eacute;j&agrave; valid&eacute;e sur l'alimentation 12V
+    r&eacute;elle du bandeau (~12V mesur&eacute;s au multim&egrave;tre entre + et masse). &Eacute;tape suivante&nbsp;:
+    r&eacute;gler le <code>MP1584EN</code> pour qu'il sorte un 5V propre, <strong>&agrave; vide</strong>
+    (rien branch&eacute; derri&egrave;re), avant d'y connecter l'ESP32 &mdash; une sortie mal r&eacute;gl&eacute;e
+    pourrait sinon envoyer du 12V directement sur la carte.
+  </p>
+
+  <figure>
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 1000 440" role="img" aria-label="Sch&eacute;ma du test du convertisseur buck&nbsp;: l'alimentation 12V du bandeau, d&eacute;j&agrave; valid&eacute;e via la prise jack, alimente l'entr&eacute;e IN+/IN- du module MP1584EN. Un multim&egrave;tre en mode DC volt mesure la sortie OUT+/OUT- du module, qui doit afficher 5,00V apr&egrave;s r&eacute;glage du trimmer. L'ESP32 est repr&eacute;sent&eacute; en pointill&eacute;s, non connect&eacute; tant que les 5V ne sont pas confirm&eacute;s.">
+        <!-- 12V supply (validated) -->
+        <rect x="40" y="140" width="210" height="90" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"></rect>
+        <text x="145" y="172" text-anchor="middle" class="svg-label" font-size="12" font-weight="600" fill="currentColor">Alim. 12V (bandeau)</text>
+        <text x="145" y="189" text-anchor="middle" class="svg-label" font-size="9.5" fill="var(--muted)">via jack DC &rarr; bornier</text>
+        <text x="145" y="203" text-anchor="middle" class="svg-label" font-size="9.5" fill="var(--accent)">tap valid&eacute; &mdash; ~12V mesur&eacute;s</text>
+
+        <!-- wires supply -> MP1584EN IN -->
+        <line x1="250" y1="160" x2="380" y2="160" stroke="currentColor" stroke-width="1.6"></line>
+        <text x="315" y="152" text-anchor="middle" class="svg-label" font-size="10" fill="currentColor">+12V</text>
+        <line x1="250" y1="210" x2="380" y2="210" stroke="currentColor" stroke-width="1.6"></line>
+        <text x="315" y="225" text-anchor="middle" class="svg-label" font-size="10" fill="currentColor">GND</text>
+
+        <!-- MP1584EN module -->
+        <rect x="380" y="110" width="200" height="180" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"></rect>
+        <text x="480" y="133" text-anchor="middle" class="svg-label" font-size="12" font-weight="600" fill="currentColor">MP1584EN</text>
+        <text x="480" y="148" text-anchor="middle" class="svg-label" font-size="9.5" fill="var(--muted)">buck converter</text>
+
+        <circle cx="480" cy="200" r="2.6" fill="currentColor"></circle>
+        <text x="480" y="185" text-anchor="middle" class="svg-label" font-size="9" fill="currentColor">IN+</text>
+        <circle cx="405" cy="160" r="2.6" fill="currentColor"></circle>
+        <line x1="405" y1="160" x2="405" y2="200" stroke="currentColor" stroke-width="1.4"></line>
+        <line x1="405" y1="200" x2="465" y2="200" stroke="currentColor" stroke-width="1.4"></line>
+
+        <!-- trimmer icon -->
+        <circle cx="480" cy="225" r="16" fill="none" stroke="currentColor" stroke-width="1.6"></circle>
+        <line x1="472" y1="219" x2="488" y2="231" stroke="currentColor" stroke-width="1.8"></line>
+        <text x="480" y="256" text-anchor="middle" class="svg-label" font-size="9" fill="var(--accent)">trimmer</text>
+        <text x="480" y="268" text-anchor="middle" class="svg-label" font-size="8.5" fill="var(--muted)">(tourner jusqu'&agrave; 5,00V)</text>
+
+        <!-- IN- wire -->
+        <line x1="405" y1="210" x2="405" y2="245" stroke="currentColor" stroke-width="1.4"></line>
+        <line x1="405" y1="245" x2="465" y2="245" stroke="currentColor" stroke-width="1.4"></line>
+        <circle cx="465" cy="245" r="2.6" fill="currentColor"></circle>
+        <text x="465" y="262" text-anchor="middle" class="svg-label" font-size="9" fill="currentColor">IN-</text>
+
+        <!-- OUT pins -->
+        <circle cx="555" cy="160" r="2.6" fill="currentColor"></circle>
+        <text x="555" y="185" text-anchor="middle" class="svg-label" font-size="9" fill="currentColor">OUT+</text>
+        <circle cx="555" cy="245" r="2.6" fill="currentColor"></circle>
+        <text x="555" y="262" text-anchor="middle" class="svg-label" font-size="9" fill="currentColor">OUT-</text>
+
+        <!-- wires MP1584EN OUT -> multimeter -->
+        <line x1="580" y1="160" x2="660" y2="160" stroke="var(--accent)" stroke-width="1.8"></line>
+        <text x="620" y="152" text-anchor="middle" class="svg-label" font-size="10" font-weight="600" fill="var(--accent)">OUT+ (5V vis&eacute;)</text>
+        <line x1="580" y1="245" x2="660" y2="245" stroke="currentColor" stroke-width="1.6"></line>
+        <text x="620" y="260" text-anchor="middle" class="svg-label" font-size="10" fill="currentColor">OUT-</text>
+
+        <!-- Multimeter -->
+        <rect x="660" y="110" width="170" height="160" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"></rect>
+        <text x="745" y="132" text-anchor="middle" class="svg-label" font-size="11" font-weight="600" fill="currentColor">Multim&egrave;tre</text>
+        <text x="745" y="146" text-anchor="middle" class="svg-label" font-size="9" fill="var(--muted)">mode DC V</text>
+        <rect x="678" y="158" width="134" height="46" rx="3" fill="var(--accent-soft)" stroke="var(--rule-strong)" stroke-width="1"></rect>
+        <text x="745" y="188" text-anchor="middle" class="svg-label" font-size="18" font-weight="600" fill="var(--accent)">5.00 V</text>
+        <text x="700" y="228" text-anchor="middle" class="svg-label" font-size="10" fill="currentColor">+</text>
+        <text x="790" y="228" text-anchor="middle" class="svg-label" font-size="10" fill="currentColor">&minus;</text>
+        <line x1="700" y1="204" x2="700" y2="216" stroke="currentColor" stroke-width="1.4"></line>
+        <line x1="790" y1="204" x2="790" y2="216" stroke="currentColor" stroke-width="1.4"></line>
+        <text x="745" y="255" text-anchor="middle" class="svg-label" font-size="9" fill="var(--muted)">&agrave; vide &mdash; rien d'autre branch&eacute;</text>
+
+        <!-- ESP32, not yet connected -->
+        <rect x="660" y="330" width="170" height="80" rx="4" fill="none" stroke="var(--muted-2)" stroke-width="1.4" stroke-dasharray="5 4"></rect>
+        <text x="745" y="362" text-anchor="middle" class="svg-label" font-size="11" fill="var(--muted)">ESP32-C6-DevKitC-1</text>
+        <text x="745" y="378" text-anchor="middle" class="svg-label" font-size="9" fill="var(--muted)">pas encore connect&eacute;</text>
+        <text x="745" y="393" text-anchor="middle" class="svg-label" font-size="9" fill="var(--muted)">(&eacute;tape suivante, apr&egrave;s 5V confirm&eacute;)</text>
+        <line x1="620" y1="245" x2="620" y2="345" stroke="var(--muted-2)" stroke-width="1.2" stroke-dasharray="4 4"></line>
+        <line x1="620" y1="345" x2="660" y2="345" stroke="var(--muted-2)" stroke-width="1.2" stroke-dasharray="4 4"></line>
+        <line x1="620" y1="160" x2="620" y2="365" stroke="var(--muted-2)" stroke-width="1.2" stroke-dasharray="4 4"></line>
+        <line x1="620" y1="365" x2="660" y2="365" stroke="var(--muted-2)" stroke-width="1.2" stroke-dasharray="4 4"></line>
+      </svg>
+    </div>
+    <figcaption>
+      L'alimentation 12V (via la prise jack d&eacute;j&agrave; valid&eacute;e) entre sur <strong>IN+/IN-</strong>
+      du MP1584EN. Le multim&egrave;tre se branche sur <strong>OUT+/OUT-</strong>, &agrave; vide, pendant qu'on
+      tourne le trimmer jusqu'&agrave; lire un 5,00V stable. L'ESP32 (en pointill&eacute;s) ne se connecte qu'une
+      fois cette valeur confirm&eacute;e &mdash; ce n'est pas encore c&acirc;bl&eacute; sur ce sch&eacute;ma.
+    </figcaption>
+  </figure>
+
+  <section class="block">
+    <h2>Protocole de test</h2>
+    <ol class="protocol">
+      <li>Jack branch&eacute; sur l'alimentation 12V r&eacute;elle du bandeau &mdash; <strong>d&eacute;j&agrave;
+        valid&eacute;</strong>, ~12V mesur&eacute;s entre + et masse.</li>
+      <li>C&acirc;bler le + et la masse de ce tap sur <strong>IN+/IN-</strong> du MP1584EN. Rien d'autre
+        branch&eacute; en sortie pour l'instant.</li>
+      <li>Multim&egrave;tre en mode <strong>DC V</strong>, sonde rouge sur <strong>OUT+</strong>, sonde noire
+        sur <strong>OUT-</strong>.</li>
+      <li>Tourner le trimmer progressivement jusqu'&agrave; lire un <strong>5,00V</strong> stable (pas 4,8 ni
+        5,3 &mdash; viser une valeur propre).</li>
+      <li>Laisser quelques secondes et relire la mesure &mdash; la tension ne doit pas d&eacute;river.</li>
+      <li>Seulement apr&egrave;s cette confirmation&nbsp;: d&eacute;brancher le multim&egrave;tre et connecter
+        l'ESP32 sur OUT+/OUT- &agrave; la place.</li>
+    </ol>
+  </section>
+
+  <div class="note">
+    <span class="label">Attention aux bornes</span>
+    <span>
+      Sur la plupart des modules MP1584EN, IN+/IN- et OUT+/OUT- sont align&eacute;s c&ocirc;te &agrave; c&ocirc;te
+      sur le m&ecirc;me bornier &agrave; vis &mdash; facile &agrave; inverser. Rep&eacute;rer les s&eacute;rigraphies
+      <code>IN+</code>/<code>IN-</code>/<code>OUT+</code>/<code>OUT-</code> sur le PCB avant de c&acirc;bler,
+      mieux vaut v&eacute;rifier deux fois qu'une&nbsp;: brancher le 12V sur une sortie OUT
+      grillerait le r&eacute;gulateur, et connecter ensuite l'ESP32 sur une entr&eacute;e IN non r&eacute;gul&eacute;e
+      grillerait la carte.
+    </span>
+  </div>
+</main>
