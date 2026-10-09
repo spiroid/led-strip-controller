@@ -600,17 +600,17 @@
       </div></li>
       <li><div class="step-body">
         <label class="check"><input type="checkbox" id="step-5"><span><strong>Canal R</strong> : R1, R4, Q1, fil volant R, puis F7 à F11.</span></label>
-        <p>R1 à plat en 11·8 → 11·13, R4 en 14·8 → 14·12, Q1 debout (patte du milieu d'abord, vérifie qu'il est droit, puis les deux autres), fil volant du bandeau en 17·9. Côté cuivre : replie la patte de R1 de 11·13 sur 10·13 (F7), puis F8 (grille), F9 (pull-down → bus), F10 (Source → bus), F11 (Drain → 17·9). F10 et F11 peuvent être les pattes de Q1 repliées.</p>
+        <p>R1 à plat en 11·8 → 11·13, R4 en 14·8 → 14·12, Q1 debout (patte du milieu d'abord, vérifie qu'il est droit, puis les deux autres), fil volant du bandeau en 17·9. Côté cuivre : replie la patte de R1 de 11·13 sur 10·13 (F7), puis F8 (grille), F9 (pull-down → bus), F10 (Source → bus), F11 (Drain → 17·9). Pas besoin de couper de fil pour F9 : ne coupe pas la patte de R4 en 14·12, replie-la côté cuivre le long de la colonne 12 jusqu'au bus. F10 et F11 peuvent de même être les pattes de Q1 repliées.</p>
         <p class="test"><b>Test</b>10·13 ↔ 16·8 : 220 Ω. 16·8 ↔ bus : 10 kΩ. 16·10 ↔ bus : 0 Ω. 16·9 ↔ bus : pas de continuité.</p>
       </div></li>
       <li><div class="step-body">
         <label class="check"><input type="checkbox" id="step-6"><span><strong>Canal V</strong> : R2, R5, Q2, fil volant V, puis F12 à F16.</span></label>
-        <p>F12 part de GPIO19 (10·14), descend jusqu'à la rangée 12, file à droite jusqu'à la colonne 18 et rejoint l'entrée de R2 en 13·18. R2 ramène le signal vers la gauche, en 13·14, d'où F13 descend jusqu'à la grille.</p>
+        <p>F12 part de GPIO19 (10·14), descend jusqu'à la rangée 12, file à droite jusqu'à la colonne 18 et rejoint l'entrée de R2 en 13·18. R2 ramène le signal vers la gauche, en 13·14, d'où F13 descend jusqu'à la grille. F14 est la patte de R5 repliée jusqu'au bus, comme F9.</p>
         <p class="test"><b>Test</b>10·14 ↔ 16·14 : 220 Ω. 16·14 ↔ bus : 10 kΩ. 16·16 ↔ bus : 0 Ω. 16·15 ↔ bus : pas de continuité.</p>
       </div></li>
       <li><div class="step-body">
         <label class="check"><input type="checkbox" id="step-7"><span><strong>Canal B</strong> : R3, R6, Q3, fil volant B, puis F17 à F21.</span></label>
-        <p>Même méthode que le canal R. Sur breadboard, les fils de GPIO19 et GPIO20 avaient été inversés (vert à la place du bleu) : vérifie que R3 est bien repliée sur 10·15 et F12 bien soudé à 10·14.</p>
+        <p>Même méthode que le canal R : F19 est la patte de R6 repliée jusqu'au bus. Sur breadboard, les fils de GPIO19 et GPIO20 avaient été inversés (vert à la place du bleu) : vérifie que R3 est bien repliée sur 10·15 et F12 bien soudé à 10·14.</p>
         <p class="test"><b>Test</b>10·15 ↔ 16·20 : 220 Ω. 16·20 ↔ bus : 10 kΩ. 16·22 ↔ bus : 0 Ω. 16·21 ↔ bus : pas de continuité. 10·14 ↔ 16·20 : pas de continuité.</p>
       </div></li>
       <li><div class="step-body">
@@ -708,17 +708,17 @@
     { id: "F6", net: "gnd", role: "GND de l'ESP32 → bus", pts: [[10, 22], [11, 22], [11, 23], [18, 23]], solder: [[10, 22], [18, 23]] },
     { id: "F7", net: "s18", role: "Patte de R1 sur GPIO18", pts: [[11, 13], [10, 13]], solder: [[11, 13], [10, 13]], lead: true },
     { id: "F8", net: "gR", role: "Grille Q1", pts: [[11, 8], [16, 8]], solder: [[11, 8], [14, 8], [16, 8]] },
-    { id: "F9", net: "gnd", role: "Pull-down R4 → bus", pts: [[14, 12], [18, 12]], solder: [[14, 12], [18, 12]] },
+    { id: "F9", net: "gnd", role: "Pull-down R4 → bus", pts: [[14, 12], [18, 12]], solder: [[14, 12], [18, 12]], lead: true },
     { id: "F10", net: "gnd", role: "Source Q1 → bus", pts: [[16, 10], [18, 10]], solder: [[16, 10], [18, 10]], lead: true },
     { id: "F11", net: "dR", role: "Drain Q1 → fil R", pts: [[16, 9], [17, 9]], solder: [[16, 9], [17, 9]], lead: true },
     { id: "F12", net: "s19", role: "GPIO19 → R2", pts: [[10, 14], [12, 14], [12, 18], [13, 18]], solder: [[10, 14], [13, 18]] },
     { id: "F13", net: "gV", role: "Grille Q2", pts: [[13, 14], [16, 14]], solder: [[13, 14], [14, 14], [16, 14]] },
-    { id: "F14", net: "gnd", role: "Pull-down R5 → bus", pts: [[14, 18], [18, 18]], solder: [[14, 18], [18, 18]] },
+    { id: "F14", net: "gnd", role: "Pull-down R5 → bus", pts: [[14, 18], [18, 18]], solder: [[14, 18], [18, 18]], lead: true },
     { id: "F15", net: "gnd", role: "Source Q2 → bus", pts: [[16, 16], [18, 16]], solder: [[16, 16], [18, 16]], lead: true },
     { id: "F16", net: "dV", role: "Drain Q2 → fil V", pts: [[16, 15], [17, 15]], solder: [[16, 15], [17, 15]], lead: true },
     { id: "F17", net: "s20", role: "Patte de R3 sur GPIO20", pts: [[11, 15], [10, 15]], solder: [[11, 15], [10, 15]], lead: true },
     { id: "F18", net: "gB", role: "Grille Q3", pts: [[11, 20], [16, 20]], solder: [[11, 20], [14, 20], [16, 20]] },
-    { id: "F19", net: "gnd", role: "Pull-down R6 → bus", pts: [[14, 24], [18, 24]], solder: [[14, 24], [18, 24]] },
+    { id: "F19", net: "gnd", role: "Pull-down R6 → bus", pts: [[14, 24], [18, 24]], solder: [[14, 24], [18, 24]], lead: true },
     { id: "F20", net: "gnd", role: "Source Q3 → bus", pts: [[16, 22], [18, 22]], solder: [[16, 22], [18, 22]], lead: true },
     { id: "F21", net: "dB", role: "Drain Q3 → fil B", pts: [[16, 21], [17, 21]], solder: [[16, 21], [17, 21]], lead: true }
   ];
