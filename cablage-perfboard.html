@@ -1,6 +1,9 @@
-<title>Câblage du montage définitif sur perfboard</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<meta charset="utf-8">
+<title>Perfboard du bandeau salon</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
+  /* Layout : document d'atelier en une colonne. Plan de placement d'abord (vue composants puis vue cuivre),
+     ensuite les listes de référence (pièces, fils), puis la procédure cochable et les tests. */
   :root {
     --bg: #eef2f2;
     --surface: #ffffff;
@@ -12,10 +15,36 @@
     --accent-soft: #b8641c1f;
     --rule: #ccd8d8;
     --rule-strong: #a9bcbc;
+
+    /* matière de la plaque */
+    --board: #e3ebe4;
+    --hole: #7d8f86;
+    --copper: #d29a5c;
+    --solder: #b9c2c6;
+    --solder-edge: #6f7b80;
+    --part: #fbfcfc;
+    --res: #b4cfe2;
+    --ceramic: #e7b65a;
+    --ecap: #31465a;
+    --ecap-stripe: #c9d6e0;
+    --esp: #2f6f8f;
+    --tab: #9aa6ab;
+
+    /* réseaux électriques */
+    --net-gnd: #2c3e44;
+    --net-12v: #c2362b;
+    --net-5v: #c27012;
+    --net-sig: #6a4cc2;
+    --net-out: #13808f;
+
+    --font-display: "IBM Plex Sans Condensed", "IBM Plex Sans", "Arial Narrow", sans-serif;
+    --font-body: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
   }
 
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
+      color-scheme: dark;
       --bg: #10191b;
       --surface: #16221f;
       --ink: #e4ede9;
@@ -26,10 +55,28 @@
       --accent-soft: #e08a3c26;
       --rule: #2a3936;
       --rule-strong: #3c4f4b;
+      --board: #1c2a25;
+      --hole: #4f6259;
+      --copper: #a8743f;
+      --solder: #c9d1d4;
+      --solder-edge: #8b979c;
+      --part: #22322d;
+      --res: #46708c;
+      --ceramic: #b98a35;
+      --ecap: #6d8aa3;
+      --ecap-stripe: #20303c;
+      --esp: #6fb3d4;
+      --tab: #6c787c;
+      --net-gnd: #c4d3d6;
+      --net-12v: #ff7a6b;
+      --net-5v: #f2a046;
+      --net-sig: #b49cff;
+      --net-out: #4fc8d8;
     }
   }
 
   :root[data-theme="dark"] {
+    color-scheme: dark;
     --bg: #10191b;
     --surface: #16221f;
     --ink: #e4ede9;
@@ -40,6 +87,23 @@
     --accent-soft: #e08a3c26;
     --rule: #2a3936;
     --rule-strong: #3c4f4b;
+    --board: #1c2a25;
+    --hole: #4f6259;
+    --copper: #a8743f;
+    --solder: #c9d1d4;
+    --solder-edge: #8b979c;
+    --part: #22322d;
+    --res: #46708c;
+    --ceramic: #b98a35;
+    --ecap: #6d8aa3;
+    --ecap-stripe: #20303c;
+    --esp: #6fb3d4;
+    --tab: #6c787c;
+    --net-gnd: #c4d3d6;
+    --net-12v: #ff7a6b;
+    --net-5v: #f2a046;
+    --net-sig: #b49cff;
+    --net-out: #4fc8d8;
   }
 
   * { box-sizing: border-box; }
@@ -47,15 +111,15 @@
   body {
     background: var(--bg);
     color: var(--ink);
-    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--font-body);
     font-size: 16px;
     line-height: 1.55;
     margin: 0;
-    padding: 48px 24px 80px;
+    padding: 44px 20px 80px;
   }
 
   main {
-    max-width: 1100px;
+    max-width: 1080px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
@@ -63,7 +127,7 @@
   }
 
   .eyebrow {
-    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     letter-spacing: 0.09em;
     text-transform: uppercase;
@@ -71,93 +135,251 @@
   }
 
   h1 {
-    font-family: "IBM Plex Sans Condensed", "IBM Plex Sans", sans-serif;
+    font-family: var(--font-display);
     font-weight: 700;
     font-size: clamp(28px, 4vw, 38px);
     line-height: 1.1;
+    margin: 6px 0 0;
+    text-wrap: balance;
+  }
+
+  h2 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 21px;
     margin: 0;
     text-wrap: balance;
-    color: var(--ink);
   }
 
-  .intro {
-    max-width: 72ch;
-    color: var(--ink-soft);
-    font-size: 16px;
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 16.5px;
+    margin: 0;
   }
 
-  .intro code {
-    font-family: "IBM Plex Mono", ui-monospace, monospace;
-    font-size: 0.9em;
+  p { margin: 0; }
+  a { color: var(--accent); }
+  a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .intro { max-width: 70ch; color: var(--ink-soft); }
+
+  code, .mono {
+    font-family: var(--font-mono);
+    font-size: 0.88em;
+  }
+  code {
     background: var(--accent-soft);
     color: var(--accent);
     padding: 0.05em 0.35em;
     border-radius: 4px;
   }
 
-  figure {
-    margin: 0;
-    background: var(--surface);
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1px;
+    background: var(--rule);
     border: 1px solid var(--rule);
-    border-radius: 12px;
-    padding: 20px clamp(12px, 3vw, 28px) 22px;
+    border-radius: 10px;
+    overflow: hidden;
   }
-
-  .diagram-wrap {
-    overflow-x: auto;
+  .facts div {
+    background: var(--surface);
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
   }
-
-  svg {
-    display: block;
-    width: 100%;
-    height: auto;
-    min-width: 1280px;
-    color: var(--ink);
-  }
-
-  figcaption {
-    margin-top: 16px;
-    padding-top: 14px;
-    border-top: 1px solid var(--rule);
-    font-size: 14px;
+  .facts dt {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     color: var(--muted);
-    max-width: 90ch;
   }
-
-  h2 {
-    font-family: "IBM Plex Sans Condensed", "IBM Plex Sans", sans-serif;
-    font-weight: 600;
-    font-size: 20px;
-    margin: 0 0 12px;
-    color: var(--ink);
-  }
+  .facts dd { margin: 0; font-size: 14.5px; color: var(--ink); }
 
   section.block {
     background: var(--surface);
     border: 1px solid var(--rule);
     border-radius: 12px;
-    padding: 20px clamp(16px, 3vw, 28px);
-  }
-
-  section.block p {
-    max-width: 78ch;
-    color: var(--ink-soft);
-    margin: 0 0 12px;
-  }
-
-  section.block p:last-child { margin-bottom: 0; }
-  section.block strong { color: var(--ink); font-weight: 600; }
-
-  ol.protocol {
-    margin: 0;
-    padding-left: 1.3em;
+    padding: 22px clamp(14px, 3vw, 28px);
     display: flex;
     flex-direction: column;
+    gap: 14px;
+  }
+  section.block > p, section.block li { color: var(--ink-soft); max-width: 78ch; }
+  section.block strong { color: var(--ink); font-weight: 600; }
+
+  .section-head { display: flex; flex-direction: column; gap: 4px; }
+  .section-head .eyebrow { font-size: 11px; }
+
+  /* --- vues du plan --- */
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
     gap: 8px;
+    align-items: center;
+  }
+  .toolbar .lbl {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-right: 4px;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font: 500 13px/1 var(--font-body);
+    color: var(--ink-soft);
+    background: var(--surface);
+    border: 1px solid var(--rule-strong);
+    border-radius: 999px;
+    padding: 7px 12px;
+    cursor: pointer;
+  }
+  .chip:hover { border-color: var(--ink-soft); }
+  .chip[aria-pressed="true"] { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+  .chip .sw { width: 14px; height: 4px; border-radius: 2px; flex: none; }
+
+  .view-pair {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+  .view {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .view-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 6px 16px;
+  }
+  .view-head p { font-size: 14px; color: var(--muted); max-width: 70ch; }
+  .diagram-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    background: var(--board);
+  }
+  .diagram-wrap svg {
+    display: block;
+    width: 100%;
+    min-width: 720px;
+    height: auto;
   }
 
-  ol.protocol li { color: var(--ink-soft); }
-  ol.protocol strong { color: var(--ink); font-weight: 600; }
+  .views[data-focus] .net { opacity: 0.1; transition: opacity 0.15s; }
+  .views[data-focus="gnd"] .n-gnd,
+  .views[data-focus="v12"] .n-v12,
+  .views[data-focus="v5"] .n-v5,
+  .views[data-focus="sig"] .n-sig,
+  .views[data-focus="out"] .n-out { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) { .views[data-focus] .net { transition: none; } }
+
+  .legend {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 8px 22px;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+  }
+  .legend div { display: flex; gap: 10px; align-items: center; }
+  .legend svg { flex: none; }
+
+  /* --- tables --- */
+  .table-wrap { overflow-x: auto; }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+  }
+  th, td {
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+  th {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom-color: var(--rule-strong);
+    white-space: nowrap;
+  }
+  td { color: var(--ink-soft); }
+  td.ref { font-family: var(--font-mono); font-weight: 600; color: var(--ink); white-space: nowrap; }
+  td.holes { font-family: var(--font-mono); font-size: 13px; white-space: nowrap; }
+  .net-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; vertical-align: 0; }
+
+  /* --- procédure --- */
+  ol.steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    counter-reset: step;
+  }
+  ol.steps > li {
+    counter-increment: step;
+    display: grid;
+    grid-template-columns: 2.4em 1fr;
+    gap: 4px 12px;
+    padding: 14px 0;
+    border-top: 1px solid var(--rule);
+  }
+  ol.steps > li:first-child { border-top: 0; padding-top: 4px; }
+  ol.steps > li::before {
+    content: counter(step, decimal-leading-zero);
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--accent);
+    padding-top: 3px;
+  }
+  .step-body { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .step-body p { color: var(--ink-soft); max-width: 76ch; }
+  .check {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: 14px;
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+  .check input { margin-top: 3px; accent-color: var(--accent); width: 16px; height: 16px; flex: none; }
+  .check:has(input:checked) span { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--muted-2); }
+  .test {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    border-left: 2px solid var(--net-out);
+    padding: 2px 0 2px 10px;
+  }
+  .test b { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--net-out); font-weight: 600; margin-right: 6px; }
+  .progress { font-family: var(--font-mono); font-size: 12.5px; color: var(--muted); }
+  .reset {
+    font: 500 12.5px/1 var(--font-body);
+    color: var(--muted);
+    background: none;
+    border: 1px solid var(--rule-strong);
+    border-radius: 6px;
+    padding: 6px 10px;
+    cursor: pointer;
+  }
 
   .note {
     display: flex;
@@ -170,9 +392,8 @@
     font-size: 14.5px;
     color: var(--ink-soft);
   }
-
   .note .label {
-    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -180,240 +401,630 @@
     white-space: nowrap;
     padding-top: 2px;
   }
+  .note.warn { border-left-color: var(--net-12v); }
+  .note.warn .label { color: var(--net-12v); }
 
-  .svg-label { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+  ul.plain { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 6px; }
+
+  @media (max-width: 560px) {
+    .note { flex-direction: column; gap: 6px; }
+    ol.steps > li { grid-template-columns: 1fr; }
+  }
 </style>
 
 <main>
-  <div>
-    <div class="eyebrow">Bandeau LED &middot; montage d&eacute;finitif</div>
-    <h1>Câblage du perfboard : le circuit complet</h1>
-  </div>
+  <header>
+    <div class="eyebrow">Bandeau LED salon · montage définitif · plan de soudure</div>
+    <h1>Perfboard du bandeau salon</h1>
+  </header>
 
   <p class="intro">
-    Ce sch&eacute;ma r&eacute;unit tout ce qui a &eacute;t&eacute; valid&eacute; s&eacute;par&eacute;ment sur
-    breadboard &mdash; les 3 canaux MOSFET, le buck converter, les condensateurs de d&eacute;couplage &mdash;
-    en une seule r&eacute;f&eacute;rence pour ressouder le tout sur perfboard. Premi&egrave;re fois sur
-    perfboard&nbsp;? Voir d'abord <a href="technique-perfboard.html">la technique de soudure</a>. Rien de
-    nouveau &eacute;lectriquement,
-    c'est le m&ecirc;me circuit, juste consolid&eacute;. Le <strong>polyfuse</strong> appara&icirc;t en
-    pointill&eacute;s&nbsp;: pas encore re&ccedil;u, mais sa place est r&eacute;serv&eacute;e en s&eacute;rie sur
-    le +12V.
+    Plan complet pour la plaque de 24 colonnes × 18 rangées. Chaque composant, chaque fil et chaque point
+    de soudure a une coordonnée exacte (rangée·colonne). Le circuit est celui validé sur breadboard :
+    3 canaux IRLB8721 commutés côté masse, buck MP1584EN réglé à 5,0 V, découplage 470 µF + 100 nF. Pour le
+    geste de soudure lui-même, voir <a href="technique-perfboard.html">souder sur perfboard</a>.
   </p>
 
-  <figure>
-    <div class="diagram-wrap">
-      <svg viewBox="0 0 1560 620" role="img" aria-label="Sch&eacute;ma complet du montage&nbsp;: l'alimentation 12V du bandeau entre par un bornier, passe par un polyfuse (pas encore install&eacute;) puis se s&eacute;pare en deux&nbsp;: une branche va directement au V+ du bandeau, l'autre alimente l'entr&eacute;e du MP1584EN. La sortie 5V du MP1584EN passe par deux condensateurs de d&eacute;couplage en parall&egrave;le (470 microfarads et 100 nanofarads) avant d'atteindre les pins 5V/GND de l'ESP32. Les GPIO18, 19 et 20 de l'ESP32 pilotent chacun un MOSFET IRLB8721 via une r&eacute;sistance de grille de 220 ohms et un pull-down de 10 kilohms, dont le Drain rejoint le fil R, V ou B du bandeau et la Source la masse commune.">
-        <!-- ================= 12V input + fuse ================= -->
-        <rect x="20" y="250" width="150" height="70" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"></rect>
-        <text x="95" y="278" text-anchor="middle" class="svg-label" font-size="11.5" font-weight="600" fill="currentColor">Entr&eacute;e 12V</text>
-        <text x="95" y="294" text-anchor="middle" class="svg-label" font-size="9" fill="var(--muted)">(bornier, depuis jack)</text>
+  <dl class="facts">
+    <div><dt>Plaque</dt><dd>24 colonnes × 18 rangées, pastilles isolées, côté long à l'horizontale</dd></div>
+    <div><dt>Repère</dt><dd>Vue côté composants : rangée 1 en haut, colonne 1 à gauche</dd></div>
+    <div><dt>ESP32</dt><dd>Colonnes 3 à 24, rangées 1 à 10, antenne au bord droit</dd></div>
+    <div><dt>Courant max mesuré</dt><dd>0,83 – 0,895 A en blanc 100 %</dd></div>
+  </dl>
 
-        <line x1="170" y1="270" x2="230" y2="270" stroke="currentColor" stroke-width="1.6"></line>
-        <text x="200" y="262" text-anchor="middle" class="svg-label" font-size="9.5" fill="currentColor">+12V</text>
-        <rect x="230" y="262" width="70" height="16" rx="2" fill="none" stroke="var(--muted-2)" stroke-width="1.4" stroke-dasharray="4 3"></rect>
-        <text x="265" y="296" text-anchor="middle" class="svg-label" font-size="9" fill="var(--accent)">Polyfuse ~1,5A</text>
-        <text x="265" y="309" text-anchor="middle" class="svg-label" font-size="8.5" fill="var(--muted)">&agrave; souder &agrave; r&eacute;ception</text>
-        <line x1="300" y1="270" x2="330" y2="270" stroke="currentColor" stroke-width="1.6"></line>
-        <circle cx="330" cy="270" r="3.2" fill="currentColor"></circle>
+  <div class="note">
+    <span class="label">Changement de position</span>
+    <span>
+      L'ESP32 n'est plus calé à gauche : il est décalé de 2 colonnes vers la droite, jusqu'au bord de la
+      plaque. Son antenne se retrouve au bord, sans cuivre autour, et les 2 colonnes libérées à gauche
+      servent à l'alimentation. Toutes ses broches ont donc 2 colonnes de plus qu'avant :
+      GPIO18/19/20 en colonnes 13/14/15, 5V en 1·9, GND en 1·8, 10·8, 10·11 et 10·22.
+    </span>
+  </div>
 
-        <line x1="170" y1="320" x2="170" y2="560" stroke="currentColor" stroke-width="1.4"></line>
-        <text x="176" y="335" class="svg-label" font-size="9.5" fill="currentColor">GND</text>
-        <line x1="170" y1="320" x2="250" y2="320" stroke="currentColor" stroke-width="1.4"></line>
-        <line x1="250" y1="320" x2="250" y2="410" stroke="currentColor" stroke-width="1.4"></line>
-        <line x1="250" y1="410" x2="390" y2="410" stroke="currentColor" stroke-width="1.4"></line>
-
-        <!-- direct +12V bus to strip V+ (top) -->
-        <line x1="330" y1="270" x2="330" y2="20" stroke="var(--accent)" stroke-width="1.6"></line>
-        <line x1="330" y1="20" x2="1470" y2="20" stroke="var(--accent)" stroke-width="1.6"></line>
-        <line x1="1470" y1="20" x2="1470" y2="120" stroke="var(--accent)" stroke-width="1.6"></line>
-        <text x="700" y="13" text-anchor="middle" class="svg-label" font-size="10" font-weight="600" fill="var(--accent)">V+ direct au bandeau</text>
-
-        <!-- down to buck IN+ -->
-        <line x1="330" y1="270" x2="330" y2="360" stroke="currentColor" stroke-width="1.6"></line>
-        <line x1="330" y1="360" x2="390" y2="360" stroke="currentColor" stroke-width="1.6"></line>
-
-        <!-- ================= MP1584EN ================= -->
-        <rect x="390" y="330" width="170" height="110" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"></rect>
-        <text x="475" y="352" text-anchor="middle" class="svg-label" font-size="12" font-weight="600" fill="currentColor">MP1584EN</text>
-        <text x="475" y="367" text-anchor="middle" class="svg-label" font-size="9.5" fill="var(--accent)">5V valid&eacute;</text>
-        <circle cx="475" cy="400" r="13" fill="none" stroke="currentColor" stroke-width="1.4"></circle>
-        <line x1="468" y1="394" x2="482" y2="406" stroke="currentColor" stroke-width="1.6"></line>
-        <text x="475" y="425" text-anchor="middle" class="svg-label" font-size="8" fill="var(--muted)">trimmer</text>
-
-        <circle cx="390" cy="360" r="2.8" fill="currentColor"></circle>
-        <text x="396" y="357" class="svg-label" font-size="9" fill="currentColor">IN+</text>
-        <circle cx="390" cy="410" r="2.8" fill="currentColor"></circle>
-        <text x="396" y="422" class="svg-label" font-size="9" fill="currentColor">IN-</text>
-        <circle cx="560" cy="360" r="2.8" fill="currentColor"></circle>
-        <text x="554" y="357" text-anchor="end" class="svg-label" font-size="9" fill="currentColor">OUT+</text>
-        <circle cx="560" cy="410" r="2.8" fill="currentColor"></circle>
-        <text x="554" y="422" text-anchor="end" class="svg-label" font-size="9" fill="currentColor">OUT-</text>
-
-        <!-- OUT -> local 5V/GND taps near ESP32 -->
-        <line x1="560" y1="360" x2="560" y2="200" stroke="var(--accent)" stroke-width="1.6"></line>
-        <line x1="560" y1="200" x2="660" y2="200" stroke="var(--accent)" stroke-width="1.6"></line>
-        <line x1="660" y1="200" x2="660" y2="140" stroke="var(--accent)" stroke-width="1.6"></line>
-
-        <line x1="560" y1="410" x2="560" y2="250" stroke="currentColor" stroke-width="1.4"></line>
-        <line x1="560" y1="250" x2="650" y2="250" stroke="currentColor" stroke-width="1.4"></line>
-        <line x1="600" y1="250" x2="600" y2="560" stroke="currentColor" stroke-width="1.4"></line>
-        <circle cx="600" cy="250" r="2.8" fill="currentColor"></circle>
-
-        <!-- decoupling caps -->
-        <circle cx="590" cy="200" r="2.8" fill="var(--accent)"></circle>
-        <line x1="590" y1="200" x2="590" y2="215" stroke="currentColor" stroke-width="1.4"></line>
-        <line x1="575" y1="215" x2="605" y2="215" stroke="currentColor" stroke-width="2"></line>
-        <text x="567" y="212" text-anchor="end" class="svg-label" font-size="10" fill="currentColor">+</text>
-        <path d="M 575 226 Q 590 236 605 226" fill="none" stroke="currentColor" stroke-width="2"></path>
-        <line x1="590" y1="234" x2="590" y2="250" stroke="currentColor" stroke-width="1.4"></line>
-        <circle cx="590" cy="250" r="2.8" fill="currentColor"></circle>
-        <text x="590" y="270" text-anchor="middle" class="svg-label" font-size="10.5" font-weight="600" fill="currentColor">470&nbsp;&micro;F</text>
-        <text x="590" y="283" text-anchor="middle" class="svg-label" font-size="8.5" fill="var(--muted)">&eacute;lectrolytique</text>
-
-        <circle cx="625" cy="200" r="2.8" fill="var(--accent)"></circle>
-        <line x1="625" y1="200" x2="625" y2="218" stroke="currentColor" stroke-width="1.4"></line>
-        <line x1="610" y1="218" x2="640" y2="218" stroke="currentColor" stroke-width="2"></line>
-        <line x1="610" y1="228" x2="640" y2="228" stroke="currentColor" stroke-width="2"></line>
-        <line x1="625" y1="228" x2="625" y2="250" stroke="currentColor" stroke-width="1.4"></line>
-        <circle cx="625" cy="250" r="2.8" fill="currentColor"></circle>
-        <text x="625" y="270" text-anchor="middle" class="svg-label" font-size="10.5" font-weight="600" fill="currentColor">100&nbsp;nF</text>
-        <text x="625" y="283" text-anchor="middle" class="svg-label" font-size="8.5" fill="var(--muted)">c&eacute;ramique</text>
-
-        <!-- ================= ESP32 ================= -->
-        <rect x="600" y="50" width="220" height="90" rx="4" fill="none" stroke="currentColor" stroke-width="1.8"></rect>
-        <text x="710" y="88" text-anchor="middle" class="svg-label" font-size="12.5" font-weight="600" fill="currentColor">ESP32-C6-DevKitC-1</text>
-        <text x="710" y="104" text-anchor="middle" class="svg-label" font-size="9" fill="var(--muted)">(sur perfboard)</text>
-
-        <text x="614" y="152" text-anchor="middle" class="svg-label" font-size="8.5" fill="currentColor">GND</text>
-        <line x1="620" y1="140" x2="620" y2="560" stroke="currentColor" stroke-width="1.6"></line>
-        <text x="660" y="152" text-anchor="middle" class="svg-label" font-size="8.5" fill="var(--accent)">5V</text>
-        <text x="700" y="152" text-anchor="middle" class="svg-label" font-size="8" fill="currentColor">GPIO18</text>
-        <text x="740" y="152" text-anchor="middle" class="svg-label" font-size="8" fill="currentColor">GPIO19</text>
-        <text x="780" y="152" text-anchor="middle" class="svg-label" font-size="8" fill="currentColor">GPIO20</text>
-
-        <!-- ================= Channel R (GPIO18) ================= -->
-        <line x1="700" y1="140" x2="700" y2="170" stroke="currentColor" stroke-width="1.4"></line>
-        <polyline points="700,170 700,180 692,188 708,200 692,212 708,224 692,234 700,242 700,250" fill="none" stroke="currentColor" stroke-width="1.4"></polyline>
-        <text x="716" y="212" class="svg-label" font-size="10" fill="currentColor">220&Omega;</text>
-        <circle cx="700" cy="250" r="3" fill="currentColor"></circle>
-        <polyline points="700,250 700,270 691,280 709,294 691,308 709,322 691,336 709,350 691,364 709,378 700,390 700,560" fill="none" stroke="currentColor" stroke-width="1.4"></polyline>
-        <text x="716" y="320" class="svg-label" font-size="10" fill="currentColor">10&nbsp;k&Omega;</text>
-        <line x1="700" y1="250" x2="760" y2="250" stroke="currentColor" stroke-width="1.4"></line>
-        <text x="752" y="264" text-anchor="end" class="svg-label" font-size="9.5" fill="currentColor">G</text>
-        <rect x="760" y="205" width="80" height="90" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"></rect>
-        <text x="800" y="254" text-anchor="middle" class="svg-label" font-size="9.5" fill="currentColor">IRLB8721</text>
-        <line x1="800" y1="205" x2="800" y2="170" stroke="currentColor" stroke-width="1.4"></line>
-        <text x="806" y="188" class="svg-label" font-size="9.5" fill="currentColor">D</text>
-        <line x1="800" y1="170" x2="1400" y2="170" stroke="currentColor" stroke-width="1.6"></line>
-        <text x="1080" y="161" text-anchor="middle" class="svg-label" font-size="9.5" font-weight="600" fill="currentColor">fil R (rouge)</text>
-        <line x1="800" y1="295" x2="800" y2="560" stroke="currentColor" stroke-width="1.4"></line>
-        <text x="806" y="312" class="svg-label" font-size="9.5" fill="currentColor">S</text>
-
-        <!-- ================= Channel G (GPIO19) ================= -->
-        <line x1="740" y1="140" x2="740" y2="215" stroke="currentColor" stroke-width="1.4"></line>
-        <line x1="740" y1="215" x2="950" y2="215" stroke="currentColor" stroke-width="1.4"></line>
-        <polyline points="950,215 950,225 942,233 958,245 942,257 958,269 942,279 950,287 950,295" fill="none" stroke="currentColor" stroke-width="1.4"></polyline>
-        <text x="966" y="257" class="svg-label" font-size="10" fill="currentColor">220&Omega;</text>
-        <circle cx="950" cy="295" r="3" fill="currentColor"></circle>
-        <polyline points="950,295 950,315 941,325 959,339 941,353 959,367 941,381 959,395 941,409 959,423 950,435 950,560" fill="none" stroke="currentColor" stroke-width="1.4"></polyline>
-        <text x="966" y="365" class="svg-label" font-size="10" fill="currentColor">10&nbsp;k&Omega;</text>
-        <line x1="950" y1="295" x2="1010" y2="295" stroke="currentColor" stroke-width="1.4"></line>
-        <text x="1002" y="309" text-anchor="end" class="svg-label" font-size="9.5" fill="currentColor">G</text>
-        <rect x="1010" y="250" width="80" height="90" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"></rect>
-        <text x="1050" y="299" text-anchor="middle" class="svg-label" font-size="9.5" fill="currentColor">IRLB8721</text>
-        <line x1="1050" y1="250" x2="1050" y2="215" stroke="currentColor" stroke-width="1.4"></line>
-        <text x="1056" y="233" class="svg-label" font-size="9.5" fill="currentColor">D</text>
-        <line x1="1050" y1="215" x2="1400" y2="215" stroke="currentColor" stroke-width="1.6"></line>
-        <text x="1200" y="206" text-anchor="middle" class="svg-label" font-size="9.5" font-weight="600" fill="currentColor">fil V (vert)</text>
-        <line x1="1050" y1="340" x2="1050" y2="560" stroke="currentColor" stroke-width="1.4"></line>
-        <text x="1056" y="357" class="svg-label" font-size="9.5" fill="currentColor">S</text>
-
-        <!-- ================= Channel B (GPIO20) ================= -->
-        <line x1="780" y1="140" x2="780" y2="260" stroke="currentColor" stroke-width="1.4"></line>
-        <line x1="780" y1="260" x2="1200" y2="260" stroke="currentColor" stroke-width="1.4"></line>
-        <polyline points="1200,260 1200,270 1192,278 1208,290 1192,302 1208,314 1192,324 1200,332 1200,340" fill="none" stroke="currentColor" stroke-width="1.4"></polyline>
-        <text x="1216" y="302" class="svg-label" font-size="10" fill="currentColor">220&Omega;</text>
-        <circle cx="1200" cy="340" r="3" fill="currentColor"></circle>
-        <polyline points="1200,340 1200,360 1191,370 1209,384 1191,398 1209,412 1191,426 1209,440 1191,454 1209,468 1200,480 1200,560" fill="none" stroke="currentColor" stroke-width="1.4"></polyline>
-        <text x="1216" y="410" class="svg-label" font-size="10" fill="currentColor">10&nbsp;k&Omega;</text>
-        <line x1="1200" y1="340" x2="1260" y2="340" stroke="currentColor" stroke-width="1.4"></line>
-        <text x="1252" y="354" text-anchor="end" class="svg-label" font-size="9.5" fill="currentColor">G</text>
-        <rect x="1260" y="295" width="80" height="90" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"></rect>
-        <text x="1300" y="344" text-anchor="middle" class="svg-label" font-size="9.5" fill="currentColor">IRLB8721</text>
-        <line x1="1300" y1="295" x2="1300" y2="260" stroke="currentColor" stroke-width="1.4"></line>
-        <text x="1306" y="278" class="svg-label" font-size="9.5" fill="currentColor">D</text>
-        <line x1="1300" y1="260" x2="1400" y2="260" stroke="currentColor" stroke-width="1.6"></line>
-        <text x="1350" y="251" text-anchor="middle" class="svg-label" font-size="9.5" font-weight="600" fill="currentColor">fil B (bleu)</text>
-        <line x1="1300" y1="385" x2="1300" y2="560" stroke="currentColor" stroke-width="1.4"></line>
-        <text x="1306" y="402" class="svg-label" font-size="9.5" fill="currentColor">S</text>
-
-        <!-- ================= Strip connector ================= -->
-        <rect x="1400" y="120" width="140" height="280" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"></rect>
-        <text x="1470" y="108" text-anchor="middle" class="svg-label" font-size="12" font-weight="600" fill="currentColor">Bandeau LED</text>
-        <circle cx="1470" cy="125" r="2.8" fill="var(--accent)"></circle>
-        <text x="1478" y="138" class="svg-label" font-size="10" fill="var(--accent)">V+</text>
-        <circle cx="1400" cy="170" r="2.8" fill="currentColor"></circle>
-        <text x="1412" y="174" class="svg-label" font-size="10" fill="currentColor">R</text>
-        <circle cx="1400" cy="215" r="2.8" fill="currentColor"></circle>
-        <text x="1412" y="219" class="svg-label" font-size="10" fill="currentColor">V</text>
-        <circle cx="1400" cy="260" r="2.8" fill="currentColor"></circle>
-        <text x="1412" y="264" class="svg-label" font-size="10" fill="currentColor">B</text>
-
-        <!-- ================= common ground rail ================= -->
-        <line x1="20" y1="560" x2="1540" y2="560" stroke="var(--accent)" stroke-width="3"></line>
-        <circle cx="170" cy="560" r="3.5" fill="var(--accent)"></circle>
-        <circle cx="600" cy="560" r="3.5" fill="var(--accent)"></circle>
-        <circle cx="620" cy="560" r="3.5" fill="var(--accent)"></circle>
-        <circle cx="700" cy="560" r="3.5" fill="var(--accent)"></circle>
-        <circle cx="800" cy="560" r="3.5" fill="var(--accent)"></circle>
-        <circle cx="950" cy="560" r="3.5" fill="var(--accent)"></circle>
-        <circle cx="1050" cy="560" r="3.5" fill="var(--accent)"></circle>
-        <circle cx="1200" cy="560" r="3.5" fill="var(--accent)"></circle>
-        <circle cx="1300" cy="560" r="3.5" fill="var(--accent)"></circle>
-        <text x="800" y="592" text-anchor="middle" class="svg-label" font-size="14" font-weight="600" letter-spacing="0.04em" fill="var(--accent)">MASSE COMMUNE</text>
-      </svg>
+  <section class="block" aria-labelledby="plan-title">
+    <div class="section-head">
+      <div class="eyebrow">Plan de placement</div>
+      <h2 id="plan-title">Les deux faces de la plaque</h2>
     </div>
-    <figcaption>
-      Entr&eacute;e 12V &rarr; polyfuse (en attente) &rarr; se s&eacute;pare en <strong>V+ direct au bandeau</strong>
-      et <strong>entr&eacute;e du MP1584EN</strong>. Sa sortie 5V passe par les deux condensateurs de
-      d&eacute;couplage avant les pins <code>5V</code>/<code>GND</code> de l'ESP32. Les trois canaux
-      GPIO18/19/20 &rarr; 220&Omega; &rarr; Gate (pull-down 10&nbsp;k&Omega;) &rarr; MOSFET &rarr; Drain sur
-      le fil R/V/B, Source sur la masse commune &mdash; identique au c&acirc;blage breadboard d&eacute;j&agrave;
-      valid&eacute;. Rep&egrave;re Gate/Drain/Source du bo&icirc;tier IRLB8721&nbsp;: voir le
-      <a href="cablage-canal-rouge.html">sch&eacute;ma du canal Rouge</a>. Les fils qui se croisent sans point
-      de jonction ne sont <strong>pas</strong> reli&eacute;s entre eux.
-    </figcaption>
-  </figure>
+    <p>
+      Les composants se posent côté composants (vue 1). Les fils de liaison et toutes les soudures se font
+      côté cuivre (vue 2), qui est la même plaque <strong>retournée de gauche à droite</strong> : la colonne 1
+      se retrouve à droite. La vue 2 est déjà dessinée en miroir, pose-la à côté de la plaque retournée et
+      suis les fils tels que tu les vois.
+    </p>
 
-  <section class="block">
-    <h2>Ordre de soudure recommand&eacute;</h2>
-    <ol class="protocol">
-      <li>Souder d'abord la <strong>masse commune</strong> (piste ou fil reliant tous les points GND) — c'est
-        le squelette du montage, tout le reste s'y raccroche.</li>
-      <li>Souder <strong>un canal &agrave; la fois</strong> (r&eacute;sistances, MOSFET), en revalidant sa
-        continuit&eacute; Gate/Drain-Source au multim&egrave;tre avant de passer au suivant — plus facile
-        d'isoler un mauvais point de soudure sur un seul canal que sur les trois &agrave; la fois.</li>
-      <li>Souder le MP1584EN et les deux condensateurs de d&eacute;couplage. <strong>V&eacute;rifier le sens du
-        condensateur &eacute;lectrolytique avant de souder</strong> — contrairement &agrave; la breadboard,
-        une erreur de polarit&eacute; n'est plus juste d&eacute;branchable en un geste.</li>
-      <li>Souder l'entr&eacute;e 12V (bornier) et la branche <strong>V+ direct au bandeau</strong>. Laisser
-        l'emplacement du polyfuse accessible pour l'ajouter d&egrave;s r&eacute;ception — ne pas relier les
-        deux extr&eacute;mit&eacute;s en direct de fa&ccedil;on permanente.</li>
-      <li>Continuit&eacute; g&eacute;n&eacute;rale au multim&egrave;tre (V+/GND, pas de court-circuit) avant
-        toute mise sous tension.</li>
-      <li>Remettre sous tension et revalider les m&ecirc;mes jalons que sur breadboard&nbsp;: connexion WiFi,
-        chaque canal isol&eacute;, blanc plein, temp&eacute;rature des MOSFET.</li>
+    <div class="toolbar" role="group" aria-label="Isoler un réseau">
+      <span class="lbl">Isoler</span>
+      <button type="button" class="chip" id="f-all" data-net="" aria-pressed="true">Tout</button>
+      <button type="button" class="chip" id="f-gnd" data-net="gnd" aria-pressed="false"><span class="sw" style="background:var(--net-gnd)"></span>Masse</button>
+      <button type="button" class="chip" id="f-v12" data-net="v12" aria-pressed="false"><span class="sw" style="background:var(--net-12v)"></span>+12 V</button>
+      <button type="button" class="chip" id="f-v5" data-net="v5" aria-pressed="false"><span class="sw" style="background:var(--net-5v)"></span>+5 V</button>
+      <button type="button" class="chip" id="f-sig" data-net="sig" aria-pressed="false"><span class="sw" style="background:var(--net-sig)"></span>Grilles</button>
+      <button type="button" class="chip" id="f-out" data-net="out" aria-pressed="false"><span class="sw" style="background:var(--net-out)"></span>Sorties Drain</button>
+    </div>
+
+    <div class="view-pair views" id="views">
+      <div class="view">
+        <div class="view-head">
+          <h3>Vue 1 · côté composants (dessus)</h3>
+          <p>Fils côté cuivre en pointillé, pour situer.</p>
+        </div>
+        <div class="diagram-wrap"><div id="view-top" role="img" aria-label="Vue côté composants : ESP32 sur colonnes 3 à 24 et rangées 1 à 10, alimentation dans le coin bas gauche, trois canaux MOSFET sur les rangées 11 à 17, bus de masse sur la rangée 18."></div></div>
+      </div>
+      <div class="view">
+        <div class="view-head">
+          <h3>Vue 2 · côté cuivre (dessous, en miroir)</h3>
+          <p>Points gris = soudures. Un fil qui passe sur un trou sans point gris n'y est pas soudé.</p>
+        </div>
+        <div class="diagram-wrap"><div id="view-bottom" role="img" aria-label="Vue côté cuivre en miroir : colonne 1 à droite. Fils de liaison colorés par réseau, points de soudure en gris."></div></div>
+      </div>
+    </div>
+
+    <div class="legend" aria-label="Légende">
+      <div><svg width="34" height="10" aria-hidden="true"><line x1="2" y1="5" x2="32" y2="5" stroke="var(--net-gnd)" stroke-width="3.2" stroke-linecap="round"/></svg>Masse commune (GND)</div>
+      <div><svg width="34" height="10" aria-hidden="true"><line x1="2" y1="5" x2="32" y2="5" stroke="var(--net-12v)" stroke-width="3.2" stroke-linecap="round"/></svg>+12 V (alim. bandeau)</div>
+      <div><svg width="34" height="10" aria-hidden="true"><line x1="2" y1="5" x2="32" y2="5" stroke="var(--net-5v)" stroke-width="3.2" stroke-linecap="round"/></svg>+5 V (sortie buck → ESP32)</div>
+      <div><svg width="34" height="10" aria-hidden="true"><line x1="2" y1="5" x2="32" y2="5" stroke="var(--net-sig)" stroke-width="3.2" stroke-linecap="round"/></svg>GPIO → résistance → Gate</div>
+      <div><svg width="34" height="10" aria-hidden="true"><line x1="2" y1="5" x2="32" y2="5" stroke="var(--net-out)" stroke-width="3.2" stroke-linecap="round"/></svg>Drain → fil R / V / B du bandeau</div>
+      <div><svg width="34" height="14" aria-hidden="true"><circle cx="17" cy="7" r="4.5" fill="var(--solder)" stroke="var(--solder-edge)"/></svg>Point de soudure</div>
+      <div><svg width="34" height="14" aria-hidden="true"><circle cx="17" cy="7" r="5" fill="var(--surface)" stroke="var(--ink)" stroke-width="1.6"/><circle cx="17" cy="7" r="1.6" fill="var(--ink)"/></svg>Fil volant (vers buck, jack ou bandeau)</div>
+      <div><svg width="34" height="14" aria-hidden="true"><rect x="4" y="2" width="26" height="10" rx="1.5" fill="var(--part)" stroke="var(--ink)" stroke-width="1.2"/><line x1="4" y1="12" x2="30" y2="12" stroke="var(--ink)" stroke-width="3"/></svg>MOSFET : trait épais = face imprimée</div>
+    </div>
+  </section>
+
+  <div class="note warn">
+    <span class="label">Languette = Drain</span>
+    <span>
+      La languette métallique de l'IRLB8721 est reliée à son Drain. Les trois languettes sont trois réseaux
+      différents : elles ne doivent jamais se toucher, ni toucher un fil nu. Les MOSFET sont espacés de
+      6 colonnes, ce qui laisse environ 5 mm entre les boîtiers. Pas de dissipateur commun.
+    </span>
+  </div>
+
+  <section class="block" aria-labelledby="parts-title">
+    <div class="section-head">
+      <div class="eyebrow">Référence</div>
+      <h2 id="parts-title">Placement des composants</h2>
+    </div>
+    <p>Coordonnées notées <code>rangée·colonne</code>, vue côté composants.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Repère</th><th>Composant</th><th>Trous</th><th>Montage</th></tr></thead>
+        <tbody>
+          <tr><td class="ref">J1, J3</td><td>2 barrettes femelles 1 × 16, pas 2,54 mm</td><td class="holes">1·7 → 1·22<br>10·7 → 10·22</td><td>Soudées. L'ESP32 s'enfiche dessus, jamais soudé.</td></tr>
+          <tr><td class="ref">C2</td><td>Céramique 100 nF (marquage 104)</td><td class="holes">2·8, 2·9</td><td>Couché à plat sous l'ESP32. Patte de 2·8 repliée côté cuivre sur 1·8 (GND). Non polarisé.</td></tr>
+          <tr><td class="ref">C1</td><td>Électrolytique 470 µF, ≥ 10 V</td><td class="holes">+ 14·3<br>− 14·5</td><td>Debout. <strong>Bande « − » côté colonne 5.</strong></td></tr>
+          <tr><td class="ref">R1</td><td>220 Ω (rouge-rouge-brun) · canal R</td><td class="holes">11·8 → 11·13</td><td>À plat, pas de 5 trous. Patte de 11·13 repliée sur la broche GPIO18 (10·13).</td></tr>
+          <tr><td class="ref">R2</td><td>220 Ω · canal V</td><td class="holes">13·14 → 13·18</td><td>À plat, pas de 4 trous. Entrée en 13·18, sortie en 13·14.</td></tr>
+          <tr><td class="ref">R3</td><td>220 Ω · canal B</td><td class="holes">11·15 → 11·20</td><td>À plat, pas de 5 trous. Patte de 11·15 repliée sur la broche GPIO20 (10·15).</td></tr>
+          <tr><td class="ref">R4</td><td>10 kΩ (brun-noir-orange) · pull-down R</td><td class="holes">14·8 → 14·12</td><td rowspan="3">À plat, pas de 4 trous. R5 touche R2 juste au-dessus : sans risque, les corps sont isolés.</td></tr>
+          <tr><td class="ref">R5</td><td>10 kΩ · pull-down V</td><td class="holes">14·14 → 14·18</td></tr>
+          <tr><td class="ref">R6</td><td>10 kΩ · pull-down B</td><td class="holes">14·20 → 14·24</td></tr>
+          <tr><td class="ref">Q1</td><td>IRLB8721 · canal R (GPIO18)</td><td class="holes">G 16·8 · D 16·9 · S 16·10</td><td rowspan="3">Debout, <strong>face imprimée vers le bas de la plaque</strong>, languette vers l'ESP32. Corps à 3–4 mm au-dessus de la plaque pour ne pas écraser R4–R6.</td></tr>
+          <tr><td class="ref">Q2</td><td>IRLB8721 · canal V (GPIO19)</td><td class="holes">G 16·14 · D 16·15 · S 16·16</td></tr>
+          <tr><td class="ref">Q3</td><td>IRLB8721 · canal B (GPIO20)</td><td class="holes">G 16·20 · D 16·21 · S 16·22</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>Fils volants (arrivent par le dessus, soudés côté cuivre)</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Trou</th><th>Vers</th><th>Réseau</th><th>Fil conseillé</th></tr></thead>
+        <tbody>
+          <tr><td class="holes">17·1</td><td>Bornier du jack DC, borne +</td><td><span class="net-dot" style="background:var(--net-12v)"></span>+12 V</td><td>Souple rouge, AWG 22 ou plus gros. Le polyfuse s'intercale sur ce fil.</td></tr>
+          <tr><td class="holes">18·2</td><td>Bornier du jack DC, borne −</td><td><span class="net-dot" style="background:var(--net-gnd)"></span>GND</td><td>Souple noir, AWG 22 ou plus gros</td></tr>
+          <tr><td class="holes">14·1</td><td>MP1584EN · IN+</td><td><span class="net-dot" style="background:var(--net-12v)"></span>+12 V</td><td rowspan="4">Souple fin (AWG 24–26), 6 à 8 cm</td></tr>
+          <tr><td class="holes">16·5</td><td>MP1584EN · IN−</td><td><span class="net-dot" style="background:var(--net-gnd)"></span>GND</td></tr>
+          <tr><td class="holes">17·3</td><td>MP1584EN · OUT+</td><td><span class="net-dot" style="background:var(--net-5v)"></span>+5 V</td></tr>
+          <tr><td class="holes">17·5</td><td>MP1584EN · OUT−</td><td><span class="net-dot" style="background:var(--net-gnd)"></span>GND</td></tr>
+          <tr><td class="holes">11·1</td><td>Bandeau · V+ (anode commune)</td><td><span class="net-dot" style="background:var(--net-12v)"></span>+12 V</td><td rowspan="4">Souple AWG 22, gaine thermo à la sortie, regroupés vers le connecteur du bandeau</td></tr>
+          <tr><td class="holes">17·9</td><td>Bandeau · fil R</td><td><span class="net-dot" style="background:var(--net-out)"></span>Drain Q1</td></tr>
+          <tr><td class="holes">17·15</td><td>Bandeau · fil V (vert)</td><td><span class="net-dot" style="background:var(--net-out)"></span>Drain Q2</td></tr>
+          <tr><td class="holes">17·21</td><td>Bandeau · fil B</td><td><span class="net-dot" style="background:var(--net-out)"></span>Drain Q3</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="wires-title">
+    <div class="section-head">
+      <div class="eyebrow">Référence · côté cuivre</div>
+      <h2 id="wires-title">Fils de liaison à préparer</h2>
+    </div>
+    <p>
+      Fil rigide étamé nu (0,6 à 0,8 mm) ou chutes de pattes de résistances. Plie chaque fil aux angles
+      indiqués, pose-le à plat sur les pastilles et soude-le <strong>uniquement</strong> aux trous de la
+      dernière colonne. La longueur inclut 4 mm de marge. Le bus de masse est un seul fil sur toute la
+      rangée 18.
+    </p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Fil</th><th>Rôle</th><th>Trajet (rangée·colonne)</th><th>Long.</th><th>Souder à</th></tr></thead>
+        <tbody id="wire-rows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="steps-title">
+    <div class="section-head">
+      <div class="eyebrow">Procédure</div>
+      <h2 id="steps-title">Ordre de soudure</h2>
+    </div>
+    <p>
+      Règle de base sur cette plaque : dans chaque zone, d'abord tout ce qui <strong>traverse</strong> la plaque
+      (pattes de composants, fils volants), ensuite les fils nus côté cuivre, qui se posent par-dessus les
+      pattes coupées. Un fil nu soudé en premier boucherait le trou dont une patte a besoin. Teste au
+      multimètre à chaque étape. Les cases se souviennent de ta progression dans ce navigateur.
+    </p>
+    <div class="toolbar"><span class="progress" id="progress">0 / 0 étapes</span><button type="button" class="reset" id="reset-steps">Tout décocher</button></div>
+    <ol class="steps" id="steps">
+      <li><div class="step-body">
+        <label class="check"><input type="checkbox" id="step-1"><span><strong>Préparer et vérifier.</strong></span></label>
+        <p>Marque au feutre fin les colonnes 5, 10, 15, 20 et les rangées 5, 10, 15, des deux côtés. Re-mesure la sortie du MP1584EN à vide : 5,0 V. Vérifie au multimètre que IN− et OUT− du module sont reliés entre eux.</p>
+        <p>Essai à blanc avec l'ESP32 sur ses barrettes : il doit couvrir les colonnes 3 à 24, antenne à droite au bord de la plaque, USB à gauche. Pose R1 et R3 à plat en rangée 11 : elles frôlent la barrette sans gêner l'ESP32.</p>
+      </div></li>
+      <li><div class="step-body">
+        <label class="check"><input type="checkbox" id="step-2"><span><strong>Barrettes femelles J1 et J3</strong> (rangées 1 et 10, colonnes 7 à 22).</span></label>
+        <p>Enfiche l'ESP32 dans les deux barrettes pour qu'elles restent parallèles, pose l'ensemble, soude les 4 coins. Vérifie que tout est à plat, retire l'ESP32, soude les 28 broches restantes.</p>
+        <p class="test"><b>Test</b>Pas de continuité entre 1·8 (GND) et 1·9 (5V), ni entre 10·13, 10·14 et 10·15.</p>
+      </div></li>
+      <li><div class="step-body">
+        <label class="check"><input type="checkbox" id="step-3"><span><strong>Zone alimentation : composants et fils volants.</strong></span></label>
+        <p>C2 couché à plat en 2·8 / 2·9, patte de 2·8 repliée sur 1·8 (F2). C1 debout, + en 14·3, <strong>bande « − » en 14·5</strong>. Puis les fils volants : buck IN+ 14·1, IN− 16·5, OUT+ 17·3, OUT− 17·5, jack +12 V 17·1, jack GND 18·2, V+ bandeau 11·1. Soude-les, coupe les pattes au ras.</p>
+      </div></li>
+      <li><div class="step-body">
+        <label class="check"><input type="checkbox" id="step-4"><span><strong>Zone alimentation : fils nus F1, F3, F4, puis bus F5 et retour ESP32 F6.</strong></span></label>
+        <p>F1 (5V) part de 1·9, passe sous l'ESP32 par la rangée 3 puis descend la colonne 3 jusqu'à 17·3. F3 descend la colonne 5 de 14·5 au bus. F4 relie les trois trous +12 V de la colonne 1. F5 parcourt toute la rangée 18, de 18·2 à 18·24. F6 ramène le GND de l'ESP32 (10·22) au bus par la colonne 23.</p>
+        <p class="test"><b>Test</b>1·9 ↔ 17·3 : continuité. 10·22 ↔ 18·2 : continuité. 11·1 ↔ 17·1 : continuité. 5V ↔ GND, 12V ↔ GND, 12V ↔ 5V : pas de court-circuit (la valeur monte puis se stabilise haut, c'est C1 qui se charge).</p>
+      </div></li>
+      <li><div class="step-body">
+        <label class="check"><input type="checkbox" id="step-5"><span><strong>Canal R</strong> : R1, R4, Q1, fil volant R, puis F7 à F11.</span></label>
+        <p>R1 à plat en 11·8 → 11·13, R4 en 14·8 → 14·12, Q1 debout (patte du milieu d'abord, vérifie qu'il est droit, puis les deux autres), fil volant du bandeau en 17·9. Côté cuivre : replie la patte de R1 de 11·13 sur 10·13 (F7), puis F8 (grille), F9 (pull-down → bus), F10 (Source → bus), F11 (Drain → 17·9). F10 et F11 peuvent être les pattes de Q1 repliées.</p>
+        <p class="test"><b>Test</b>10·13 ↔ 16·8 : 220 Ω. 16·8 ↔ bus : 10 kΩ. 16·10 ↔ bus : 0 Ω. 16·9 ↔ bus : pas de continuité.</p>
+      </div></li>
+      <li><div class="step-body">
+        <label class="check"><input type="checkbox" id="step-6"><span><strong>Canal V</strong> : R2, R5, Q2, fil volant V, puis F12 à F16.</span></label>
+        <p>F12 part de GPIO19 (10·14), descend jusqu'à la rangée 12, file à droite jusqu'à la colonne 18 et rejoint l'entrée de R2 en 13·18. R2 ramène le signal vers la gauche, en 13·14, d'où F13 descend jusqu'à la grille.</p>
+        <p class="test"><b>Test</b>10·14 ↔ 16·14 : 220 Ω. 16·14 ↔ bus : 10 kΩ. 16·16 ↔ bus : 0 Ω. 16·15 ↔ bus : pas de continuité.</p>
+      </div></li>
+      <li><div class="step-body">
+        <label class="check"><input type="checkbox" id="step-7"><span><strong>Canal B</strong> : R3, R6, Q3, fil volant B, puis F17 à F21.</span></label>
+        <p>Même méthode que le canal R. Sur breadboard, les fils de GPIO19 et GPIO20 avaient été inversés (vert à la place du bleu) : vérifie que R3 est bien repliée sur 10·15 et F12 bien soudé à 10·14.</p>
+        <p class="test"><b>Test</b>10·15 ↔ 16·20 : 220 Ω. 16·20 ↔ bus : 10 kΩ. 16·22 ↔ bus : 0 Ω. 16·21 ↔ bus : pas de continuité. 10·14 ↔ 16·20 : pas de continuité.</p>
+      </div></li>
+      <li><div class="step-body">
+        <label class="check"><input type="checkbox" id="step-8"><span><strong>Contrôle visuel complet, hors tension.</strong></span></label>
+        <p>À la loupe ou en lumière rasante : pas de pont entre pastilles voisines, surtout en rangée 11 (colonnes 13, 14, 15), en rangée 16 (pattes des MOSFET) et en rangée 17 (fils volants). Refais les tests des étapes 4 à 7.</p>
+      </div></li>
+      <li><div class="step-body">
+        <label class="check"><input type="checkbox" id="step-9"><span><strong>Première mise sous tension, sans l'ESP32.</strong></span></label>
+        <p>Bandeau branché, ESP32 hors des barrettes, branche le 12 V. Le bandeau doit rester éteint : les pull-down tiennent les trois grilles à 0 V. Mesure 5,0 V entre 1·9 et 1·8 dans la barrette, et 12 V entre 11·1 et le bus.</p>
+      </div></li>
+      <li><div class="step-body">
+        <label class="check"><input type="checkbox" id="step-10"><span><strong>ESP32 en place et validation.</strong></span></label>
+        <p>Débranche le 12 V, enfiche l'ESP32, rebranche. Pas de câble USB en même temps que le 12 V : deux sources 5 V se retrouveraient reliées. Les mises à jour se font en OTA. Refais les jalons du breadboard : WiFi dans Home Assistant, rouge, vert, bleu un par un, blanc 100 %, température des MOSFET après quelques minutes.</p>
+      </div></li>
     </ol>
   </section>
 
+  <section class="block" aria-labelledby="why-title">
+    <div class="section-head">
+      <div class="eyebrow">Choix du plan</div>
+      <h2 id="why-title">Comment tout tient en 24 × 18</h2>
+    </div>
+    <ul class="plain">
+      <li><strong>ESP32 contre le bord droit.</strong> L'antenne du module se retrouve au bord de la plaque, ce qui est sa meilleure position. Les colonnes 1 et 2, côté USB, restent libres pour l'alimentation, et la prise USB reste accessible.</li>
+      <li><strong>Trois étages de 8 rangées.</strong> Rangée 11 : résistances de grille à plat, juste sous les GPIO. Rangée 14 : pull-down. Rangée 16 : MOSFET. Rangée 17 : sorties vers le bandeau. Rangée 18 : bus de masse.</li>
+      <li><strong>Pas de rail 12 V qui traverse la plaque.</strong> Le V+ du bandeau part du coin gauche, à côté de l'entrée 12 V et du buck. Les 4 fils du bandeau partent de points différents mais se regroupent au connecteur.</li>
+      <li><strong>Aucun fil ne se croise.</strong> Le canal V fait un petit détour par la rangée 12 pour éviter les deux autres. Une vérification automatique du plan garantit qu'aucun fil ne passe sur un trou d'un autre réseau.</li>
+      <li><strong>Découplage.</strong> Le 100 nF reste collé aux broches 5V/GND, sous l'ESP32. Le 470 µF est trop haut pour passer dessous : il est dans le coin bas gauche, à environ 4 cm de la broche 5V, sur le fil qui arrive du buck.</li>
+    </ul>
+  </section>
+
   <div class="note">
-    <span class="label">Fusible non install&eacute;</span>
+    <span class="label">Polyfuse en attente</span>
     <span>
-      Le polyfuse n'est pas encore re&ccedil;u — le +12V reste temporairement non prot&eacute;g&eacute; contre
-      un court-circuit franc pendant cette phase. Rien n'emp&ecirc;che de souder le reste et de faire les tests
-      de validation, mais &eacute;viter de laisser le montage sous tension sans surveillance avant que le
-      fusible soit en place.
+      Le polyfuse 1,5 A (hold) se place en série sur le fil +12 V d'entrée, entre le bornier du jack et 17·1.
+      En attendant, tout le reste peut être soudé et validé, mais ne laisse pas le montage sous tension sans
+      surveillance avant qu'il soit en place.
     </span>
   </div>
 </main>
+
+<script>
+(function () {
+  // ---- Données du plan : (rangée, colonne), vue côté composants ----
+  var ROWS = 18, COLS = 24, CELL = 24, PADL = 44, PADR = 30, PADT = 76, PADB = 52;
+  var W = PADL + (COLS - 1) * CELL + PADR;
+  var H = PADT + (ROWS - 1) * CELL + PADB;
+  var ESP_FROM = 3, ESP_TO = 24;
+
+  var FAMILY = { s18: "sig", s19: "sig", s20: "sig", gR: "sig", gV: "sig", gB: "sig", dR: "out", dV: "out", dB: "out", gnd: "gnd", v12: "v12", v5: "v5" };
+  var COLOR = { gnd: "var(--net-gnd)", v12: "var(--net-12v)", v5: "var(--net-5v)", sig: "var(--net-sig)", out: "var(--net-out)" };
+
+  var PARTS = [
+    { id: "C2", type: "ccap", a: [2, 8], b: [2, 9], na: "gnd", nb: "v5", value: "100 nF" },
+    { id: "C1", type: "ecap", a: [14, 3], b: [14, 5], na: "v5", nb: "gnd", value: "470 µF" },
+    { id: "R1", type: "res", a: [11, 8], b: [11, 13], na: "gR", nb: "s18", value: "220 Ω" },
+    { id: "R2", type: "res", a: [13, 14], b: [13, 18], na: "gV", nb: "s19", value: "220 Ω" },
+    { id: "R3", type: "res", a: [11, 15], b: [11, 20], na: "s20", nb: "gB", value: "220 Ω" },
+    { id: "R4", type: "res", a: [14, 8], b: [14, 12], na: "gR", nb: "gnd", value: "10 kΩ" },
+    { id: "R5", type: "res", a: [14, 14], b: [14, 18], na: "gV", nb: "gnd", value: "10 kΩ" },
+    { id: "R6", type: "res", a: [14, 20], b: [14, 24], na: "gB", nb: "gnd", value: "10 kΩ" },
+    { id: "Q1", type: "fet", at: [16, 8], nets: ["gR", "dR", "gnd"], ch: "R" },
+    { id: "Q2", type: "fet", at: [16, 14], nets: ["gV", "dV", "gnd"], ch: "V" },
+    { id: "Q3", type: "fet", at: [16, 20], nets: ["gB", "dB", "gnd"], ch: "B" }
+  ];
+
+  // Fils volants. dx/dy/anchor : étiquette dans la vue composants (miroir auto en vue cuivre).
+  var PADS = [
+    { at: [11, 1], net: "v12", label: "V+", dx: 9, dy: 4, anchor: "start" },
+    { at: [14, 1], net: "v12", label: "IN+", dx: -4, dy: -9, anchor: "start" },
+    { at: [17, 1], net: "v12", label: "12V", dx: -4, dy: -9, anchor: "start" },
+    { at: [18, 2], net: "gnd", label: "GND", dx: 0, dy: 19, anchor: "middle" },
+    { at: [17, 3], net: "v5", label: "OUT+", dx: 0, dy: 13, anchor: "middle" },
+    { at: [16, 5], net: "gnd", label: "IN−", dx: 9, dy: 4, anchor: "start" },
+    { at: [17, 5], net: "gnd", label: "OUT−", dx: 9, dy: 9, anchor: "start" },
+    { at: [17, 9], net: "dR", label: "R", dx: -9, dy: 4, anchor: "end" },
+    { at: [17, 15], net: "dV", label: "V", dx: -9, dy: 4, anchor: "end" },
+    { at: [17, 21], net: "dB", label: "B", dx: -9, dy: 4, anchor: "end" }
+  ];
+
+  var HEADER_ROWS = [1, 10], HEADER_FROM = 7, HEADER_TO = 22;
+  // broches nommées (col = 23 − position sur le connecteur) ; used = reliée sur ce montage
+  var HEADER_PINS = {
+    "1,8": ["GND", "gnd", true], "1,9": ["5V", "v5", true],
+    "10,8": ["GND", "gnd", false], "10,11": ["GND", "gnd", false], "10,22": ["GND", "gnd", true],
+    "10,13": ["IO18", "s18", true], "10,14": ["IO19", "s19", true], "10,15": ["IO20", "s20", true]
+  };
+
+  var WIRES = [
+    { id: "F1", net: "v5", role: "5V sous l'ESP32", pts: [[1, 9], [3, 9], [3, 3], [17, 3]], solder: [[1, 9], [2, 9], [14, 3], [17, 3]] },
+    { id: "F2", net: "gnd", role: "Patte de C2 sur GND", pts: [[2, 8], [1, 8]], solder: [[2, 8], [1, 8]], lead: true },
+    { id: "F3", net: "gnd", role: "Masse de l'alimentation", pts: [[14, 5], [18, 5]], solder: [[14, 5], [16, 5], [17, 5], [18, 5]] },
+    { id: "F4", net: "v12", role: "+12V : entrée, buck, V+", pts: [[11, 1], [17, 1]], solder: [[11, 1], [14, 1], [17, 1]] },
+    { id: "F5", net: "gnd", role: "Bus de masse", pts: [[18, 2], [18, 24]], solder: [[18, 2], [18, 5], [18, 10], [18, 12], [18, 16], [18, 18], [18, 22], [18, 23], [18, 24]] },
+    { id: "F6", net: "gnd", role: "GND de l'ESP32 → bus", pts: [[10, 22], [11, 22], [11, 23], [18, 23]], solder: [[10, 22], [18, 23]] },
+    { id: "F7", net: "s18", role: "Patte de R1 sur GPIO18", pts: [[11, 13], [10, 13]], solder: [[11, 13], [10, 13]], lead: true },
+    { id: "F8", net: "gR", role: "Grille Q1", pts: [[11, 8], [16, 8]], solder: [[11, 8], [14, 8], [16, 8]] },
+    { id: "F9", net: "gnd", role: "Pull-down R4 → bus", pts: [[14, 12], [18, 12]], solder: [[14, 12], [18, 12]] },
+    { id: "F10", net: "gnd", role: "Source Q1 → bus", pts: [[16, 10], [18, 10]], solder: [[16, 10], [18, 10]], lead: true },
+    { id: "F11", net: "dR", role: "Drain Q1 → fil R", pts: [[16, 9], [17, 9]], solder: [[16, 9], [17, 9]], lead: true },
+    { id: "F12", net: "s19", role: "GPIO19 → R2", pts: [[10, 14], [12, 14], [12, 18], [13, 18]], solder: [[10, 14], [13, 18]] },
+    { id: "F13", net: "gV", role: "Grille Q2", pts: [[13, 14], [16, 14]], solder: [[13, 14], [14, 14], [16, 14]] },
+    { id: "F14", net: "gnd", role: "Pull-down R5 → bus", pts: [[14, 18], [18, 18]], solder: [[14, 18], [18, 18]] },
+    { id: "F15", net: "gnd", role: "Source Q2 → bus", pts: [[16, 16], [18, 16]], solder: [[16, 16], [18, 16]], lead: true },
+    { id: "F16", net: "dV", role: "Drain Q2 → fil V", pts: [[16, 15], [17, 15]], solder: [[16, 15], [17, 15]], lead: true },
+    { id: "F17", net: "s20", role: "Patte de R3 sur GPIO20", pts: [[11, 15], [10, 15]], solder: [[11, 15], [10, 15]], lead: true },
+    { id: "F18", net: "gB", role: "Grille Q3", pts: [[11, 20], [16, 20]], solder: [[11, 20], [14, 20], [16, 20]] },
+    { id: "F19", net: "gnd", role: "Pull-down R6 → bus", pts: [[14, 24], [18, 24]], solder: [[14, 24], [18, 24]] },
+    { id: "F20", net: "gnd", role: "Source Q3 → bus", pts: [[16, 22], [18, 22]], solder: [[16, 22], [18, 22]], lead: true },
+    { id: "F21", net: "dB", role: "Drain Q3 → fil B", pts: [[16, 21], [17, 21]], solder: [[16, 21], [17, 21]], lead: true }
+  ];
+
+  function fam(n) { return FAMILY[n] || n; }
+  function key(p) { return p[0] + "," + p[1]; }
+  function leads(part) {
+    if (part.type === "fet") {
+      var r = part.at[0], c = part.at[1];
+      return [[[r, c], part.nets[0]], [[r, c + 1], part.nets[1]], [[r, c + 2], part.nets[2]]];
+    }
+    return [[part.a, part.na], [part.b, part.nb]];
+  }
+  function holesAlong(pts) {
+    var out = [];
+    for (var i = 0; i < pts.length - 1; i++) {
+      var a = pts[i], b = pts[i + 1];
+      var dr = Math.sign(b[0] - a[0]), dc = Math.sign(b[1] - a[1]);
+      var p = [a[0], a[1]];
+      out.push([p[0], p[1]]);
+      while (p[0] !== b[0] || p[1] !== b[1]) { p = [p[0] + dr, p[1] + dc]; out.push([p[0], p[1]]); }
+    }
+    return out;
+  }
+
+  // ---- Vérification de cohérence : aucun fil ne traverse un trou d'un autre réseau, tout tient sur la plaque ----
+  function validate() {
+    var occ = {}, problems = [];
+    function claim(p, net, who) {
+      if (p[0] < 1 || p[0] > ROWS || p[1] < 1 || p[1] > COLS) problems.push(who + " hors plaque en " + key(p));
+      var k = key(p);
+      if (occ[k] && occ[k].net !== net) problems.push(who + " en " + k + " : " + net + " / " + occ[k].net + " (" + occ[k].who + ")");
+      else occ[k] = { net: net, who: who };
+    }
+    HEADER_ROWS.forEach(function (r) {
+      for (var c = HEADER_FROM; c <= HEADER_TO; c++) {
+        var u = HEADER_PINS[r + "," + c];
+        claim([r, c], u && u[2] ? u[1] : "pin" + r + "_" + c, "barrette");
+      }
+    });
+    PARTS.forEach(function (p) { leads(p).forEach(function (l) { claim(l[0], l[1], p.id); }); });
+    PADS.forEach(function (p) { claim(p.at, p.net, "fil volant " + p.label); });
+    WIRES.forEach(function (w) { holesAlong(w.pts).forEach(function (h) { claim(h, w.net, w.id); }); });
+    WIRES.forEach(function (w) {
+      w.solder.forEach(function (s) {
+        var o = occ[key(s)];
+        if (!o || o.net !== w.net) problems.push(w.id + " : soudure en " + key(s) + " hors réseau");
+      });
+    });
+    // chaque patte et chaque fil volant doit être relié à au moins un fil
+    var wired = {};
+    WIRES.forEach(function (w) { w.solder.forEach(function (s) { wired[key(s)] = 1; }); });
+    PARTS.forEach(function (p) { leads(p).forEach(function (l) { if (!wired[key(l[0])]) problems.push(p.id + " : patte " + key(l[0]) + " non reliée"); }); });
+    PADS.forEach(function (p) { if (!wired[key(p.at)]) problems.push("fil volant " + p.label + " non relié"); });
+    return problems;
+  }
+
+  function wireLengthMm(w) {
+    var n = 0;
+    for (var i = 0; i < w.pts.length - 1; i++) n += Math.abs(w.pts[i + 1][0] - w.pts[i][0]) + Math.abs(w.pts[i + 1][1] - w.pts[i][1]);
+    return Math.round(n * 2.54 + 4);
+  }
+
+  if (typeof module !== "undefined") { module.exports = { validate: validate, WIRES: WIRES, wireLengthMm: wireLengthMm }; }
+  if (typeof document === "undefined") return;
+
+  var problems = validate();
+  if (problems.length) console.warn("Plan incohérent :", problems);
+
+  // ---- Rendu SVG ----
+  function X(c, mir) { return PADL + ((mir ? COLS + 1 - c : c) - 1) * CELL; }
+  function Y(r) { return PADT + (r - 1) * CELL; }
+  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
+  function text(x, y, s, o) {
+    o = o || {};
+    return '<text x="' + x + '" y="' + y + '" text-anchor="' + (o.anchor || "middle") + '" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="' + (o.size || 8.5) +
+      '" font-weight="' + (o.weight || 500) + '" fill="' + (o.fill || "var(--ink)") + '"' +
+      (o.halo ? ' stroke="var(--board)" stroke-width="3.2" paint-order="stroke" stroke-linejoin="round"' : "") + '>' + esc(s) + '</text>';
+  }
+  function flipAnchor(a, mir) { return !mir ? a : a === "start" ? "end" : a === "end" ? "start" : a; }
+  function span(c1, c2, mir) { var a = X(c1, mir), b = X(c2, mir); return [Math.min(a, b), Math.max(a, b)]; }
+
+  function render(mir) {
+    var s = [];
+    var copper = mir;
+    var edge = CELL * 0.7;
+    s.push('<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg">');
+
+    // plaque
+    s.push('<rect x="' + (PADL - edge) + '" y="' + (PADT - edge) + '" width="' + ((COLS - 1) * CELL + edge * 2) + '" height="' + ((ROWS - 1) * CELL + edge * 2) + '" rx="6" fill="var(--board)" stroke="var(--rule-strong)" stroke-width="1.2"/>');
+
+    // numéros
+    for (var c = 1; c <= COLS; c++) {
+      var strong = c % 5 === 0 || c === 1;
+      s.push(text(X(c, mir), PADT - edge - 24, c, { size: strong ? 9.5 : 8, weight: strong ? 600 : 400, fill: strong ? "var(--ink-soft)" : "var(--muted)" }));
+    }
+    for (var r = 1; r <= ROWS; r++) {
+      var st = r % 5 === 0 || r === 1;
+      s.push(text(PADL - edge - 6, Y(r) + 3, r, { anchor: "end", size: st ? 9.5 : 8, weight: st ? 600 : 400, fill: st ? "var(--ink-soft)" : "var(--muted)" }));
+    }
+    s.push(text(X(1, mir), 14, mir ? "← colonnes (miroir)" : "colonnes →", { anchor: mir ? "end" : "start", size: 8, fill: "var(--muted)" }));
+
+    // trous / pastilles
+    for (r = 1; r <= ROWS; r++) {
+      for (c = 1; c <= COLS; c++) {
+        if (copper) {
+          s.push('<circle cx="' + X(c, mir) + '" cy="' + Y(r) + '" r="6" fill="var(--copper)" opacity="0.5"/>');
+          s.push('<circle cx="' + X(c, mir) + '" cy="' + Y(r) + '" r="1.7" fill="var(--hole)"/>');
+        } else {
+          s.push('<circle cx="' + X(c, mir) + '" cy="' + Y(r) + '" r="2.1" fill="var(--hole)" opacity="0.7"/>');
+        }
+      }
+    }
+
+    // fils
+    WIRES.forEach(function (w) {
+      var f = fam(w.net);
+      var pts = w.pts.map(function (p) { return X(p[1], mir) + "," + Y(p[0]); }).join(" ");
+      if (copper) s.push('<polyline class="net n-' + f + '" points="' + pts + '" fill="none" stroke="' + COLOR[f] + '" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>');
+      else s.push('<polyline class="net n-' + f + '" points="' + pts + '" fill="none" stroke="' + COLOR[f] + '" stroke-width="1.6" stroke-dasharray="4 3" opacity="0.75" stroke-linecap="round" stroke-linejoin="round"/>');
+    });
+
+    // composants
+    var ghost = copper ? ' opacity="0.28"' : "";
+    PARTS.forEach(function (p) {
+      if (p.type === "res") {
+        var ax = X(p.a[1], mir), ay = Y(p.a[0]), bx = X(p.b[1], mir), by = Y(p.b[0]);
+        var len = Math.abs(bx - ax), body = Math.min(len * 0.62, CELL * 2.6), th = 10;
+        var cx = (ax + bx) / 2, cy = ay;
+        s.push('<g' + ghost + '>');
+        s.push('<line x1="' + ax + '" y1="' + ay + '" x2="' + bx + '" y2="' + by + '" stroke="var(--ink-soft)" stroke-width="1.4"/>');
+        s.push('<rect x="' + (cx - body / 2) + '" y="' + (cy - th / 2) + '" width="' + body + '" height="' + th + '" rx="4.5" fill="var(--res)" stroke="var(--ink)" stroke-width="1.1"/>');
+        s.push('<circle cx="' + ax + '" cy="' + ay + '" r="2.4" fill="var(--ink)"/><circle cx="' + bx + '" cy="' + by + '" r="2.4" fill="var(--ink)"/>');
+        s.push('</g>');
+        if (!copper) s.push(text(cx, p.a[0] === 11 ? cy + 18 : cy - 9, p.id + " · " + p.value, { size: 8.5, weight: 600, halo: true }));
+      } else if (p.type === "fet") {
+        var r0 = p.at[0], g = p.at[1];
+        var xs = [X(g, mir), X(g + 1, mir), X(g + 2, mir)];
+        var x1 = Math.min(xs[0], xs[2]) - CELL * 0.62, x2 = Math.max(xs[0], xs[2]) + CELL * 0.62;
+        var top = Y(r0) - CELL * 1.05, bot = Y(r0) + CELL * 0.32;
+        s.push('<g' + ghost + '>');
+        s.push('<rect x="' + x1 + '" y="' + top + '" width="' + (x2 - x1) + '" height="' + (bot - top) + '" rx="2" fill="var(--part)" stroke="var(--ink)" stroke-width="1.3"/>');
+        s.push('<rect x="' + (x1 + 3) + '" y="' + (top + 2) + '" width="' + (x2 - x1 - 6) + '" height="5" rx="1" fill="var(--tab)"/>');
+        s.push('<line x1="' + x1 + '" y1="' + bot + '" x2="' + x2 + '" y2="' + bot + '" stroke="var(--ink)" stroke-width="3"/>');
+        ["G", "D", "S"].forEach(function (L, i) {
+          s.push('<circle cx="' + xs[i] + '" cy="' + Y(r0) + '" r="2.7" fill="var(--ink)"/>');
+          if (!copper) s.push(text(xs[i], Y(r0) - 7, L, { size: 8.5, weight: 600, fill: "var(--ink-soft)" }));
+        });
+        s.push('</g>');
+        if (!copper) s.push(text((x1 + x2) / 2, top - 5, p.id + " IRLB8721 · " + p.ch, { size: 8, weight: 600, halo: true }));
+        else s.push(text((x1 + x2) / 2, top - 5, p.id, { size: 8, weight: 600, fill: "var(--muted)", halo: true }));
+      } else if (p.type === "ecap") {
+        var pa = X(p.a[1], mir), pb = X(p.b[1], mir), py = Y(p.a[0]);
+        var ccx = (pa + pb) / 2, rad = CELL * 1.75;
+        var dir = pb > pa ? 1 : -1;
+        var cid = "clip" + p.id + (mir ? "b" : "t");
+        s.push('<g' + ghost + '>');
+        s.push('<clipPath id="' + cid + '"><circle cx="' + ccx + '" cy="' + py + '" r="' + rad + '"/></clipPath>');
+        s.push('<circle cx="' + ccx + '" cy="' + py + '" r="' + rad + '" fill="var(--ecap)" opacity="0.92"/>');
+        var sx = dir > 0 ? ccx + rad * 0.45 : ccx - rad;
+        s.push('<rect clip-path="url(#' + cid + ')" x="' + sx + '" y="' + (py - rad) + '" width="' + (rad * 0.55) + '" height="' + (rad * 2) + '" fill="var(--ecap-stripe)"/>');
+        s.push('<circle cx="' + ccx + '" cy="' + py + '" r="' + rad + '" fill="none" stroke="var(--ink)" stroke-width="1.2"/>');
+        s.push('<circle cx="' + pa + '" cy="' + py + '" r="2.6" fill="var(--board)"/><circle cx="' + pb + '" cy="' + py + '" r="2.6" fill="var(--board)"/>');
+        s.push('</g>');
+        if (!copper) {
+          s.push(text(pa, py - 8, "+", { size: 12, weight: 700, fill: "var(--board)" }));
+          s.push(text(pb, py - 8, "−", { size: 12, weight: 700, fill: "var(--ink)" }));
+          s.push(text(ccx - dir * 4, py + 17, p.id, { size: 8.5, weight: 600, fill: "var(--board)" }));
+          s.push(text(ccx - dir * 4, py + 27, p.value, { size: 7.5, weight: 500, fill: "var(--board)" }));
+        }
+      } else if (p.type === "ccap") {
+        var qa = X(p.a[1], mir), qb = X(p.b[1], mir), qy = Y(p.a[0]);
+        s.push('<g' + ghost + '><ellipse cx="' + ((qa + qb) / 2) + '" cy="' + (qy + 4) + '" rx="14" ry="6.5" fill="var(--ceramic)" stroke="var(--ink)" stroke-width="1"/>');
+        s.push('<circle cx="' + qa + '" cy="' + qy + '" r="2.2" fill="var(--ink)"/><circle cx="' + qb + '" cy="' + qy + '" r="2.2" fill="var(--ink)"/></g>');
+      }
+    });
+
+    // ESP32
+    var es = span(ESP_FROM, ESP_TO, mir);
+    var ex = es[0] - CELL * 0.5, ew = es[1] - es[0] + CELL;
+    var ey = Y(1) - CELL * 0.55, eh = Y(10) - Y(1) + CELL * 1.1;
+    if (!copper) s.push('<rect x="' + ex + '" y="' + ey + '" width="' + ew + '" height="' + eh + '" rx="5" fill="var(--esp)" fill-opacity="0.12" stroke="var(--esp)" stroke-width="1.4" stroke-dasharray="6 4"/>');
+    else s.push('<rect x="' + ex + '" y="' + ey + '" width="' + ew + '" height="' + eh + '" rx="5" fill="none" stroke="var(--esp)" stroke-width="1.2" stroke-dasharray="3 5" opacity="0.7"/>');
+    var usbEdge = X(ESP_FROM, mir) + (mir ? CELL * 0.5 : -CELL * 0.5);
+    s.push('<rect x="' + (mir ? usbEdge - 3 : usbEdge - 9) + '" y="' + (Y(4) - 4) + '" width="12" height="' + (CELL * 2 + 8) + '" rx="2" fill="var(--esp)" opacity="0.55"/>');
+    s.push(text(X(4.3, mir), Y(5.6), "USB", { size: 8, weight: 600, fill: "var(--esp)", halo: true }));
+    var ant = span(23, 24, mir);
+    s.push('<rect x="' + (ant[0] - CELL * 0.4) + '" y="' + (Y(3) - 4) + '" width="' + (ant[1] - ant[0] + CELL * 0.8) + '" height="' + (CELL * 4 + 8) + '" rx="3" fill="none" stroke="var(--esp)" stroke-width="1.1" stroke-dasharray="2 3"/>');
+    s.push(text((ant[0] + ant[1]) / 2, Y(5.3), "ant.", { size: 8.5, weight: 600, fill: "var(--esp)", halo: true }));
+    var mid = (X(9, mir) + X(19, mir)) / 2;
+    s.push(text(mid, Y(5) + 2, copper ? "ESP32 (de l'autre côté)" : "ESP32-C6-DevKitC-1", { size: 11.5, weight: 600, fill: "var(--esp)", halo: true }));
+    s.push(text(mid, Y(5) + 16, copper ? "rangées 2 à 9 masquées par la carte" : "enfichée sur J1 / J3, retirée pendant la soudure", { size: 8.5, fill: "var(--muted)", halo: true }));
+    if (!copper) s.push(text(X(8.5, mir), Y(2) + 21, "C2 100 nF (dessous)", { size: 8, weight: 600, fill: "var(--ink-soft)", halo: true }));
+
+    // barrettes
+    HEADER_ROWS.forEach(function (hr) {
+      for (var hc = HEADER_FROM; hc <= HEADER_TO; hc++) {
+        var u = HEADER_PINS[hr + "," + hc];
+        var hx = X(hc, mir), hy = Y(hr);
+        if (u && u[2]) {
+          var f = fam(u[1]);
+          s.push('<rect class="net n-' + f + '" x="' + (hx - 5) + '" y="' + (hy - 5) + '" width="10" height="10" rx="1.5" fill="' + COLOR[f] + '"/>');
+        } else {
+          s.push('<rect x="' + (hx - 3.8) + '" y="' + (hy - 3.8) + '" width="7.6" height="7.6" rx="1" fill="none" stroke="var(--muted)" stroke-width="1"/>');
+        }
+        if (u) {
+          var col = u[2] ? COLOR[fam(u[1])] : "var(--muted)";
+          if (hr === 10) s.push(text(hx, hy - 10, u[0], { size: 7.5, weight: 600, fill: col, halo: true }));
+          else {
+            var right = u[0] === "5V";
+            s.push(text(hx + ((right ? 1 : -1) * (mir ? -7 : 7)), Y(1) - CELL * 0.55 - 5, u[0], { size: 8, weight: 600, fill: col, anchor: flipAnchor(right ? "start" : "end", mir), halo: true }));
+          }
+        }
+      }
+    });
+
+    // soudures (vue cuivre)
+    if (copper) {
+      var done = {};
+      var blob = function (p, f) {
+        var k = key(p); if (done[k]) return; done[k] = 1;
+        s.push('<circle class="net n-' + f + '" cx="' + X(p[1], mir) + '" cy="' + Y(p[0]) + '" r="4.8" fill="var(--solder)" stroke="var(--solder-edge)" stroke-width="1"/>');
+      };
+      WIRES.forEach(function (w) { w.solder.forEach(function (p) { blob(p, fam(w.net)); }); });
+      PARTS.forEach(function (p) { leads(p).forEach(function (l) { blob(l[0], fam(l[1])); }); });
+      HEADER_ROWS.forEach(function (hr) { for (var hc = HEADER_FROM; hc <= HEADER_TO; hc++) blob([hr, hc], "nc"); });
+      PADS.forEach(function (p) { blob(p.at, fam(p.net)); });
+      WIRES.forEach(function (w) {
+        if (w.lead) return;
+        var longest = -1, seg = 0;
+        for (var i = 0; i < w.pts.length - 1; i++) {
+          var l = Math.abs(w.pts[i + 1][0] - w.pts[i][0]) + Math.abs(w.pts[i + 1][1] - w.pts[i][1]);
+          if (l > longest) { longest = l; seg = i; }
+        }
+        var a = w.pts[seg], b = w.pts[seg + 1];
+        var horiz = a[0] === b[0];
+        var mx = (X(a[1], mir) + X(b[1], mir)) / 2, my = (Y(a[0]) + Y(b[0])) / 2;
+        if (!horiz) my = Math.min(Y(a[0]), Y(b[0])) + CELL * 1.5;
+        s.push('<g class="net n-' + fam(w.net) + '">' + text(mx + (horiz ? 0 : 8), my + (horiz ? -7 : 3), w.id, { anchor: horiz ? "middle" : "start", size: 8, weight: 600, fill: COLOR[fam(w.net)], halo: true }) + '</g>');
+      });
+    }
+
+    // étiquette du bus
+    s.push('<g class="net n-gnd">' + text((X(10, mir) + X(16, mir)) / 2, Y(18) + edge + 14, "bus de masse · rangée 18", { size: 8.5, weight: 600, fill: "var(--net-gnd)" }) + '</g>');
+
+    // fils volants
+    PADS.forEach(function (p) {
+      var f = fam(p.net), px = X(p.at[1], mir), py = Y(p.at[0]);
+      s.push('<g class="net n-' + f + '">');
+      if (!copper) s.push('<circle cx="' + px + '" cy="' + py + '" r="5.6" fill="var(--surface)" stroke="' + COLOR[f] + '" stroke-width="1.9"/><circle cx="' + px + '" cy="' + py + '" r="1.8" fill="' + COLOR[f] + '"/>');
+      else s.push('<circle cx="' + px + '" cy="' + py + '" r="7.5" fill="none" stroke="' + COLOR[f] + '" stroke-width="1.5"/>');
+      s.push(text(px + (mir ? -p.dx : p.dx), py + p.dy, p.label, { anchor: flipAnchor(p.anchor, mir), size: 8.5, weight: 600, fill: COLOR[f], halo: true }));
+      s.push('</g>');
+    });
+
+    s.push('</svg>');
+    return s.join("");
+  }
+
+  document.getElementById("view-top").innerHTML = render(false);
+  document.getElementById("view-bottom").innerHTML = render(true);
+
+  // ---- Isoler un réseau ----
+  var views = document.getElementById("views");
+  var chips = Array.prototype.slice.call(document.querySelectorAll(".chip[data-net]"));
+  chips.forEach(function (b) {
+    b.addEventListener("click", function () {
+      var n = b.getAttribute("data-net");
+      if (n) views.setAttribute("data-focus", n); else views.removeAttribute("data-focus");
+      chips.forEach(function (o) { o.setAttribute("aria-pressed", o === b ? "true" : "false"); });
+    });
+  });
+
+  // ---- Tableau des fils ----
+  document.getElementById("wire-rows").innerHTML = WIRES.map(function (w) {
+    var f = fam(w.net);
+    var path = w.pts.map(function (p) { return p[0] + "·" + p[1]; }).join(" → ");
+    var sol = w.solder.map(function (p) { return p[0] + "·" + p[1]; }).join(", ");
+    return '<tr><td class="ref">' + w.id + '</td><td><span class="net-dot" style="background:' + COLOR[f] + '"></span>' + esc(w.role) +
+      (w.lead ? ' <span class="mono" style="color:var(--muted)">(patte repliée)</span>' : "") +
+      '</td><td class="holes">' + path + '</td><td class="holes">' + wireLengthMm(w) + ' mm</td><td class="holes">' + sol + '</td></tr>';
+  }).join("");
+
+  // ---- Progression ----
+  var KEY = "perfboard-bandeau-steps-24x18";
+  var boxes = Array.prototype.slice.call(document.querySelectorAll("#steps input[type=checkbox]"));
+  var saved = {};
+  try { saved = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { saved = {}; }
+  function update() {
+    var n = boxes.filter(function (b) { return b.checked; }).length;
+    document.getElementById("progress").textContent = n + " / " + boxes.length + " étapes faites";
+  }
+  boxes.forEach(function (b) {
+    b.checked = !!saved[b.id];
+    b.addEventListener("change", function () {
+      saved[b.id] = b.checked;
+      try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) {}
+      update();
+    });
+  });
+  document.getElementById("reset-steps").addEventListener("click", function () {
+    boxes.forEach(function (b) { b.checked = false; });
+    saved = {};
+    try { localStorage.removeItem(KEY); } catch (e) {}
+    update();
+  });
+  update();
+})();
+</script>
