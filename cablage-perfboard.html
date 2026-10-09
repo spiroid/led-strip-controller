@@ -404,6 +404,10 @@
   .note.warn { border-left-color: var(--net-12v); }
   .note.warn .label { color: var(--net-12v); }
 
+  ol.plain-steps { margin: 0; padding-left: 1.3em; display: flex; flex-direction: column; gap: 8px; }
+  ol.plain-steps li { color: var(--ink-soft); max-width: 78ch; }
+  #view-buck svg { min-width: 680px; }
+
   ul.plain { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 6px; }
 
   @media (max-width: 560px) {
@@ -491,6 +495,42 @@
       <div><svg width="34" height="14" aria-hidden="true"><circle cx="17" cy="7" r="5" fill="var(--surface)" stroke="var(--ink)" stroke-width="1.6"/><circle cx="17" cy="7" r="1.6" fill="var(--ink)"/></svg>Fil volant (vers buck, jack ou bandeau)</div>
       <div><svg width="34" height="14" aria-hidden="true"><rect x="4" y="2" width="26" height="10" rx="1.5" fill="var(--part)" stroke="var(--ink)" stroke-width="1.2"/><line x1="4" y1="12" x2="30" y2="12" stroke="var(--ink)" stroke-width="3"/></svg>MOSFET : trait épais = face imprimée</div>
     </div>
+  </section>
+
+  <section class="block" aria-labelledby="buck-title">
+    <div class="section-head">
+      <div class="eyebrow">Raccordement hors plaque</div>
+      <h2 id="buck-title">Buck MP1584EN, jack 12 V et plaque</h2>
+    </div>
+    <p>
+      Zoom sur le coin bas gauche de la plaque, vue côté composants. Le module buck n'est pas soudé sur la
+      plaque : il est relié par 4 fils souples et sera collé sur une paroi du boîtier, à gauche de la plaque.
+      Les fils du jack et le V+ du bandeau arrivent dans le même coin.
+    </p>
+    <div class="diagram-wrap"><div id="view-buck" role="img" aria-label="Raccordement du module MP1584EN : IN+ vers le trou 14·1, IN− vers 16·5, OUT+ vers 17·3, OUT− vers 17·5. Bornier du jack : + vers 17·1 via le polyfuse, − vers 18·2. V+ du bandeau depuis 11·1."></div></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Fil</th><th>Depuis</th><th>Vers la plaque</th><th>Couleur conseillée</th><th>Longueur</th></tr></thead>
+        <tbody>
+          <tr><td class="ref">B1</td><td>MP1584EN · IN+</td><td class="holes">14·1</td><td><span class="net-dot" style="background:var(--net-12v)"></span>rouge</td><td class="holes">6–8 cm</td></tr>
+          <tr><td class="ref">B2</td><td>MP1584EN · IN−</td><td class="holes">16·5</td><td><span class="net-dot" style="background:var(--net-gnd)"></span>noir</td><td class="holes">6–8 cm</td></tr>
+          <tr><td class="ref">B3</td><td>MP1584EN · OUT+</td><td class="holes">17·3</td><td><span class="net-dot" style="background:var(--net-5v)"></span>orange ou jaune</td><td class="holes">6–8 cm</td></tr>
+          <tr><td class="ref">B4</td><td>MP1584EN · OUT−</td><td class="holes">17·5</td><td><span class="net-dot" style="background:var(--net-gnd)"></span>noir</td><td class="holes">6–8 cm</td></tr>
+          <tr><td class="ref">J+</td><td>Bornier du jack · +, via le polyfuse</td><td class="holes">17·1</td><td><span class="net-dot" style="background:var(--net-12v)"></span>rouge, AWG 22</td><td class="holes">selon boîtier</td></tr>
+          <tr><td class="ref">J−</td><td>Bornier du jack · −</td><td class="holes">18·2</td><td><span class="net-dot" style="background:var(--net-gnd)"></span>noir, AWG 22</td><td class="holes">selon boîtier</td></tr>
+          <tr><td class="ref">V+</td><td>Connecteur du bandeau · V+</td><td class="holes">11·1</td><td><span class="net-dot" style="background:var(--net-12v)"></span>rouge, AWG 22</td><td class="holes">selon boîtier</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ol class="plain-steps">
+      <li><strong>Repère les pastilles du module.</strong> Selon le fabricant, elles sont marquées <code>IN+ / IN− / OUT+ / OUT−</code> ou <code>VIN / GND / VOUT / GND</code>. Les entrées et les sorties sont aux deux extrémités opposées du module. Vérifie au multimètre que les deux GND (IN− et OUT−) sont reliés.</li>
+      <li><strong>Contrôle la sortie une dernière fois :</strong> 12 V en entrée, 5,0 V à vide en sortie. Ne touche plus le potentiomètre ensuite. Une goutte de vernis à ongles dessus évite qu'il bouge.</li>
+      <li><strong>Prépare les 4 fils :</strong> dénude 3 mm à chaque bout et étame. Étame aussi les 4 pastilles du module.</li>
+      <li><strong>Soude d'abord côté module</strong>, fil posé à plat sur la pastille, sans soudure qui coule vers les composants voisins. Gaine thermo sur chaque soudure si tu en as de la petite taille.</li>
+      <li><strong>Puis côté plaque</strong>, à l'étape 3 de la procédure : fil enfoncé par le dessus, soudé côté cuivre, avant de poser les fils nus F1, F3 et F4 qui passent sur ces trous.</li>
+      <li><strong>Teste</strong> : IN+ du module ↔ 11·1 : continuité. OUT+ ↔ 1·9 (5V de l'ESP32) : continuité. OUT− ↔ bus de masse : continuité. IN+ ↔ OUT+ : pas de continuité.</li>
+      <li><strong>Fixe le module</strong> avec de l'adhésif double face mousse, loin de l'antenne de l'ESP32. Le dessous du module a des pastilles nues, comme le côté cuivre de la plaque : ils ne doivent jamais se toucher.</li>
+    </ol>
   </section>
 
   <div class="note warn">
@@ -980,6 +1020,113 @@
 
   document.getElementById("view-top").innerHTML = render(false);
   document.getElementById("view-bottom").innerHTML = render(true);
+
+  // ---- Zoom : buck, jack et coin bas gauche de la plaque ----
+  function renderBuck() {
+    var C = 32, ox = 470, oy = 64, C_TO = 8;
+    function bx(c) { return ox + (c - 1) * C; }
+    function by(r) { return oy + (r - 11) * C; }
+    var s = [];
+    var BW = 770, BH = 420;
+    s.push('<svg viewBox="0 0 ' + BW + ' ' + BH + '" xmlns="http://www.w3.org/2000/svg">');
+    s.push('<defs><clipPath id="zoomclip"><rect x="' + (bx(1) - 18) + '" y="' + (by(11) - 26) + '" width="' + (bx(C_TO) - bx(1) + 50) + '" height="' + (by(18) - by(11) + 44) + '"/></clipPath></defs>');
+
+    // plaque (bord gauche et bas réels, haut et droite = suite)
+    var zx = bx(1) - 18, zy = by(11) - 26, zw = bx(C_TO) - bx(1) + 50, zh = by(18) - by(11) + 44;
+    s.push('<rect x="' + zx + '" y="' + zy + '" width="' + zw + '" height="' + zh + '" fill="var(--board)" stroke="none"/>');
+    s.push('<rect x="' + zx + '" y="' + zy + '" width="' + zw + '" height="' + zh + '" fill="none" stroke="var(--muted-2)" stroke-dasharray="4 4"/>');
+    s.push('<polyline points="' + zx + ',' + zy + ' ' + zx + ',' + (zy + zh) + ' ' + (zx + zw) + ',' + (zy + zh) + '" fill="none" stroke="var(--rule-strong)" stroke-width="2"/>');
+    s.push(text(zx + zw - 4, zy - 6, "suite de la plaque →", { anchor: "end", size: 8, fill: "var(--muted)" }));
+    s.push(text(zx + 4, zy - 6, "ESP32 au-dessus ↑", { anchor: "start", size: 8, fill: "var(--muted)" }));
+    for (var c = 1; c <= C_TO; c++) s.push(text(bx(c), by(18) + 36, c, { size: 9, weight: c % 5 === 0 || c === 1 ? 600 : 400, fill: "var(--ink-soft)" }));
+    s.push(text(bx(1) - 26, by(18) + 36, "col.", { anchor: "end", size: 8, fill: "var(--muted)" }));
+    for (var r = 11; r <= 18; r++) s.push(text(zx + zw + 8, by(r) + 3, r, { anchor: "start", size: 9, weight: r % 5 === 0 ? 600 : 400, fill: "var(--ink-soft)" }));
+    s.push(text(zx + zw + 8, zy - 6, "rang.", { anchor: "start", size: 8, fill: "var(--muted)" }));
+    for (r = 11; r <= 18; r++) for (c = 1; c <= C_TO; c++) s.push('<circle cx="' + bx(c) + '" cy="' + by(r) + '" r="2.2" fill="var(--hole)" opacity="0.7"/>');
+
+    // fils nus côté cuivre (pointillés) et C1
+    s.push('<g clip-path="url(#zoomclip)">');
+    WIRES.forEach(function (w) {
+      var f = fam(w.net);
+      var pts = w.pts.map(function (p) { return bx(p[1]) + "," + by(p[0]); }).join(" ");
+      s.push('<polyline points="' + pts + '" fill="none" stroke="' + COLOR[f] + '" stroke-width="1.6" stroke-dasharray="4 3" opacity="0.7"/>');
+    });
+    var ccx = (bx(3) + bx(5)) / 2, ccy = by(14), rad = C * 1.75;
+    s.push('<circle cx="' + ccx + '" cy="' + ccy + '" r="' + rad + '" fill="var(--ecap)" opacity="0.9" stroke="var(--ink)" stroke-width="1.2"/>');
+    s.push(text(ccx, ccy + 4, "C1", { size: 9, weight: 600, fill: "var(--board)" }));
+    s.push('</g>');
+
+    // pastilles des fils volants de la zone
+    PADS.forEach(function (p) {
+      if (p.at[1] > C_TO || p.at[0] < 11) return;
+      var f = fam(p.net), px = bx(p.at[1]), py = by(p.at[0]);
+      s.push('<circle cx="' + px + '" cy="' + py + '" r="6" fill="var(--surface)" stroke="' + COLOR[f] + '" stroke-width="2"/><circle cx="' + px + '" cy="' + py + '" r="2" fill="' + COLOR[f] + '"/>');
+    });
+
+    // fils souples : tracés orthogonaux, sans croisement
+    function wire(pts, net, label, lx, ly, anchor) {
+      var col = COLOR[fam(net)];
+      var d = pts.map(function (q) { return q[0] + "," + q[1]; }).join(" ");
+      s.push('<polyline points="' + d + '" fill="none" stroke="var(--ink)" stroke-width="5.6" stroke-linejoin="round" stroke-linecap="round" opacity="0.3"/>');
+      s.push('<polyline points="' + d + '" fill="none" stroke="' + col + '" stroke-width="3.4" stroke-linejoin="round" stroke-linecap="round"/>');
+      if (label) s.push(text(lx, ly, label, { anchor: anchor || "middle", size: 8.5, weight: 600, fill: col, halo: true }));
+    }
+
+    // module MP1584EN (bas gauche), entrées à gauche, sorties à droite
+    var mx = 50, my = 326, mw = 160, mh = 76;
+    var mp = {
+      inp: [mx + 14, my + 18, "IN+", "v12"], inn: [mx + 14, my + mh - 16, "IN−", "gnd"],
+      outp: [mx + mw - 14, my + 18, "OUT+", "v5"], outn: [mx + mw - 14, my + mh - 16, "OUT−", "gnd"]
+    };
+    // bornier du jack (au-dessus du module)
+    var jx = 92, jy = 238, jw = 56, jh = 66;
+    var jp = [jx + jw - 14, by(17)], jn = [jx + jw - 14, by(18)];
+
+    wire([[bx(1), by(11)], [330, by(11)]], "v12", "V+ → connecteur du bandeau", 322, by(11) + 3, "end");
+    wire([mp.inp.slice(0, 2), [24, mp.inp[1]], [24, by(14)], [bx(1), by(14)]], "v12", "B1 · IN+ → 14·1", 250, by(14) - 8);
+    wire([mp.inn.slice(0, 2), [38, mp.inn[1]], [38, by(16)], [bx(5), by(16)]], "gnd", "B2 · IN− → 16·5", 250, by(16) - 8);
+    wire([jp, [bx(1), by(17)]], "v12", "J+ → 17·1", 400, by(17) - 8);
+    wire([jn, [bx(2), by(18)]], "gnd", "J− → 18·2", 300, by(18) + 16);
+    wire([mp.outp.slice(0, 2), [bx(3), mp.outp[1]], [bx(3), by(17)]], "v5", "B3 · OUT+ → 17·3", 380, mp.outp[1] - 8);
+    wire([mp.outn.slice(0, 2), [bx(5), mp.outn[1]], [bx(5), by(17)]], "gnd", "B4 · OUT− → 17·5", 380, mp.outn[1] - 8);
+
+    // polyfuse sur J+
+    var fx = 290, fy = by(17);
+    s.push('<rect x="' + (fx - 18) + '" y="' + (fy - 9) + '" width="36" height="18" rx="6" fill="var(--ceramic)" stroke="var(--ink)" stroke-width="1.1" stroke-dasharray="3 2"/>');
+    s.push(text(fx, fy + 22, "polyfuse 1,5 A (à venir)", { size: 8, weight: 600, fill: "var(--ink-soft)", halo: true }));
+
+    // dessin du module
+    s.push('<rect x="' + mx + '" y="' + my + '" width="' + mw + '" height="' + mh + '" rx="5" fill="var(--board)" stroke="var(--esp)" stroke-width="1.6"/>');
+    s.push('<rect x="' + mx + '" y="' + my + '" width="' + mw + '" height="' + mh + '" rx="5" fill="var(--esp)" fill-opacity="0.16"/>');
+    s.push('<rect x="' + (mx + 44) + '" y="' + (my + 16) + '" width="34" height="34" rx="4" fill="var(--part)" stroke="var(--ink)" stroke-width="1.1"/>');
+    s.push('<rect x="' + (mx + 94) + '" y="' + (my + 22) + '" width="22" height="22" rx="2" fill="var(--ceramic)" stroke="var(--ink)" stroke-width="1"/>');
+    s.push('<line x1="' + (mx + 99) + '" y1="' + (my + 33) + '" x2="' + (mx + 111) + '" y2="' + (my + 33) + '" stroke="var(--ink)" stroke-width="1.6"/>');
+    s.push(text(mx + mw / 2 + 20, my - 8, "MP1584EN · réglé 5,0 V", { size: 9, weight: 600, fill: "var(--esp)", halo: true }));
+    Object.keys(mp).forEach(function (k) {
+      var q = mp[k];
+      s.push('<rect x="' + (q[0] - 8) + '" y="' + (q[1] - 8) + '" width="16" height="16" rx="2" fill="var(--copper)" stroke="var(--ink)" stroke-width="0.8"/>');
+      var left = k === "inp" || k === "inn";
+      s.push(text(q[0] + (left ? 12 : -12), q[1] + 3, q[2], { anchor: left ? "start" : "end", size: 8, weight: 600, fill: COLOR[q[3]], halo: true }));
+    });
+
+    // dessin du bornier
+    s.push('<rect x="' + jx + '" y="' + jy + '" width="' + jw + '" height="' + jh + '" rx="4" fill="var(--part)" stroke="var(--ink)" stroke-width="1.3"/>');
+    [[jp, "+", "var(--net-12v)"], [jn, "−", "var(--net-gnd)"]].forEach(function (t) {
+      s.push('<circle cx="' + t[0][0] + '" cy="' + t[0][1] + '" r="9" fill="var(--tab)" stroke="var(--ink)"/>');
+      s.push('<line x1="' + (t[0][0] - 6) + '" y1="' + t[0][1] + '" x2="' + (t[0][0] + 6) + '" y2="' + t[0][1] + '" stroke="var(--ink)" stroke-width="1.6"/>');
+      s.push(text(jx + 12, t[0][1] + 4, t[1], { size: 12, weight: 700, fill: t[2] }));
+    });
+    s.push(text(jx + jw / 2 + 20, jy - 20, "bornier du jack 12 V", { size: 8.5, weight: 600, halo: true }));
+
+    // repères des trous d'arrivée
+    [[14, 1, "14·1"], [16, 5, "16·5"], [17, 3, "17·3"], [17, 5, "17·5"], [17, 1, "17·1"], [18, 2, "18·2"], [11, 1, "11·1"]].forEach(function (h) {
+      s.push(text(bx(h[1]) + 9, by(h[0]) - 8, h[2], { anchor: "start", size: 8, weight: 600, fill: "var(--ink)", halo: true }));
+    });
+
+    s.push('</svg>');
+    return s.join("");
+  }
+  document.getElementById("view-buck").innerHTML = renderBuck();
 
   // ---- Isoler un réseau ----
   var views = document.getElementById("views");
