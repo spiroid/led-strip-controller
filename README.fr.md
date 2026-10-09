@@ -331,12 +331,36 @@ traversant (radial), ~1,5A hold current, tension nominale ≥12V. Ne
 bloque pas le reste du montage définitif : il se câble en série sur le
 +12V et peut être ajouté à n'importe quel moment.
 
-Reste à faire pour le montage permanent — voir
-[`cablage-perfboard.html`](cablage-perfboard.html) pour le schéma de
-câblage consolidé (les 3 canaux + buck converter + découplage, en un seul
-diagramme) et l'ordre de soudure recommandé, et
-[`technique-perfboard.html`](technique-perfboard.html) pour la technique
-de soudure elle-même sur perfboard à trous isolés (première fois) :
+**Disposition sur perfboard :** la plaque est un perfboard à pastilles
+isolées de **24 colonnes × 18 rangées** (côté long à l'horizontale). Le
+plan de soudure complet, trou par trou, est dans
+[`cablage-perfboard.html`](cablage-perfboard.html) : vue côté composants,
+vue côté cuivre en miroir, liste des fils à couper, ordre de soudure à
+cocher et tests au multimètre après chaque étape. Principaux choix :
+
+- L'ESP32 est enfiché sur deux barrettes femelles 1×16 (jamais soudé
+  directement), calé contre le **bord droit** de la plaque (colonnes 3 à
+  24, rangées 1 à 10) pour que son antenne PCB arrive au bord, sans cuivre
+  autour. Ses broches tombent sur : GPIO18/19/20 en rangée 10, colonnes
+  13/14/15 ; `5V` en rangée 1 colonne 9 ; `GND` en rangée 1 colonne 8 et
+  rangée 10 colonnes 8, 11 et 22.
+- Les 8 rangées sous l'ESP32 accueillent les 3 canaux : résistances de
+  grille 220Ω couchées en rangée 11, pull-down 10kΩ en rangée 14, MOSFET
+  debout en rangée 16 (face imprimée vers le bas de la plaque, languette
+  vers l'ESP32 — la languette est le Drain, les trois ne doivent jamais se
+  toucher), sorties vers le bandeau en rangée 17, bus de masse d'un seul
+  fil en rangée 18.
+- L'alimentation (entrée 12V, fils volants du buck, condensateur 470µF,
+  V+ du bandeau) est regroupée dans le coin bas gauche, libéré en décalant
+  l'ESP32 à droite. Le 100nF reste glissé sous l'ESP32 contre ses broches
+  `5V`/`GND` ; le 470µF est trop haut pour ça et se trouve à ~4cm, sur
+  l'arrivée 5V.
+- Aucun fil ne se croise : toutes les liaisons sont en fil étamé nu côté
+  cuivre.
+
+Voir aussi [`technique-perfboard.html`](technique-perfboard.html) pour la
+technique de soudure elle-même sur perfboard à trous isolés (première
+fois). Reste à faire pour le montage permanent :
 
 - Ressouder le circuit MOSFET sur perfboard.
 - Isoler les jonctions 12V/GND à la gaine thermorétractable.

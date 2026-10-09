@@ -309,12 +309,32 @@ on normal variation). None on hand — ordering a leaded/radial PTC polyfuse,
 ~1.5A hold current, rated ≥12V. Doesn't block the rest of final assembly;
 it wires in series on +12V and can be added at any point.
 
-Remaining for the permanent build — see
-[`cablage-perfboard.html`](cablage-perfboard.html) for the consolidated
-wiring reference (all 3 channels + buck converter + decoupling, in one
-diagram) and the recommended soldering order, and
-[`technique-perfboard.html`](technique-perfboard.html) for the actual
-soldering technique on isolated-pad perfboard (first time doing this):
+**Perfboard layout:** the board is a **24-column × 18-row** isolated-pad
+perfboard (long side horizontal). The full hole-by-hole soldering plan is
+in [`cablage-perfboard.html`](cablage-perfboard.html): component-side view,
+mirrored copper-side view, wire cut list, ordered soldering checklist and
+multimeter checks after each step. Main layout choices:
+
+- The ESP32 sits on two 1×16 female headers (never soldered directly),
+  pushed against the **right edge** of the board (columns 3–24, rows 1–10)
+  so its PCB antenna ends up at the board edge with no copper around it.
+  Its pins land on: GPIO18/19/20 at row 10, columns 13/14/15; `5V` at
+  row 1 col 9; `GND` at row 1 col 8 and row 10 cols 8, 11 and 22.
+- The 8 rows below the ESP32 hold the 3 channels: 220Ω gate resistors
+  lying flat on row 11, 10kΩ pull-downs on row 14, MOSFETs standing on
+  row 16 (printed face toward the bottom edge, tab toward the ESP32 — the
+  tab is the Drain, so the three must never touch), LED strip outputs on
+  row 17, single-wire ground bus on row 18.
+- The power section (12V input, buck converter flying leads, 470µF
+  capacitor, strip V+) is grouped in the bottom-left corner, freed by
+  shifting the ESP32 right. The 100nF stays tucked under the ESP32
+  against its `5V`/`GND` pins; the 470µF is too tall for that and sits
+  ~4cm away on the 5V feed.
+- No two wires cross: all links are bare tinned wire on the copper side.
+
+See also [`technique-perfboard.html`](technique-perfboard.html) for the
+soldering technique itself on isolated-pad perfboard (first time doing
+this). Remaining for the permanent build:
 
 - Re-solder the MOSFET circuit onto perfboard.
 - Heat-shrink the 12V/GND joints.
