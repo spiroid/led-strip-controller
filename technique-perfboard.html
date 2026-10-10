@@ -277,8 +277,8 @@
     <figcaption>
       Le fil de liaison (en orange) se soude directement sur la pastille, &agrave; c&ocirc;t&eacute; de la
       patte du composant &mdash; c'est comme &ccedil;a qu'on relie deux pastilles qui ne se touchent pas
-      directement. Sur ce montage, la <strong>masse commune</strong> se fait typiquement avec un seul fil qui
-      court le long d'une rang&eacute;e enti&egrave;re, soud&eacute; &agrave; chaque pastille GND qu'il croise.
+      directement. Sur ce montage, la <strong>masse commune</strong> court le long d'une rang&eacute;e
+      enti&egrave;re&nbsp;; elle se construit en dernier, maillon par maillon (voir les astuces de terrain plus bas).
     </figcaption>
   </figure>
 
@@ -438,9 +438,30 @@
         recouvert d'une fine couche de soudure transmet bien mieux la chaleur qu'une panne oxyd&eacute;e ou
         sale.</li>
       <li><strong>Tout souder d'un coup</strong> &mdash; mieux vaut suivre l'ordre du
-        <a href="cablage-perfboard.html">sch&eacute;ma &eacute;lectrique</a> (masse d'abord, un canal &agrave;
-        la fois) et v&eacute;rifier au fur et &agrave; mesure, plut&ocirc;t que de tout souder puis chercher
+        <a href="cablage-perfboard.html">sch&eacute;ma &eacute;lectrique</a> (un canal &agrave; la fois,
+        masse commune &agrave; la fin) et v&eacute;rifier au fur et &agrave; mesure, plut&ocirc;t que de tout souder puis chercher
         un d&eacute;faut dans 40 joints d'un coup.</li>
+    </ul>
+  </section>
+
+  <section class="block">
+    <h2>Astuces de terrain</h2>
+    <p>Ce qu'on aurait aim&eacute; savoir avant de commencer, appris en soudant ce montage.</p>
+    <ul class="pitfalls">
+      <li><strong>Une ligne de masse se construit &agrave; la fin, maillon par maillon.</strong> Commence
+        par souder tous les fils et toutes les pattes qui doivent arriver sur la ligne. Ensuite seulement,
+        relie-les deux par deux avec une chute de patte de r&eacute;sistance ou un fil tr&egrave;s fin pos&eacute;
+        en travers&nbsp;: un peu de flux, une goutte d'&eacute;tain sur la panne, on soude les deux extr&eacute;mit&eacute;s
+        du lien, puis on compl&egrave;te les raccords avec les fils d&eacute;j&agrave; en place. C'est bien plus
+        facile que de poser un long fil d'un bloc et d'essayer de le tenir pendant qu'on soude chaque point.</li>
+      <li><strong>Garde toutes les chutes de pattes.</strong> Les bouts coup&eacute;s des r&eacute;sistances,
+        condensateurs et autres composants sont rigides, d&eacute;j&agrave; &eacute;tam&eacute;s et au bon
+        diam&egrave;tre&nbsp;: parfaits pour relier deux pastilles voisines ou faire un maillon de ligne de
+        masse. Un petit bocal &agrave; c&ocirc;t&eacute; du fer &eacute;vite de les perdre.</li>
+      <li><strong>&Eacute;tudie le sch&eacute;ma avant de faire fondre la moindre soudure.</strong> Rep&egrave;re
+        les liaisons qui se chevauchent ou passent au m&ecirc;me endroit, et soude toujours en premier celle
+        qui est au plus pr&egrave;s de la plaque. Une fois la couche du dessus pos&eacute;e, celle du dessous
+        n'est plus accessible au fer.</li>
     </ul>
   </section>
 

@@ -593,10 +593,11 @@
       <h2 id="wires-title">Fils de liaison à préparer</h2>
     </div>
     <p>
-      Fil rigide étamé nu (0,6 à 0,8 mm) ou chutes de pattes de résistances. Plie chaque fil aux angles
-      indiqués, pose-le à plat sur les pastilles et soude-le <strong>uniquement</strong> aux trous de la
-      dernière colonne. La longueur inclut 4 mm de marge. Le bus de masse est un seul fil sur toute la
-      rangée 18.
+      Fil rigide étamé nu (0,6 à 0,8 mm) ou chutes de pattes de résistances et de condensateurs : garde
+      toutes tes chutes de pattes, elles sont parfaites pour relier deux pastilles. Plie chaque fil aux
+      angles indiqués, pose-le à plat sur les pastilles et soude-le <strong>uniquement</strong> aux trous de
+      la dernière colonne. La longueur inclut 4 mm de marge. Le bus de masse F5 se fait en dernier, une fois
+      que tous les fils qui y arrivent sont en place (voir l'étape « Bus de masse »).
     </p>
     <div class="table-wrap">
       <table>
@@ -614,8 +615,9 @@
     <p>
       Règle de base sur cette plaque : dans chaque zone, d'abord tout ce qui <strong>traverse</strong> la plaque
       (pattes de composants, fils volants), ensuite les fils nus côté cuivre, qui se posent par-dessus les
-      pattes coupées. Un fil nu soudé en premier boucherait le trou dont une patte a besoin. Teste au
-      multimètre à chaque étape. Les cases se souviennent de ta progression dans ce navigateur.
+      pattes coupées. Un fil nu soudé en premier boucherait le trou dont une patte a besoin. Avant chaque
+      étape, repère sur la vue cuivre les liaisons qui se superposent au même endroit et soude d'abord celle
+      qui est au plus près de la plaque. Teste au multimètre à chaque étape. Les cases se souviennent de ta progression dans ce navigateur.
     </p>
     <div class="toolbar"><span class="progress" id="progress">0 / 0 étapes</span><button type="button" class="reset" id="reset-steps">Tout décocher</button></div>
     <ol class="steps" id="steps">
@@ -634,28 +636,33 @@
         <p>C2 couché à plat en 2·8 / 2·9, patte de 2·8 repliée sur 1·8 (F2). C1 debout, + en 14·3, <strong>bande « − » en 14·5</strong>. Puis les fils volants : buck IN+ 14·1, IN− 16·5, OUT+ 17·3, OUT− 17·5, jack +12 V 17·1, jack GND 18·2, V+ bandeau 11·1. Soude-les, coupe les pattes au ras.</p>
       </div></li>
       <li><div class="step-body">
-        <label class="check"><input type="checkbox" id="step-4"><span><strong>Zone alimentation : fils nus F1, F3, F4, puis bus F5 et retour ESP32 F6.</strong></span></label>
-        <p>F1 (5V) part de 1·9, passe sous l'ESP32 par la rangée 3 puis descend la colonne 3 jusqu'à 17·3. F3 descend la colonne 5 de 14·5 au bus. F4 relie les trois trous +12 V de la colonne 1. F5 parcourt toute la rangée 18, de 18·2 à 18·24. F6 ramène le GND de l'ESP32 (10·22) au bus par la colonne 23.</p>
-        <p class="test"><b>Test</b>1·9 ↔ 17·3 : continuité. 10·22 ↔ 18·2 : continuité. 11·1 ↔ 17·1 : continuité. 5V ↔ GND, 12V ↔ GND, 12V ↔ 5V : pas de court-circuit (la valeur monte puis se stabilise haut, c'est C1 qui se charge).</p>
+        <label class="check"><input type="checkbox" id="step-4"><span><strong>Zone alimentation : fils nus F1, F3, F4 et retour ESP32 F6.</strong></span></label>
+        <p>F1 (5V) part de 1·9, passe sous l'ESP32 par la rangée 3 puis descend la colonne 3 jusqu'à 17·3. F3 descend la colonne 5 de 14·5 jusqu'à 18·5. F4 relie les trois trous +12 V de la colonne 1. F6 ramène le GND de l'ESP32 (10·22) jusqu'à 18·23 par la colonne 23. Le bus F5 qui les reliera viendra après les canaux.</p>
+        <p class="test"><b>Test</b>1·9 ↔ 17·3 : continuité. 10·22 ↔ 18·23 : continuité. 11·1 ↔ 17·1 : continuité. 5V ↔ GND, 12V ↔ GND, 12V ↔ 5V : pas de court-circuit (la valeur monte puis se stabilise haut, c'est C1 qui se charge).</p>
       </div></li>
       <li><div class="step-body">
         <label class="check"><input type="checkbox" id="step-5"><span><strong>Canal R</strong> : R1, R4, Q1, fil volant R, puis F7 à F11.</span></label>
         <p>R1 à plat en 11·8 → 11·13, R4 en 14·8 → 14·12, Q1 debout (patte du milieu d'abord, vérifie qu'il est droit, puis les deux autres), fil volant du bandeau en 17·9. Côté cuivre : replie la patte de R1 de 11·13 sur 10·13 (F7), puis F8 (grille), F9 (pull-down → bus), F10 (Source → bus), F11 (Drain → 17·9). Pas besoin de couper de fil pour F9 : ne coupe pas la patte de R4 en 14·12, replie-la côté cuivre le long de la colonne 12 jusqu'au bus. F10 et F11 peuvent de même être les pattes de Q1 repliées.</p>
-        <p class="test"><b>Test</b>10·13 ↔ 16·8 : 220 Ω. 16·8 ↔ bus : 10 kΩ. 16·10 ↔ bus : 0 Ω. 16·9 ↔ bus : pas de continuité.</p>
+        <p class="test"><b>Test</b>10·13 ↔ 16·8 : 220 Ω. 16·8 ↔ 18·12 (bout de la patte de R4) : 10 kΩ. 16·9 ↔ 16·10 : pas de continuité.</p>
       </div></li>
       <li><div class="step-body">
         <label class="check"><input type="checkbox" id="step-6"><span><strong>Canal V</strong> : R2, R5, Q2, fil volant V, puis F12 à F16.</span></label>
         <p>F12 part de GPIO19 (10·14), descend jusqu'à la rangée 12, file à droite jusqu'à la colonne 18 et rejoint l'entrée de R2 en 13·18. R2 ramène le signal vers la gauche, en 13·14, d'où F13 descend jusqu'à la grille. F14 est la patte de R5 repliée jusqu'au bus, comme F9.</p>
-        <p class="test"><b>Test</b>10·14 ↔ 16·14 : 220 Ω. 16·14 ↔ bus : 10 kΩ. 16·16 ↔ bus : 0 Ω. 16·15 ↔ bus : pas de continuité.</p>
+        <p class="test"><b>Test</b>10·14 ↔ 16·14 : 220 Ω. 16·14 ↔ 18·18 (bout de la patte de R5) : 10 kΩ. 16·15 ↔ 16·16 : pas de continuité.</p>
       </div></li>
       <li><div class="step-body">
         <label class="check"><input type="checkbox" id="step-7"><span><strong>Canal B</strong> : R3, R6, Q3, fil volant B, puis F17 à F21.</span></label>
         <p>Même méthode que le canal R : F19 est la patte de R6 repliée jusqu'au bus. Sur breadboard, les fils de GPIO19 et GPIO20 avaient été inversés (vert à la place du bleu) : vérifie que R3 est bien repliée sur 10·15 et F12 bien soudé à 10·14.</p>
-        <p class="test"><b>Test</b>10·15 ↔ 16·20 : 220 Ω. 16·20 ↔ bus : 10 kΩ. 16·22 ↔ bus : 0 Ω. 16·21 ↔ bus : pas de continuité. 10·14 ↔ 16·20 : pas de continuité.</p>
+        <p class="test"><b>Test</b>10·15 ↔ 16·20 : 220 Ω. 16·20 ↔ 18·24 (bout de la patte de R6) : 10 kΩ. 16·21 ↔ 16·22 : pas de continuité. 10·14 ↔ 16·20 : pas de continuité.</p>
+      </div></li>
+      <li><div class="step-body">
+        <label class="check"><input type="checkbox" id="step-bus"><span><strong>Bus de masse F5</strong> (rangée 18), une fois tous les fils d'arrivée en place.</span></label>
+        <p>À ce stade, huit fils ou pattes arrivent déjà sur la rangée 18 : 18·2 (GND du jack), 18·5 (F3), 18·10, 18·12, 18·16, 18·18, 18·22 (Sources et pull-down) et 18·23 (F6). Plutôt qu'un long fil posé d'un bloc, relie-les de proche en proche : place une chute de patte (ou un fil très fin) à plat entre deux points voisins, mets du flux, une goutte d'étain sur la panne, soude les deux extrémités de ce lien, puis passe au suivant jusqu'à 18·24. Chaque lien se soude ainsi sur une pastille déjà étamée, avec le fil d'arrivée déjà en place.</p>
+        <p class="test"><b>Test</b>18·2 ↔ 18·24 : continuité. 10·22 ↔ 18·2 : continuité. 16·8, 16·14, 16·20 ↔ bus : 10 kΩ. 16·10, 16·16, 16·22 ↔ bus : 0 Ω. 16·9, 16·15, 16·21 ↔ bus : pas de continuité.</p>
       </div></li>
       <li><div class="step-body">
         <label class="check"><input type="checkbox" id="step-8"><span><strong>Contrôle visuel complet, hors tension.</strong></span></label>
-        <p>À la loupe ou en lumière rasante : pas de pont entre pastilles voisines, surtout en rangée 11 (colonnes 13, 14, 15), en rangée 16 (pattes des MOSFET) et en rangée 17 (fils volants). Refais les tests des étapes 4 à 7.</p>
+        <p>À la loupe ou en lumière rasante : pas de pont entre pastilles voisines, surtout en rangée 11 (colonnes 13, 14, 15), en rangée 16 (pattes des MOSFET) et en rangée 17 (fils volants). Refais les tests des étapes 4 à 8.</p>
       </div></li>
       <li><div class="step-body">
         <label class="check"><input type="checkbox" id="step-9"><span><strong>Première mise sous tension, sans l'ESP32.</strong></span></label>
