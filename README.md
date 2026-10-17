@@ -16,7 +16,8 @@ the board on hand, all 3 MOSFETs individually bench-tested and validated.
 Full 3-channel RGB circuit wired end-to-end on breadboard, flashed, and
 validated stable — individual channels plus full white at 100% brightness.
 Integrated into Home Assistant, color/brightness control confirmed
-flicker-free from the dashboard.
+flicker-free from the dashboard. Final circuit soldered onto perfboard and
+validated on 2026-10-17.
 
 **Planned order of operations:**
 - [x] Strip measurements (common-anode confirmed, see
@@ -40,7 +41,9 @@ flicker-free from the dashboard.
 - [x] Bench-test the DC jack tap and buck converter (MP1584EN) on the
       strip's real 12V supply, independent of final assembly — see
       [Final assembly](#final-assembly)
-- [ ] Final assembly (perfboard, buck converter setup, enclosure) — see
+- [x] Solder the final circuit onto perfboard (3 channels, buck,
+      decoupling) and validate it — see [Final assembly](#final-assembly)
+- [ ] Finishing: enclosure, polyfuse, heat-shrink — see
       [Final assembly](#final-assembly)
 
 Note: the ESP32 stays on USB power throughout breadboard prototyping — the
@@ -260,8 +263,8 @@ flicker — no `ledc` PWM frequency adjustment needed.
 
 ## Final assembly
 
-*(Power path bench-tested; the rest is future work once the breadboard
-prototype as a whole is validated.)*
+*(Power path bench-tested, then the full circuit soldered onto perfboard
+and validated on 2026-10-17; finishing work remains.)*
 
 Before soldering anything down, the power path was bench-tested on its
 own, breadboard-style, the same way each MOSFET was validated in
@@ -334,9 +337,16 @@ multimeter checks after each step. Main layout choices:
 
 See also [`technique-perfboard.html`](technique-perfboard.html) for the
 soldering technique itself on isolated-pad perfboard (first time doing
-this). Remaining for the permanent build:
+this).
 
-- Re-solder the MOSFET circuit onto perfboard.
+Soldering finished and assembly validated on 2026-10-17, following the plan
+and its validation procedure (see
+[`cablage-perfboard.html`](cablage-perfboard.html)). Ground bus method that worked: solder every wire
+that lands on it first, then link them pairwise with lead offcuts (see the
+field tips in [`technique-perfboard.html`](technique-perfboard.html)).
+
+Remaining to finish the permanent build:
+
 - Heat-shrink the 12V/GND joints.
 - Removable screw-terminal connectors for the external wiring.
 - Plastic enclosure (not metal — would shield the ESP32's PCB antenna).

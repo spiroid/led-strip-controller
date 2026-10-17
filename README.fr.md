@@ -16,7 +16,8 @@ d'être rédigé après coup.
 Circuit RGB complet à 3 canaux câblé de bout en bout sur breadboard,
 flashé, et validé stable — canaux individuels et blanc plein à 100% de
 luminosité. Intégré à Home Assistant, contrôle couleur/luminosité confirmé
-sans scintillement depuis le tableau de bord.
+sans scintillement depuis le tableau de bord. Circuit définitif soudé sur
+perfboard et validé le 2026-10-17.
 
 **Ordre des manipulations prévu :**
 - [x] Mesures du bandeau (anode commune confirmée, voir
@@ -40,7 +41,9 @@ sans scintillement depuis le tableau de bord.
 - [x] Tester sur banc la prise jack et le convertisseur buck (MP1584EN)
       sur l'alimentation 12V réelle du bandeau, indépendamment du montage
       définitif — voir [Montage définitif](#montage-définitif)
-- [ ] Montage définitif (perfboard, réglage du buck, boîtier) — voir
+- [x] Souder le montage définitif sur perfboard (3 canaux, buck,
+      découplage) et le valider — voir [Montage définitif](#montage-définitif)
+- [ ] Finitions : boîtier, polyfuse, gaines — voir
       [Montage définitif](#montage-définitif)
 
 Note : l'ESP32 reste alimenté en USB pendant tout le prototypage sur
@@ -277,8 +280,8 @@ nécessaire.
 
 ## Montage définitif
 
-*(Chaîne d'alimentation testée sur banc ; le reste reste à venir une fois
-le prototype breadboard complet validé.)*
+*(Chaîne d'alimentation testée sur banc, puis circuit complet soudé sur
+perfboard et validé le 2026-10-17 ; restent les finitions.)*
 
 Avant de souder quoi que ce soit, la chaîne d'alimentation a été testée
 seule sur breadboard, sur le même principe que la validation de chaque
@@ -360,9 +363,17 @@ cocher et tests au multimètre après chaque étape. Principaux choix :
 
 Voir aussi [`technique-perfboard.html`](technique-perfboard.html) pour la
 technique de soudure elle-même sur perfboard à trous isolés (première
-fois). Reste à faire pour le montage permanent :
+fois).
 
-- Ressouder le circuit MOSFET sur perfboard.
+Soudure terminée et montage validé le 2026-10-17, en suivant le plan et sa
+procédure de validation (voir
+[`cablage-perfboard.html`](cablage-perfboard.html)). Méthode retenue pour le bus de masse : souder d'abord
+tous les fils qui y arrivent, puis les relier deux par deux avec des chutes
+de pattes (voir les astuces de terrain dans
+[`technique-perfboard.html`](technique-perfboard.html)).
+
+Reste à faire pour finir le montage permanent :
+
 - Isoler les jonctions 12V/GND à la gaine thermorétractable.
 - Connectique externe démontable via bornier à vis.
 - Boîtier en plastique (pas métallique — atténuerait l'antenne PCB de
